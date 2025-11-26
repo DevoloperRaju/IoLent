@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>IoLent Daily Quiz Bonus</title>
+<style>
+  :root {
+    --bg1:#020a04;
+    --bg2:#06381b;
+    --card:#0b2618;
+    --accent:#00ff87;
+    --accent2:#60efff;
+    --text:#e6fff6;
+    --muted:#a0cfc0;
+    --wrong:#ff6b6b;
+  }
+  body {
+    margin: 0;
+    font-family: "Poppins", sans-serif;
+    background: radial-gradient(500px 300px at 10% 5%, rgba(0,255,170,0.04), transparent),
+                linear-gradient(180deg,var(--bg1),var(--bg2));
+    color: var(--text);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    min-height: 100vh;
+    padding: 20px;
+  }
+  h1.title {
+    text-align: center;
+    color: var(--accent);
+    font-size: 1.9rem;
+    margin: 20px 0 10px;
+    letter-spacing: 1px;
+    text-shadow: 0 0 10px rgba(0,255,170,0.3);
+  }
+  .timer {
+    font-size: 1rem;
+    color: var(--muted);
+    margin-bottom: 20px;
+    text-align: center;
+  }
+  .timer span {
+    font-weight: bold;
+    color: var(--accent2);
+  }
+  .card {
+    background: rgba(255,255,255,0.05);
+    backdrop-filter: blur(12px);
+    border-radius: 18px;
+    width: 90%;
+    max-width: 420px;
+    box-shadow: 0 8px 30px rgba(0,0,0,0.5);
+    padding: 25px;
+    text-align: center;
+  }
+  .question {
+    font-size: 1.2rem;
+    font-weight: 600;
+    margin: 15px 0 25px;
+    line-height: 1.6;
+    color: #fff;
+    background: linear-gradient(90deg, rgba(0,255,135,0.08), rgba(96,239,255,0.05));
+    padding: 12px;
+    border-radius: 10px;
+    border: 1px solid rgba(255,255,255,0.05);
+  }
+  .options {
+    display: grid;
+    gap: 10px;
+  }
+  .option {
+    background: rgba(255,255,255,0.1);
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 12px;
+    padding: 12px;
+    cursor: pointer;
+    font-weight: 500;
+    transition: all 0.3s;
+  }
+  .option:hover { background: rgba(255,255,255,0.15); }
+  .option.correct {
+    background: linear-gradient(90deg,var(--accent),var(--accent2));
+    color: #000;
+  }
+  .option.wrong {
+    background: var(--wrong);
+    color: #000;
+  }
+  .option.disabled {
+    opacity: 0.4;
+    pointer-events: none;
+    filter: grayscale(0.8);
+  }
+
+  /* Dialog */
+  .dialog {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.7);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    visibility: hidden;
+    opacity: 0;
+    transition: all 0.3s ease;
+  }
+  .dialog.active {
+    visibility: visible;
+    opacity: 1;
+  }
+  .dialog-content {
+    background: var(--card);
+    padding: 25px;
+    border-radius: 16px;
+    text-align: center;
+    color: var(--text);
+    box-shadow: 0 10px 40px rgba(0,0,0,0.6);
+    width: 85%;
+    max-width: 340px;
+    animation: pop 0.4s ease;
+  }
+  @keyframes pop {
+    0% { transform: scale(0.7); opacity: 0; }
+    100% { transform: scale(1); opacity: 1; }
+  }
+  .dialog-content h2 {
+    color: var(--accent);
+    margin: 0 0 10px;
+  }
+  .dialog-content p {
+    color: var(--muted);
+    margin-bottom: 15px;
+  }
+  .dialog-content button {
+    background: linear-gradient(90deg,var(--accent),var(--accent2));
+    border: none;
+    padding: 8px 20px;
+    border-radius: 20px;
+    font-weight: 600;
+    cursor: pointer;
+  }
+</style>
+</head>
+<body>
+
+<h1 class="title">📅 Daily Bonus</h1>
+<div class="timer" id="timerText">⏳ Next Bonus Time...</Div>
+
+<div class="card" id="quizCard">
+  <div class="question" id="questionText"></div>
+  <div class="options">
+    <div class="option" onclick="chooseAnswer(1)" id="opt1"></div>
+    <div class="option" onclick="chooseAnswer(2)" id="opt2"></div>
+    <div class="option" onclick="chooseAnswer(3)" id="opt3"></div>
+    <div class="option" onclick="chooseAnswer(4)" id="opt4"></div>
+  </div>
+</div>
+
+<!-- Dialog -->
+<div class="dialog" id="resultDialog">
+  <div class="dialog-content">
+    <h2 id="dialogTitle">🎉 Congratulations!</h2>
+    <p id="dialogMessage">You Have Earn 10 Point</p>
+    <button onclick="closeDialog()">Okay</button>
+  </div>
+</div>
+
+<script>
+  // ====== CONFIG ======
+  const QUESTIONTEXT = "IoLent What is its title?";
+  const OPTIONS = ["Money Is Money", "Taka Is Money", "Everything Is Money", "Money Is Everything"];
+  const CORRECTANSWER = 3;
+  const REWARDPOINT = "10";
+  const WAIT_TIME_MS = 60000; // ২৪ ঘন্টা
+
+  // ====== ELEMENTS ======
+  const qEl = document.getElementById("questionText");
+  const opts = [opt1,opt2,opt3,opt4];
+  const timerEl = document.getElementById("timerText");
+  const dialog = document.getElementById("resultDialog");
+  const dialogTitle = document.getElementById("dialogTitle");
+  const dialogMessage = document.getElementById("dialogMessage");
+
+  // ====== INITIALIZE ======
+  qEl.innerText = QUESTIONTEXT;
+  OPTIONS.forEach((txt,i)=>opts[i].innerText = txt);
+
+  let lastAttempt = localStorage.getItem("lastQuizTime") || null;
+  let claimAllowed = false;
+
+  // ====== TIMER (No real-time loop) ======
+  function startTimer() {
+    if (!lastAttempt) {
+      claimAllowed = true;
+      timerEl.innerHTML = "✅ Please Choose A Correct Answer";
+      enableOptions(true);
+      return;
+    }
+    const diff = Date.now() - parseInt(lastAttempt);
+    const remaining = WAIT_TIME_MS - diff;
+    if (remaining > 0) {
+      claimAllowed = false;
+      enableOptions(false);
+      const h = Math.floor(remaining / 3600000);
+      const m = Math.floor((remaining % 3600000) / 60000);
+      const s = Math.floor((remaining % 60000) / 1000);
+      timerEl.innerHTML = `⏳ Next Time To Claim: <span>${h.toString().padStart(2,'0')}h ${m.toString().padStart(2,'0')}m ${s.toString().padStart(2,'0')}s</span>`;
+    } else {
+      claimAllowed = true;
+      enableOptions(true);
+      timerEl.innerHTML = "✅ Please Choose A Correct Answer";
+    }
+  }
+
+  // ====== ENABLE/DISABLE OPTIONS ======
+  function enableOptions(state) {
+    opts.forEach(o => {
+      if (state) o.classList.remove("disabled");
+      else o.classList.add("disabled");
+    });
+  }
+
+  // ====== CHOOSE ANSWER ======
+  function chooseAnswer(num) {
+    if (!claimAllowed) return;
+    opts.forEach(o => o.classList.remove("correct","wrong"));
+    if (num === CORRECTANSWER) {
+      opts[num-1].classList.add("correct");
+      showDialog(true);
+    } else {
+      opts[num-1].classList.add("wrong");
+      showDialog(false);
+    }
+    claimAllowed = false;
+    lastAttempt = Date.now();
+    localStorage.setItem("lastQuizTime", lastAttempt);
+    enableOptions(false);
+    startTimer();
+  }
+
+  // ====== DIALOG ======
+  function showDialog(success) {
+    if (success) {
+      dialogTitle.innerText = "🎉 Congratulations!";
+      dialogMessage.innerText = `You Have Earn ${REWARDPOINT} Point`;
+    } else {
+      dialogTitle.innerText = "❌ Wrong Answer!";
+      dialogMessage.innerText = "You Can Try Again After 24 Hours.";
+    }
+    dialog.classList.add("active");
+  }
+  function closeDialog() {
+    dialog.classList.remove("active");
+  }
+
+  // INIT
+  startTimer();
+</script>
+</body>
+  </html>
