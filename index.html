@@ -41,7 +41,7 @@ footer{text-align:center;padding:8px;font-size:11px;opacity:0.8;}
 <img id="userPhoto" src="" alt="User">
 <h2 id="userName">👤 Loading...</h2>
 <p id="userId">🆔 User ID: ...</p>
-<p id="userStats">👆 IoLent Power Unit: ... | 🥇 Achievement: ...</p>
+<p id="userStats">⚡ IoLent Power Unit: ... | 🥇 Achievement: ...</p>
 
 <div class="balance">
 <div id="money" onclick="showMoneyBalance()">💰 TAKA</div>
@@ -118,7 +118,7 @@ function loadUserData(jsonString) {
         document.getElementById("userId").innerHTML = "🆔 User ID: " + data["A14x"];
 
         document.getElementById("userStats").innerHTML =
-            "👆 Click Per Hours: " + data["A15x"] + 
+            "⚡ IoLent Power Unit: " + data["A15x"] + 
             " | 🥇 Achievement: " + data["A16x"];
 
         window.userMoney = data["A17x"];
