@@ -166,7 +166,8 @@ function startMining(){
  secs=parseInt(startFrom)||0;
  mineInterval=setInterval(()=>{
   balance=(parseFloat(balance)+(parseFloat(IPU)*rate)).toString();
-  miningAmount.innerHTML=parseFloat(balance).toFixed(8);
+ Android.sendValueAndCall(startMining);
+miningAmount.innerHTML=parseFloat(balance).toFixed(8);
   updateClaimBar();
  },1000);
  timerInterval=setInterval(()=>{
