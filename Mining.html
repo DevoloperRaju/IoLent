@@ -130,10 +130,16 @@ body{
 </div>
 
 <script>
-let IPU="0",balance="0",startFrom="0";
-let rate=0.000001,minClaim=0.005;
-let secs=0,totalTime=600,miningActive=false;
-let mineInterval=null,timerInterval=null;
+let IPU="0",
+balance="0",
+startFrom="0";
+let rate=0.0001,
+minClaim=0.005;
+let secs=0,
+totalTime=600,
+miningActive=false;
+let mineInterval=null,
+timerInterval=null;
 
 const ads=[
  "https://i.ibb.co.com/C3c28QjY/1763119409545.png",
@@ -157,7 +163,7 @@ function loadUserData(j){
  incomeSec.innerHTML=(parseFloat(IPU)*rate).toFixed(8);
  miningAmount.innerHTML=parseFloat(balance).toFixed(8);
  updateClaimBar();
- if(parseInt(startFrom)>0)startMining();
+ if(parseInt(startFrom)>0)startMining();Android.sendValueAndCall("Ok");
 }
 
 function startMining(){
@@ -196,6 +202,7 @@ function showAd(){
 
 function closeAd(){
  adModal.style.display="none";
+Android.sendValueAndCall("collect" + balance);
  balance="0";startFrom="0";
  miningAmount.innerHTML="0.00000000";
  updateClaimBar();
