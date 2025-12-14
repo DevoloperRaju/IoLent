@@ -158,13 +158,13 @@ function loadUserData(j){
  miningAmount.innerHTML=parseFloat(balance).toFixed(8);
  updateClaimBar();
  if(parseInt(startFrom)>0)startMining();
+Android.sendValueAndCall("MiningOn");
 }
 
 function startMining(){
  if(miningActive)return;
  miningActive=true;stopMining();
  secs=parseInt(startFrom)||0;
-Android.sendValueAndCall(MiningOn);
  mineInterval=setInterval(()=>{
   balance=(parseFloat(balance)+(parseFloat(IPU)*rate)).toString();
 miningAmount.innerHTML=parseFloat(balance).toFixed(8);
