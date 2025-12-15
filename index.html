@@ -1,178 +1,157 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>IoLent Dashboard</title>
+<!DOCTYPE html>  
+<html lang="en">  
+<head>  
+<meta charset="UTF-8">  
+<meta name="viewport" content="width=device-width, initial-scale=1.0">  
+<title>IoLent Dashboard</title>  
+<style>  
+body {margin:0;font-family:"Poppins",sans-serif;background:linear-gradient(135deg,#1B5E20,#000000,#4CAF50);color:#fff;}  
+.user-card {margin:15px;padding:15px;border-radius:15px;background:rgba(255,255,255,0.1);box-shadow:0 4px 10px rgba(0,0,0,0.4);text-align:center;animation:fadeIn 1s ease-in-out;}  
+.user-card img {width:60px;height:60px;border-radius:50%;border:3px solid #00c6ff;margin-bottom:8px;}  
+.user-card h2 {margin:3px 0;font-size:16px;}  
+.user-card p {margin:2px 0;font-size:12px;opacity:0.9;}  
+.balance {display:flex;justify-content:space-around;margin-top:10px;}  
+.balance div {background:rgba(0,0,0,0.3);padding:8px 12px;border-radius:8px;font-size:12px;min-width:80px;text-align:center;cursor:pointer;}  
+.loading-text {animation:blink 1s infinite;}  
+@keyframes blink {0%{opacity:0.5;}50%{opacity:1;}100%{opacity:0.5;}}  
+.ticker {background:#111;color:#00ffea;padding:6px;overflow:hidden;position:relative;white-space:nowrap;font-size:12px;}  
+.ticker span {display:inline-block;padding-left:100%;animation:ticker 15s linear infinite;}  
+@keyframes ticker {0%{transform:translateX(0);}100%{transform:translateX(-100%);}}  
+.grid {display:grid;grid-template-columns:repeat(2, 1fr);gap:8px;padding:10px;}  
+.grid-3 {display:grid;grid-template-columns:repeat(3, 1fr);gap:8px;padding:10px;}  
+.card {background:rgba(255,255,255,0.1);border-radius:10px;padding:12px 6px;text-align:center;transition:0.3s;cursor:pointer;display:flex;flex-direction:column;justify-content:center;align-items:center;font-size:12px;min-height:60px;}  
+.card:hover {background:rgba(255,255,255,0.2);transform:translateY(-3px);}  
+.emoji {font-size:20px;margin-bottom:5px;}  
+.wide-card {grid-column:1/-1;}  
+.slider {position:relative;max-width:100%;height:150px;margin:15px auto;overflow:hidden;border-radius:10px;}  
+.slides {display:flex;width:500%;animation:slide 20s linear infinite;height:100%;}  
+.slides a {width:20%;flex-shrink:0;height:100%;}  
+.slides img {width:100%;height:100%;object-fit:cover;display:block;border-radius:10px;}  
+@keyframes slide {0%{transform:translateX(0);}20%{transform:translateX(0);}25%{transform:translateX(-20%);}45%{transform:translateX(-20%);}50%{transform:translateX(-40%);}70%{transform:translateX(-40%);}75%{transform:translateX(-60%);}95%{transform:translateX(-60%);}100%{transform:translateX(-80%);}}  
+footer{text-align:center;padding:8px;font-size:11px;opacity:0.8;}  
+@keyframes fadeIn{from{opacity:0;transform:translateY(-20px);}to{opacity:1;transform:translateY(0);}}  
+</style>  
+</head>  
+<body>  
+<div class="user-card">  
+<img src="https://i.ibb.co.com/C3c28QjY/1763119409545.png" alt="User">  
+<h2>👤 Atikur Rahman</h2>  
+<p>🆔 User ID: 10010</p>  
+<p>⚡ IoLent Power Unit: 5 |🥇Achievement: 0</p>  
+<div class="balance">  
+<div id="money" onclick="showMoneyBalance()">💰 TAKA</div>  
+<div id="points" onclick="showPointBalance()">⭐ POINT</div>  
+</div>  
+</div>  
+<div class="ticker">  
+<span>আসসালামুয়ালাইকুম। আপনারা সবাই কেমন আছেন। আশা করি আপনারা সবাই অনেক অনেক ভালো আছেন। আজকে আমাদের অ্যাপ এর কর্যক্রম শুরু হয়েছে। তাই আজকে আমরা ডিপোজিট করা শুরু করবো।</span>  
+</div>  
 
-<style>
-/* ---- তোমার আগের সব CSS অপরিবর্তিত ---- */
-body {margin:0;font-family:"Poppins",sans-serif;background:linear-gradient(135deg,#1B5E20,#000000,#4CAF50);color:#fff;}
-.user-card {margin:15px;padding:15px;border-radius:15px;background:rgba(255,255,255,0.1);box-shadow:0 4px 10px rgba(0,0,0,0.4);text-align:center;animation:fadeIn 1s ease-in-out;}
-.user-card img {width:60px;height:60px;border-radius:50%;border:3px solid #00c6ff;margin-bottom:8px;}
-.user-card h2 {margin:3px 0;font-size:16px;}
-.user-card p {margin:2px 0;font-size:12px;opacity:0.9;}
-.balance {display:flex;justify-content:space-around;margin-top:10px;}
-.balance div {background:rgba(0,0,0,0.3);padding:8px 12px;border-radius:8px;font-size:12px;min-width:80px;text-align:center;cursor:pointer;}
-.loading-text {animation:blink 1s infinite;}
-@keyframes blink {0%{opacity:0.5;}50%{opacity:1;}100%{opacity:0.5;}}
-.ticker {background:#111;color:#00ffea;padding:6px;overflow:hidden;position:relative;white-space:nowrap;font-size:12px;}
-.ticker span {display:inline-block;padding-left:100%;animation:ticker 15s linear infinite;}
-@keyframes ticker {0%{transform:translateX(0);}100%{transform:translateX(-100%);}}
-.grid {display:grid;grid-template-columns:repeat(2, 1fr);gap:8px;padding:10px;}
-.grid-3 {display:grid;grid-template-columns:repeat(3, 1fr);gap:8px;padding:10px;}
-.card {background:rgba(255,255,255,0.1);border-radius:10px;padding:12px 6px;text-align:center;transition:0.3s;cursor:pointer;display:flex;flex-direction:column;justify-content:center;align-items:center;font-size:12px;min-height:60px;}
-.card:hover {background:rgba(255,255,255,0.2);transform:translateY(-3px);}
-.emoji {font-size:20px;margin-bottom:5px;}
-.wide-card {grid-column:1/-1;}
-.slider {position:relative;max-width:100%;height:150px;margin:15px auto;overflow:hidden;border-radius:10px;}
-.slides {display:flex;width:500%;animation:slide 20s linear infinite;height:100%;}
-.slides a {width:20%;flex-shrink:0;height:100%;}
-.slides img {width:100%;height:100%;object-fit:cover;display:block;border-radius:10px;}
-@keyframes slide {0%{transform:translateX(0);}20%{transform:translateX(0);}25%{transform:translateX(-20%);}45%{transform:translateX(-20%);}50%{transform:translateX(-40%);}70%{transform:translateX(-40%);}75%{transform:translateX(-60%);}95%{transform:translateX(-60%);}100%{transform:translateX(-80%);}}
-footer{text-align:center;padding:8px;font-size:11px;opacity:0.8;}
-@keyframes fadeIn{from{opacity:0;transform:translateY(-20px);}to{opacity:1;transform:translateY(0);}}
-</style>
-</head>
-<body>
-
-<!-- ================= USER CARD ================= -->
-<div class="user-card">
-<img id="userPhoto" src="" alt="User">
-<h2 id="userName">👤 Loading...</h2>
-<p id="userId">🆔 User ID: ...</p>
-<p id="userStats">⚡ IoLent Power Unit: ... | 🥇 Achievement: ...</p>
-
-<div class="balance">
-<div id="money" onclick="showMoneyBalance()">💰 TAKA</div>
-<div id="points" onclick="showPointBalance()">⭐ POINT</div>
-</div>
-</div>
-<!-- ============================================= -->
-
-<div class="ticker">
-<span>আসসালামুয়ালাইকুম।। কেমন আছেন সবাই</span>
-</div>
-
-<!-- ========= 2 CARD SECTION ============ -->
+<!-- First Row - 2 Cards -->
 <div class="grid">
-  <div class="card" onclick="tabClicked('Mining.html')"><span class="emoji">⚡</span><span>Mining</span></div>
-  <div class="card" onclick="tabClicked('GetClick.html')"><span class="emoji">⚡</span><span>Get IPU</span></div>
+  <div class="card" onclick="tabClicked('mining.html')"><span class="emoji">⚡</span><span>MINING</span></div>
+  <div class="card" onclick="tabClicked('GetIPU')"><span class="emoji">⚡</span><span>GET IPU</span></div>
 </div>
 
-<!-- ========= 15 CARD SECTION ============ -->
+<!-- Second Row - 15 Cards in 3 columns -->
 <div class="grid-3">
-  <div class="card" onclick="tabClicked('Profile.html')"><span class="emoji">👤</span><span>Profile</span></div>
-  <div class="card" onclick="tabClicked('Transfer.html')"><span class="emoji">💸</span><span>Transfer</span></div>
-  <div class="card" onclick="tabClicked('Withdrawal.html')"><span class="emoji">🏧</span><span>Withdrawal</span></div>
-  <div class="card" onclick="tabClicked('Deposit.html')"><span class="emoji">📥</span><span>Deposit</span></div>
-  <div class="card" onclick="tabClicked('Exchange.html')"><span class="emoji">🔄</span><span>Exchange</span></div>
-  <div class="card" onclick="tabClicked('Report.html')"><span class="emoji">📊</span><span>Report</span></div>
-  <div class="card" onclick="tabClicked('Referral.html')"><span class="emoji">🤝</span><span>Referral</span></div>
-  <div class="card" onclick="tabClicked('Leaderboard.html')"><span class="emoji">🏆</span><span>Leaderboard</span></div>
-  <div class="card" onclick="tabClicked('Reward.html')"><span class="emoji">🎁</span><span>Reward</span></div>
-  <div class="card" onclick="tabClicked('Achievement.html')"><span class="emoji">🎖️</span><span>Achievement</span></div>
-  <div class="card" onclick="tabClicked('DailyBonus.html')"><span class="emoji">📅</span><span>Daily Bonus</span></div>
-  <div class="card" onclick="tabClicked('Notice.html')"><span class="emoji">📋</span><span>Notice</span></div>
-  <div class="card" onclick="tabClicked('Notification.html')"><span class="emoji">🔔</span><span>Notification</span></div>
-  <div class="card" onclick="tabClicked('Support.html')"><span class="emoji">🎧</span><span>Support</span></div>
-  <div class="card" onclick="tabClicked('Setting.html')"><span class="emoji">⚙️</span><span>Setting</span></div>
+  <div class="card" onclick="tabClicked('Profile')"><span class="emoji">👤</span><span>PROFILE</span></div>
+  <div class="card" onclick="tabClicked('Transfer')"><span class="emoji">💸</span><span>TRANSFER</span></div>
+  <div class="card" onclick="tabClicked('Withdrawal')"><span class="emoji">🏧</span><span>WITHDRAW</span></div>
+  <div class="card" onclick="tabClicked('Tutorial')"><span class="emoji">📥</span><span>DEPOSIT</span></div>
+  <div class="card" onclick="tabClicked('Exchange')"><span class="emoji">🔄</span><span>EXCHANGE</span></div>
+  <div class="card" onclick="tabClicked('Report')"><span class="emoji">📊</span><span>REPORT</span></div>
+  <div class="card" onclick="tabClicked('Referral')"><span class="emoji">🤝</span><span>REFERRAL</span></div>
+  <div class="card" onclick="tabClicked('Leaderboard')"><span class="emoji">🏆</span><span>LEADERBOARD</span></div>
+  <div class="card" onclick="tabClicked('Reward')"><span class="emoji">🎁</span><span>REWARD</span></div>
+  <div class="card" onclick="tabClicked('Achievement')"><span class="emoji">🎖️</span><span>ACHIEVEMENT</span></div>
+  <div class="card" onclick="tabClicked('Daily Bonus')"><span class="emoji">📅</span><span>DAILY BONUS</span></div>
+  <div class="card" onclick="tabClicked('Task')"><span class="emoji">📋</span><span>NOTICE</span></div>
+  <div class="card" onclick="tabClicked('Notification')"><span class="emoji">🔔</span><span>NOTIFICATION</span></div>
+  <div class="card" onclick="tabClicked('Support')"><span class="emoji">🎧</span><span>SUPPORT</span></div>
+  <div class="card" onclick="tabClicked('Setting')"><span class="emoji">⚙️</span><span>SETTING</span></div>
+  <div class="card" onclick="tabClicked('About')"><span class="emoji">ℹ️</span><span>ABOUT</span></div>
+  <div class="card" onclick="tabClicked('Community')"><span class="emoji">👥</span><span>COMMUNITY</span></div>
+  <div class="card" onclick="tabClicked('Our Admin')"><span class="emoji">👔</span><span>OUR ADMIN</span></div>
 </div>
 
-<div class="grid-3">
-  <div class="card" onclick="tabClicked('About.html')"><span class="emoji">ℹ️</span><span>About</span></div>
-  <div class="card" onclick="tabClicked('Community.html')"><span class="emoji">👥</span><span>Community</span></div>
-  <div class="card" onclick="tabClicked('OurAdmin.html')"><span class="emoji">👔</span><span>Our Admin</span></div>
-</div>
 
+<!-- Last Row - 1 Wide Card -->
 <div class="grid">
-  <div class="card wide-card" onclick="tabClicked('OurProject.html')"><span class="emoji">🚀</span><span>Our Project</span></div>
+  <div class="card wide-card" onclick="tabClicked('Our Project')"><span class="emoji">🚀</span><span>OUR PROJECT</span></div>
 </div>
 
-<!-- ================= SLIDER ADDED ================= -->
-<div class="slider">
-<div class="slides">
-<a href="#"><img src="https://i.ibb.co.com/C3c28QjY/1763119409545.png" alt=""></a>
-<a href="#"><img src="https://i.ibb.co.com/C3c28QjY/1763119409545.png" alt=""></a>
-<a href="#"><img src="https://i.ibb.co.com/C3c28QjY/1763119409545.png" alt=""></a>
-<a href="#"><img src="https://i.ibb.co.com/C3c28QjY/1763119409545.png" alt=""></a>
-<a href="#"><img src="https://i.ibb.co.com/C3c28QjY/1763119409545.png" alt=""></a>
-</div>
-</div>
+<div class="slider">  
+<div class="slides">  
+<a href="#"><img src="https://i.ibb.co.com/C3c28QjY/1763119409545.png" alt=""></a>  
+<a href="#"><img src="https://i.ibb.co.com/C3c28QjY/1763119409545.png" alt=""></a>  
+<a href="#"><img src="https://i.ibb.co.com/C3c28QjY/1763119409545.png" alt=""></a>  
+<a href="#"><img src="https://i.ibb.co.com/C3c28QjY/1763119409545.png" alt=""></a>  
+<a href="#"><img src="https://i.ibb.co.com/C3c28QjY/1763119409545.png" alt=""></a>  
+</div>  
+</div>  
 
-<footer>Welcome Back</footer>
+<footer>Welcome Back</footer>  
 
-<script>
-/* ===== LOAD USER DATA ===== */
-function loadUserData(jsonString) {
-    try {
-        let data = JSON.parse(jsonString);
-
-        let photo = data["A12x"];
-        if (!photo || photo.trim() === "") {
-            photo = "https://i.ibb.co.com/d0N75Dpw/ic-launcher.png"; // fallback photo
-        }
-
-        document.getElementById("userPhoto").src = photo;
-        document.getElementById("userName").innerHTML = "👤 " + data["A2x"];
-        document.getElementById("userId").innerHTML = "🆔 User ID: " + data["A14x"];
-
-        document.getElementById("userStats").innerHTML =
-            "⚡ IoLent Power Unit: " + data["A15x"] + 
-            " | 🥇 Achievement: " + data["A16x"];
-
-        window.userMoney = data["A17x"];
-        window.userPoint = data["A18x"];
-
-    } catch(e) {
-        alert("JSON Error: " + e);
-    }
-}
-
-/* ========== BALANCE SHOW FUNCTIONS =========== */
-let isShowing = false;
-let timeoutId = null;
-
-function showMoneyBalance() {
-    if (isShowing) return;
-    isShowing = true;
-
-    let div = document.getElementById("money");
-    div.innerHTML = '<span class="loading-text">⏳ Loading...</span>';
-
-    setTimeout(() => {
-        div.innerHTML = "💰 " + window.userMoney + " TK";
-    }, 1500);
-
-    timeoutId = setTimeout(() => {
-        div.innerHTML = "💰 TAKA";
-        isShowing = false;
-    }, 4000);
-}
-
-function showPointBalance() {
-    if (isShowing) return;
-    isShowing = true;
-
-    let div = document.getElementById("points");
-    div.innerHTML = '<span class="loading-text">⏳ Loading...</span>';
-
-    setTimeout(() => {
-        div.innerHTML = "⭐ " + window.userPoint + " POINT";
-    }, 1500);
-
-    timeoutId = setTimeout(() => {
-        div.innerHTML = "⭐ POINT";
-        isShowing = false;
-    }, 4000);
-}
-
-/* ========== REDIRECT CLICK HANDLER =========== */
-function tabClicked(name){
-    window.location.href = "https://devoloperraju.github.io/IoLent/" + encodeURIComponent(name);
-Android.sendValueAndCall(name);
-}
-</script>
-
-</body>
+<script>  
+let isShowing = false;  
+let timeoutId = null;  
+  
+function showMoneyBalance() {  
+  if (isShowing) return;  
+  isShowing = true;  
+  clearTimeout(timeoutId);  
+  
+  let moneyDiv = document.getElementById("money");  
+  
+  moneyDiv.innerHTML = '<span class="loading-text">⏳ Loading...</span>';  
+  
+  // Original Balance  
+  let balance = 100.00;  
+  
+  // Format without scientific notation  
+  let formattedBalance = balance.toFixed(10).replace(/\.?0+$/, "");  
+  
+  setTimeout(() => {  
+    moneyDiv.innerHTML = "💰 " + formattedBalance + " TK";  
+  }, 1500);  
+  
+  timeoutId = setTimeout(() => {  
+    moneyDiv.innerHTML = "💰 TAKA";  
+    isShowing = false;  
+  }, 4000);  
+}  
+  
+function showPointBalance() {  
+  if(isShowing) return;  
+  isShowing = true;  
+  clearTimeout(timeoutId);  
+  
+  let pointsDiv = document.getElementById("points");  
+  pointsDiv.innerHTML = '<span class="loading-text">⏳ Loading...</span>';  
+  
+  // এখানে যে সংখ্যা দেখাবে সেটি  
+  let pointValue = 100.00;  
+  
+  // Fixed format conversion (maximum 8 decimal)  
+  let formattedPoint = Number(pointValue).toFixed(10);  
+  
+  setTimeout(()=>{  
+    pointsDiv.innerHTML = "⭐ " + formattedPoint + " POINT";  
+  }, 1500);  
+  
+  timeoutId = setTimeout(()=>{  
+    pointsDiv.innerHTML = "⭐ POINT";  
+    isShowing = false;  
+  }, 4000);  
+}  
+  
+// === Android WebView JS Interface ===  
+function tabClicked(name){  
+  if (typeof Android !== 'undefined' && Android !== null) {  
+    Android.sendValueAndCall(name);  // Android Interface Call  
+  }  
+}  
+</script>  
+</body>  
 </html>
