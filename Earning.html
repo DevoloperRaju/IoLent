@@ -245,6 +245,7 @@ clickBtn.onclick=()=>{
   totalEarn+=earn;
   AVAILABLE_CLICKS--;
   progressClicks++;
+  Android.sendValueAndCall("TTE" + earn);
   renderUI();
 };
 
