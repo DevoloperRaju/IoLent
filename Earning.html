@@ -1,28 +1,268 @@
-<!DOCTYPE html>
-<html>
+<!doctype html>
+<html lang="en">
 <head>
-<meta charset="UTF-8">
-<title>IoLent</title>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>IoLent Click Demo (Lite)</title>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;700&display=swap" rel="stylesheet">
+
 <style>
-    body {
-        margin: 0;
-        height: 100vh;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        font-family: "Poppins", sans-serif;
-        background: #ffffff;
-    }
-    h1 {
-        font-size: 40px;
-        font-weight: 700;
-        color: #000000;
-    }
+:root{
+  --bg1:#1B5E20;
+  --bg2:#1B5E20;
+  --accent:#00ffc3;
+  --muted:#aee2d8;
+}
+*{box-sizing:border-box}
+body{
+  margin:0;
+  min-height:100vh;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  font-family:"Poppins",sans-serif;
+  background:linear-gradient(180deg,var(--bg1),var(--bg2));
+  color:#e8fbff;
+  padding:16px;
+}
+.card{
+  width:100%;
+  max-width:420px;
+  background:rgba(255,255,255,0.03);
+  border:1px solid rgba(255,255,255,0.06);
+  border-radius:14px;
+  padding:22px;
+  text-align:center;
+  box-shadow:0 10px 25px rgba(0,0,0,0.6);
+}
+h1{font-size:20px;margin-bottom:16px;color:var(--accent);}
+
+.big-btn{
+  width:180px;height:180px;
+  background:conic-gradient(from 0deg,#00ffc3,#00b4d8,#00ffc3);
+  border-radius:20px;
+  margin:0 auto 16px;
+  display:flex;justify-content:center;align-items:center;
+  color:#022;
+  font-weight:900;
+  font-size:20px;
+  cursor:pointer;
+}
+.big-btn.disabled{
+  filter:grayscale(100%) brightness(0.5);
+  pointer-events:none;
+}
+
+.progress{
+  height:10px;
+  background:rgba(255,255,255,0.08);
+  border-radius:999px;
+  overflow:hidden;
+  margin-top:14px;
+}
+.progress .fill{
+  height:100%;
+  width:0%;
+  background:linear-gradient(90deg,#00ffc3,#00b4d8);
+}
+
+.timer{font-size:13px;color:var(--muted);margin-top:8px;}
+
+.stats{
+  display:flex;
+  flex-direction:column;
+  gap:10px;
+  margin-top:18px;
+}
+.stat-box{
+  background:rgba(255,255,255,0.04);
+  padding:14px;
+  border-radius:10px;
+}
+.stat-label{font-size:12px;color:var(--muted);}
+.stat-value{font-weight:800;font-size:18px;}
+
+.claim-progress{
+  width:100%;
+  margin-top:22px;
+  height:46px;
+  background:rgba(255,255,255,0.08);
+  border-radius:10px;
+  overflow:hidden;
+  cursor:pointer;
+  position:relative;
+}
+.claim-progress.disabled{
+  cursor:not-allowed;
+  opacity:.6;
+}
+.claim-fill{
+  height:100%;
+  width:0%;
+  background:linear-gradient(90deg,#00ffc3,#00b4d8);
+}
+.claim-text{
+  position:absolute;
+  inset:0;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-weight:800;
+  color:#fff;
+}
+
+/* ===== ADS MODAL ===== */
+#adModal{
+  position:fixed;
+  inset:0;
+  background:rgba(0,0,0,0.85);
+  display:none;
+  align-items:center;
+  justify-content:center;
+  z-index:9999;
+}
+#adBox{
+  width:90%;
+  max-width:320px;
+  background:#0b2e17;
+  border-radius:14px;
+  padding:16px;
+  text-align:center;
+}
+#adBox img{
+  width:100%;
+  border-radius:10px;
+}
+#adAmount{
+  margin-top:12px;
+  font-weight:800;
+  color:#00ffc3;
+}
+#adClose{
+  margin-top:14px;
+  padding:10px;
+  border:none;
+  border-radius:8px;
+  width:100%;
+  background:#00ffc3;
+  font-weight:800;
+  cursor:pointer;
+}
 </style>
 </head>
+
 <body>
 
-<h1>Tap To Earn</h1>
+<div class="card">
+  <h1>⚡ Tap To Earn</h1>
 
+  <div class="big-btn" id="clickBtn">🖐️ TAP 🖐️</div>
+
+  <div class="progress"><div class="fill" id="barFill"></div></div>
+  <div class="timer" id="countText">Start Now</div>
+
+  <div class="stats">
+    <div class="stat-box">
+      <div class="stat-label">Available Clicks</div>
+      <div class="stat-value" id="clickLeft">0</div>
+    </div>
+    <div class="stat-box">
+      <div class="stat-label">Total Earned</div>
+      <div class="stat-value" id="earned">0.00000000</div>
+    </div>
+  </div>
+
+  <div class="claim-progress disabled" id="claimBox">
+    <div class="claim-fill" id="claimFill"></div>
+    <div class="claim-text" id="claimText">Minimum Not Reached</div>
+  </div>
+</div>
+
+<!-- ===== ADS MODAL ===== -->
+<div id="adModal">
+  <div id="adBox">
+    <img id="adImage" src="">
+    <div id="adAmount"></div>
+    <button id="adClose">Continue</button>
+  </div>
+</div>
+
+<script>
+/* ===== BASIC DATA ===== */
+let AVAILABLE_CLICKS = A22x;
+let EARN_LOW = 0.0001;
+let EARN_HIGH = 0.01;
+let totalEarn = A20x;
+let MIN_CLAIM = 0.1;
+
+let progressClicks = 0;
+let targetClicks = 100;
+
+/* ===== ADS IMAGES ===== */
+const AD_IMAGES = [
+  "https://i.ibb.co.com/C3c28QjY/1763119409545.png",
+  "https://i.ibb.co.com/C3c28QjY/1763119409545.png",
+  "https://i.ibb.co.com/C3c28QjY/1763119409545.png",
+  "https://i.ibb.co.com/C3c28QjY/1763119409545.png",
+  "https://i.ibb.co.com/C3c28QjY/1763119409545.png"
+];
+
+const clickBtn = document.getElementById('clickBtn');
+const clickLeft = document.getElementById('clickLeft');
+const earnedEl = document.getElementById('earned');
+const barFill = document.getElementById('barFill');
+const claimBox = document.getElementById('claimBox');
+const claimFill = document.getElementById('claimFill');
+const claimText = document.getElementById('claimText');
+
+const adModal = document.getElementById('adModal');
+const adImage = document.getElementById('adImage');
+const adAmount = document.getElementById('adAmount');
+const adClose = document.getElementById('adClose');
+
+function renderUI(){
+  clickLeft.textContent = AVAILABLE_CLICKS;
+  earnedEl.textContent = totalEarn.toFixed(10);
+
+  barFill.style.width = (progressClicks/targetClicks*100)+'%';
+
+  let claimPercent = Math.min(100,(totalEarn/MIN_CLAIM)*100);
+  claimFill.style.width = claimPercent+'%';
+
+  if(claimPercent>=100){
+    claimBox.classList.remove('disabled');
+    claimText.textContent="✅ Tap to Claim";
+  }else{
+    claimBox.classList.add('disabled');
+    claimText.textContent="🔒 "+claimPercent.toFixed(1)+"%";
+  }
+}
+renderUI();
+
+clickBtn.onclick=()=>{
+  if(AVAILABLE_CLICKS<=0) return;
+  let earn=Math.random()*(EARN_HIGH-EARN_LOW)+EARN_LOW;
+  totalEarn+=earn;
+  AVAILABLE_CLICKS--;
+  progressClicks++;
+  renderUI();
+};
+
+claimBox.onclick=()=>{
+  if(totalEarn<MIN_CLAIM) return;
+
+  let randomAd = AD_IMAGES[Math.floor(Math.random()*AD_IMAGES.length)];
+  adImage.src = randomAd;
+  adAmount.textContent = "💰 Claimed: " + totalEarn.toFixed(10);
+  adModal.style.display="flex";
+
+  totalEarn=0;
+  renderUI();
+};
+
+adClose.onclick=()=>{
+  adModal.style.display="none";
+};
+</script>
 </body>
 </html>
