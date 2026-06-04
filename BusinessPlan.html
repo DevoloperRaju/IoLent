@@ -1,0 +1,2639 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IoLent - Business Plan</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    
+    <style>
+        /* CSS Variables */
+        :root {
+            --primary-color: #00e676;
+            --secondary-color: #00e676;
+            --accent-color: #00e676;
+            --text-color: #ffffff;
+            --light-text: #0B111B;
+            --bg-color: #0B111B;
+            --card-bg: rgba(255, 255, 255, 0.05);
+            --border-radius: 12px;
+            --box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            --transition-speed: 0.3s;
+            --font-family-primary: 'Space Grotesk', sans-serif;
+            --font-family-secondary: 'Inter', sans-serif;
+        }
+
+        /* Dark theme variables (kept same for unified UI) */
+        :root[data-theme="dark"] {
+            --primary-color: #00e676;
+            --secondary-color: #00e676;
+            --accent-color: #00e676;
+            --text-color: #ffffff;
+            --light-text: #0B111B;
+            --bg-color: #0B111B;
+            --card-bg: rgba(255, 255, 255, 0.05);
+            --box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+        }
+
+        /* Reset and Base Styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: var(--font-family-secondary);
+            background-color: var(--bg-color) !important;
+            background-image: none !important;
+            color: var(--text-color);
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        /* Navigation */
+        .navbar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            background: rgba(11, 17, 27, 0.85);
+            backdrop-filter: blur(10px);
+            z-index: 1000;
+            padding: 1rem 0;
+            box-shadow: 0 2px 20px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+        }
+
+        .nav-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            text-decoration: none;
+        }
+
+        .logo-circle {
+            width: 40px;
+            height: 40px;
+            background: var(--primary-color);
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: white;
+            font-weight: 700;
+            font-family: var(--font-family-primary);
+        }
+
+        .logo-text {
+            font-family: var(--font-family-primary);
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--text-color);
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 30px;
+            list-style: none;
+        }
+
+        .nav-links a {
+            text-decoration: none;
+            color: var(--text-color);
+            font-weight: 600;
+            font-family: var(--font-family-secondary);
+            transition: color 0.3s ease;
+            position: relative;
+        }
+
+        .nav-links a:hover {
+            color: var(--primary-color);
+        }
+
+        .nav-links a::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: var(--primary-color);
+            transition: width 0.3s ease;
+        }
+
+        .nav-links a:hover::after {
+            width: 100%;
+        }
+
+        /* Content Section */
+        .content-section {
+            padding: 120px 0 80px;
+        }
+
+        .section-title {
+            font-family: var(--font-family-primary);
+            font-size: 2.5rem;
+            font-weight: 700;
+            text-align: center;
+            margin-bottom: 50px;
+            color: var(--text-color);
+            position: relative;
+        }
+
+        .section-title::after {
+            content: '';
+            position: absolute;
+            bottom: -15px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 80px;
+            height: 4px;
+            background: var(--primary-color);
+            border-radius: 2px;
+        }
+
+        /* Card Grid */
+        .card-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+            margin-bottom: 60px;
+        }
+
+        .card {
+            background: var(--card-bg);
+            padding: 40px;
+            border-radius: var(--border-radius);
+            box-shadow: var(--box-shadow);
+            text-align: center;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+        }
+
+        .card-icon {
+            width: 80px;
+            height: 80px;
+            background: var(--primary-color);
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin: 0 auto 20px;
+            color: white;
+            font-size: 2rem;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+        }
+
+        .card h3 {
+            font-family: var(--font-family-primary);
+            font-size: 1.5rem;
+            margin-bottom: 20px;
+            color: var(--text-color);
+        }
+
+        .card p {
+            font-family: var(--font-family-secondary);
+            font-size: 1rem;
+            line-height: 1.8;
+            color: var(--text-color);
+            opacity: 0.8;
+        }
+
+        /* Legitimacy Grid */
+        .legitimacy-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+            margin-bottom: 60px;
+        }
+
+        .legitimacy-card {
+            background: var(--card-bg);
+            padding: 30px;
+            border-radius: var(--border-radius);
+            box-shadow: var(--box-shadow);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: transform 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .legitimacy-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 4px;
+            height: 100%;
+            background: var(--primary-color);
+        }
+
+        .legitimacy-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .legit-header {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 20px;
+            border-bottom: 1px solid rgba(0,0,0,0.05);
+            padding-bottom: 15px;
+        }
+
+        .legit-icon {
+            width: 50px;
+            height: 50px;
+            background: rgba(0, 230, 118, 0.1);
+            color: var(--primary-color);
+            border-radius: 12px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 1.5rem;
+        }
+
+        .legit-header h3 {
+            font-family: var(--font-family-primary);
+            font-size: 1.2rem;
+            color: var(--text-color);
+            margin: 0;
+        }
+
+        .legit-details {
+            list-style: none;
+            padding: 0;
+        }
+
+        .legit-details li {
+            font-family: var(--font-family-secondary);
+            font-size: 0.95rem;
+            color: var(--text-color);
+            opacity: 0.9;
+            margin-bottom: 12px;
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+        }
+
+        .legit-details li i {
+            color: var(--secondary-color);
+            margin-top: 4px;
+            font-size: 0.9rem;
+        }
+
+        /* Methods Grid */
+        .methods-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 30px;
+            margin-bottom: 60px;
+        }
+
+        .method-card {
+            background: var(--card-bg);
+            padding: 30px;
+            border-radius: var(--border-radius);
+            box-shadow: var(--box-shadow);
+            text-align: center;
+            transition: transform 0.3s ease;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .method-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .method-icon {
+            width: 60px;
+            height: 60px;
+            background: var(--primary-color);
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin: 0 auto 20px;
+            color: white;
+            font-size: 1.5rem;
+        }
+
+        .method-card h3 {
+            font-family: var(--font-family-primary);
+            font-size: 1.2rem;
+            margin-bottom: 15px;
+            color: var(--text-color);
+        }
+
+        .method-card p {
+            font-family: var(--font-family-secondary);
+            font-size: 0.9rem;
+            line-height: 1.6;
+            color: var(--text-color);
+            opacity: 0.8;
+        }
+
+        /* Rank Progress System */
+        .rank-progress {
+            margin-top: 15px;
+            width: 100%;
+        }
+
+        .progress-bar-container {
+            width: 100%;
+            height: 10px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 5px;
+            overflow: hidden;
+            margin-bottom: 5px;
+        }
+
+        .progress-bar {
+            height: 100%;
+            background: var(--primary-color);
+            border-radius: 5px;
+            transition: width 1.5s ease-in-out;
+        }
+
+        .progress-label {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.8rem;
+            color: #aaa;
+            font-family: var(--font-family-secondary);
+        }
+
+        /* Distribution and Example Grid */
+        .distribution-content {
+            background: var(--card-bg);
+            padding: 40px;
+            border-radius: var(--border-radius);
+            box-shadow: var(--box-shadow);
+            margin-bottom: 60px;
+        }
+
+        /* How it Works Flow */
+        .how-it-works-flow {
+            position: relative;
+            padding: 40px 0;
+            margin-bottom: 60px;
+        }
+
+        .flow-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            position: relative;
+            z-index: 1;
+        }
+
+        /* Line connecting steps */
+        .flow-container::before {
+            content: '';
+            position: absolute;
+            top: 40px;
+            left: 5%;
+            right: 5%;
+            height: 4px;
+            background: rgba(0, 230, 118, 0.2);
+            z-index: -1;
+        }
+        
+        .flow-container::after {
+            content: '';
+            position: absolute;
+            top: 40px;
+            left: 5%;
+            width: 0;
+            height: 4px;
+            background: var(--primary-color);
+            z-index: -1;
+            transition: width 1s ease;
+        }
+
+        .flow-container:hover::after {
+            width: 90%;
+        }
+
+        .flow-step {
+            text-align: center;
+            width: 18%;
+            position: relative;
+            transition: transform 0.3s ease;
+        }
+
+        .flow-step:hover {
+            transform: translateY(-10px);
+        }
+
+        .step-icon {
+            width: 80px;
+            height: 80px;
+            background: var(--card-bg);
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin: 0 auto 20px;
+            font-size: 2rem;
+            color: var(--primary-color);
+            box-shadow: var(--box-shadow);
+            border: 4px solid var(--bg-color);
+            position: relative;
+            z-index: 2;
+            transition: all 0.3s ease;
+        }
+
+        .flow-step:hover .step-icon {
+            background: var(--primary-color);
+            color: var(--light-text);
+            box-shadow: 0 10px 25px rgba(0, 230, 118, 0.4);
+        }
+
+        .step-number {
+            position: absolute;
+            top: -5px;
+            right: -5px;
+            width: 30px;
+            height: 30px;
+            background: var(--accent-color);
+            color: var(--light-text);
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-weight: bold;
+            font-size: 0.9rem;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+            font-family: var(--font-family-primary);
+        }
+
+        .flow-step h3 {
+            font-family: var(--font-family-primary);
+            font-size: 1.1rem;
+            color: var(--text-color);
+            margin-bottom: 10px;
+            font-weight: 700;
+        }
+
+        .flow-step p {
+            font-family: var(--font-family-secondary);
+            font-size: 0.9rem;
+            color: var(--text-color);
+            opacity: 0.8;
+            line-height: 1.5;
+        }
+
+        /* Withdrawal Grid */
+        .withdrawal-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 30px;
+            margin-bottom: 60px;
+        }
+
+        .withdrawal-card {
+            background: var(--card-bg);
+            padding: 30px;
+            border-radius: var(--border-radius);
+            box-shadow: var(--box-shadow);
+            text-align: center;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: all 0.3s ease;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .withdrawal-card:hover {
+            transform: translateY(-5px);
+            border-color: rgba(255, 255, 255, 0.2);
+        }
+
+        .withdrawal-card .icon-wrapper {
+            width: 60px;
+            height: 60px;
+            background: rgba(0, 230, 118, 0.1);
+            color: var(--primary-color);
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin: 0 auto 15px;
+            font-size: 1.5rem;
+        }
+
+        .withdrawal-card h3 {
+            font-family: var(--font-family-primary);
+            font-size: 1.2rem;
+            color: var(--text-color);
+            margin-bottom: 10px;
+        }
+
+        .withdrawal-card p {
+            font-family: var(--font-family-secondary);
+            font-size: 1rem;
+            color: var(--text-color);
+            font-weight: 600;
+            opacity: 0.9;
+            margin: 0;
+        }
+
+        .payment-methods {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-top: 15px;
+        }
+        
+        .payment-methods img {
+            height: 30px;
+            border-radius: 4px;
+        }
+
+        .example-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-bottom: 40px;
+        }
+
+        .example-item {
+            padding: 20px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 8px;
+            text-align: center;
+            font-weight: 600;
+            color: var(--text-color);
+        }
+
+        .fund-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+        }
+
+        .fund-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 8px;
+            font-weight: 600;
+        }
+
+        .fund-name {
+            color: var(--text-color);
+            opacity: 0.8;
+        }
+
+        .fund-percentage {
+            color: var(--primary-color);
+            font-family: var(--font-family-primary);
+            font-weight: 700;
+        }
+
+        /* Commission Grid */
+        .commission-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+        }
+
+        .commission-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px;
+            background: var(--primary-color);
+            color: var(--light-text);
+            border-radius: 8px;
+            font-weight: 600;
+        }
+
+        .generation {
+            font-family: var(--font-family-secondary);
+            opacity: 0.9;
+        }
+
+        .commission-percentage {
+            font-family: var(--font-family-primary);
+            font-weight: 700;
+            font-size: 1.1rem;
+        }
+
+        /* Ranks Grid */
+        .ranks-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 30px;
+            margin-bottom: 60px;
+        }
+
+        .rank-card {
+            background: var(--card-bg);
+            padding: 30px;
+            border-radius: var(--border-radius);
+            box-shadow: var(--box-shadow);
+            text-align: center;
+            border: 2px solid transparent;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .rank-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 5px;
+            background: var(--primary-color);
+            transform: scaleX(0);
+            transition: transform 0.3s ease;
+        }
+
+        .rank-card:hover::before {
+            transform: scaleX(1);
+        }
+
+        .rank-card:hover {
+            transform: translateY(-5px);
+            border-color: rgba(255, 255, 255, 0.2);
+        }
+
+        .rank-badge {
+            display: inline-block;
+            padding: 10px 20px;
+            border-radius: 50px;
+            font-family: var(--font-family-primary);
+            font-weight: 700;
+            font-size: 1.5rem;
+            color: var(--light-text);
+            margin-bottom: 20px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .ifs { background: var(--primary-color); }
+        .ils { background: var(--primary-color); }
+        .iss { background: var(--primary-color); }
+        .ibs { background: var(--primary-color); }
+        .ima { background: var(--primary-color); }
+        .ina { background: var(--primary-color); }
+        .iea { background: var(--primary-color); }
+        .iga { background: var(--primary-color); }
+        .ima2 { background: var(--primary-color); }
+        .ica { background: var(--primary-color); }
+
+        .rank-card h3 {
+            font-family: var(--font-family-primary);
+            font-size: 1.2rem;
+            margin-bottom: 15px;
+            color: var(--text-color);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .rank-card p {
+            font-family: var(--font-family-secondary);
+            font-size: 0.9rem;
+            color: var(--text-color);
+            opacity: 0.8;
+            margin-bottom: 20px;
+        }
+
+        .salary {
+            font-family: var(--font-family-primary);
+            font-weight: 700;
+            color: var(--primary-color);
+            font-size: 1.1rem;
+            display: block;
+        }
+
+        /* Community Section */
+        .community-section {
+            padding: 40px 0;
+            margin-bottom: 60px;
+        }
+
+        .community-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 20px;
+        }
+
+        .community-card {
+            background: var(--card-bg);
+            padding: 25px 15px;
+            border-radius: var(--border-radius);
+            box-shadow: var(--box-shadow);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            text-align: center;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .community-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.15);
+        }
+
+        .community-icon {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-bottom: 15px;
+            font-size: 2rem;
+            color: white;
+            transition: transform 0.3s ease;
+        }
+
+        .community-card:hover .community-icon {
+            transform: scale(1.1);
+        }
+
+        /* Platform Specific Colors */
+        .community-card.telegram .community-icon { background: #0088cc; }
+        .community-card.facebook .community-icon { background: #1877F2; }
+        .community-card.whatsapp .community-icon { background: #25D366; }
+        .community-card.instagram .community-icon { background: radial-gradient(circle at 30% 107%, #fdf497 0%, #fdf497 5%, #fd5949 45%, #d6249f 60%, #285AEB 90%); }
+        .community-card.youtube .community-icon { background: #FF0000; }
+
+        .community-card span {
+            font-family: var(--font-family-primary);
+            font-weight: 600;
+            color: var(--text-color);
+            font-size: 1.1rem;
+        }
+
+        /* Testimonial Section */
+        .testimonial-section {
+            padding: 40px 0;
+            margin-bottom: 60px;
+            background: linear-gradient(135deg, rgba(102, 126, 234, 0.05), rgba(118, 75, 162, 0.05));
+            border-radius: var(--border-radius);
+            position: relative;
+        }
+
+        .testimonial-slider {
+            position: relative;
+            max-width: 800px;
+            margin: 0 auto;
+            overflow: hidden;
+            padding: 20px 0;
+        }
+
+        .testimonial-track {
+            display: flex;
+            transition: transform 0.5s ease-in-out;
+        }
+
+        .testimonial-card {
+            min-width: 100%;
+            padding: 0 20px;
+            text-align: center;
+        }
+
+        .testimonial-content {
+            background: var(--card-bg);
+            padding: 30px;
+            border-radius: var(--border-radius);
+            box-shadow: var(--box-shadow);
+            border: 1px solid rgba(0, 0, 0, 0.05);
+            position: relative;
+        }
+
+        .testimonial-icon {
+            font-size: 2rem;
+            color: rgba(0, 230, 118, 0.3);
+            margin-bottom: 15px;
+        }
+
+        .testimonial-text {
+            font-family: var(--font-family-secondary);
+            font-size: 1.1rem;
+            color: var(--text-color);
+            line-height: 1.6;
+            margin-bottom: 20px;
+            font-style: italic;
+        }
+
+        .testimonial-author {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 15px;
+        }
+
+        .author-avatar {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 2px solid var(--primary-color);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .author-info h4 {
+            font-family: var(--font-family-primary);
+            font-size: 1rem;
+            color: var(--text-color);
+            margin: 0;
+            text-align: left;
+        }
+
+        .author-info p {
+            font-family: var(--font-family-secondary);
+            font-size: 0.85rem;
+            color: #888;
+            margin: 0;
+            text-align: left;
+        }
+
+        .slider-controls {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-top: 20px;
+        }
+
+        .slider-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: rgba(0, 230, 118, 0.3);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: none;
+            padding: 0;
+        }
+
+        .slider-dot.active {
+            background: var(--primary-color);
+            transform: scale(1.2);
+        }
+
+        /* Statistics Grid */
+        .stats-section {
+            padding: 40px 0 20px;
+            margin-bottom: 60px;
+        }
+        
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 25px;
+        }
+
+        .stat-card {
+            background: var(--card-bg);
+            padding: 25px 20px;
+            border-radius: var(--border-radius);
+            box-shadow: var(--box-shadow);
+            border: 1px solid rgba(0, 0, 0, 0.05);
+            text-align: center;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            position: relative;
+            overflow: hidden;
+            z-index: 1;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.15);
+        }
+
+        .stat-icon {
+            width: 60px;
+            height: 60px;
+            background: var(--primary-color);
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin: 0 auto 15px;
+            font-size: 1.5rem;
+            box-shadow: 0 5px 15px rgba(0, 230, 118, 0.4);
+        }
+
+        .stat-number {
+            font-family: var(--font-family-primary);
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--text-color);
+            margin-bottom: 5px;
+            display: flex;
+            justify-content: center;
+            align-items: baseline;
+            gap: 2px;
+        }
+
+        .stat-label {
+            font-family: var(--font-family-secondary);
+            font-size: 0.95rem;
+            color: var(--text-color);
+            opacity: 0.8;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            font-weight: 600;
+        }
+        
+        .stat-card.highlight {
+            background: var(--primary-color);
+        }
+        
+        .stat-card.highlight .stat-number, .stat-card.highlight .stat-label {
+            color: white;
+            opacity: 1;
+        }
+        
+        .stat-card.highlight .stat-icon {
+            background: rgba(255,255,255,0.2);
+            color: white;
+            box-shadow: none;
+        }
+
+        /* Security Section */
+        .security-section {
+            padding: 40px 0;
+            margin-bottom: 60px;
+        }
+
+        .security-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 30px;
+        }
+
+        .security-card {
+            background: var(--card-bg);
+            padding: 30px;
+            border-radius: var(--border-radius);
+            box-shadow: var(--box-shadow);
+            border: 1px solid rgba(0, 0, 0, 0.05);
+            text-align: center;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+            z-index: 1;
+        }
+
+        .security-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 230, 118, 0.05);
+            border-radius: var(--border-radius);
+            z-index: -1;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .security-card:hover {
+            transform: translateY(-5px);
+            border-color: rgba(0, 230, 118, 0.3);
+        }
+
+        .security-card:hover::before {
+            opacity: 1;
+        }
+
+        .security-icon {
+            width: 70px;
+            height: 70px;
+            background: rgba(0, 230, 118, 0.1);
+            color: var(--primary-color);
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin: 0 auto 20px;
+            font-size: 1.8rem;
+            transition: all 0.3s ease;
+        }
+
+        .security-card:hover .security-icon {
+            background: var(--primary-color);
+            color: var(--light-text);
+            box-shadow: 0 10px 20px rgba(0, 230, 118, 0.3);
+        }
+
+        .security-card h3 {
+            font-family: var(--font-family-primary);
+            font-size: 1.2rem;
+            color: var(--text-color);
+            margin-bottom: 15px;
+        }
+
+        .security-card p {
+            font-family: var(--font-family-secondary);
+            font-size: 0.95rem;
+            color: var(--text-color);
+            opacity: 0.8;
+            line-height: 1.6;
+        }
+
+        /* Final CTA */
+        .final-cta {
+            text-align: center;
+            padding: 60px 20px;
+            background: var(--primary-color);
+            color: var(--light-text);
+            border-radius: var(--border-radius);
+            box-shadow: var(--box-shadow);
+        }
+
+        .final-cta .section-title {
+            color: var(--light-text);
+            margin-bottom: 30px;
+        }
+
+        .final-cta p {
+            font-size: 1.2rem;
+            margin-bottom: 40px;
+            opacity: 0.9;
+        }
+
+        .cta-button {
+            background: rgba(255, 255, 255, 0.2);
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            color: var(--light-text);
+            padding: 15px 40px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            border-radius: 50px;
+            cursor: pointer;
+            backdrop-filter: blur(10px);
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .cta-button:hover {
+            background: rgba(255, 255, 255, 0.9);
+            color: var(--text-color);
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+        }
+
+        .cta-button i {
+            transition: transform 0.3s ease;
+        }
+
+        .cta-button:hover i {
+            transform: translateX(5px);
+        }
+
+        /* Roadmap Section */
+        .roadmap-section {
+            padding: 40px 0;
+            margin-bottom: 60px;
+            position: relative;
+        }
+
+        .timeline {
+            position: relative;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .timeline::after {
+            content: '';
+            position: absolute;
+            width: 4px;
+            background: rgba(0, 230, 118, 0.2);
+            top: 0;
+            bottom: 0;
+            left: 50%;
+            margin-left: -2px;
+            border-radius: 2px;
+        }
+
+        .timeline-item {
+            padding: 10px 40px;
+            position: relative;
+            background-color: inherit;
+            width: 50%;
+            box-sizing: border-box;
+        }
+
+        .timeline-item::after {
+            content: '';
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            right: -10px;
+            background-color: var(--card-bg);
+            border: 4px solid var(--primary-color);
+            top: 15px;
+            border-radius: 50%;
+            z-index: 1;
+            transition: all 0.3s ease;
+        }
+
+        .timeline-item.completed::after {
+            background-color: var(--primary-color);
+        }
+
+        .left {
+            left: 0;
+        }
+
+        .right {
+            left: 50%;
+        }
+
+        .right::after {
+            left: -10px;
+        }
+
+        .timeline-content {
+            padding: 20px 30px;
+            background: var(--card-bg);
+            position: relative;
+            border-radius: var(--border-radius);
+            box-shadow: var(--box-shadow);
+            border: 1px solid rgba(0,0,0,0.05);
+            transition: transform 0.3s ease;
+        }
+
+        .timeline-item:hover .timeline-content {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0, 230, 118, 0.15);
+        }
+        
+        .timeline-item:hover::after {
+            transform: scale(1.2);
+        }
+
+        .timeline-date {
+            font-family: var(--font-family-primary);
+            font-weight: 700;
+            color: var(--primary-color);
+            font-size: 0.9rem;
+            margin-bottom: 5px;
+        }
+
+        .timeline-content h3 {
+            font-family: var(--font-family-primary);
+            font-size: 1.1rem;
+            color: var(--text-color);
+            margin-bottom: 10px;
+        }
+
+        .timeline-content p {
+            font-family: var(--font-family-secondary);
+            font-size: 0.9rem;
+            color: var(--text-color);
+            opacity: 0.8;
+            margin: 0;
+        }
+
+        @media screen and (max-width: 600px) {
+            .timeline::after {
+                left: 31px;
+            }
+            .timeline-item {
+                width: 100%;
+                padding-left: 70px;
+                padding-right: 25px;
+            }
+            .timeline-item::after {
+                left: 21px;
+            }
+            .right {
+                left: 0%;
+            }
+        }
+
+        /* Roadmap Section */
+        .roadmap-section {
+            padding: 40px 0;
+            margin-bottom: 60px;
+            position: relative;
+        }
+
+        .timeline {
+            position: relative;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .timeline::after {
+            content: '';
+            position: absolute;
+            width: 4px;
+            background: rgba(0, 230, 118, 0.2);
+            top: 0;
+            bottom: 0;
+            left: 50%;
+            margin-left: -2px;
+            border-radius: 2px;
+        }
+
+        .timeline-item {
+            padding: 10px 40px;
+            position: relative;
+            background-color: inherit;
+            width: 50%;
+            box-sizing: border-box;
+        }
+
+        .timeline-item::after {
+            content: '';
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            right: -10px;
+            background-color: var(--card-bg);
+            border: 4px solid var(--primary-color);
+            top: 15px;
+            border-radius: 50%;
+            z-index: 1;
+            transition: all 0.3s ease;
+        }
+
+        .timeline-item.completed::after {
+            background-color: var(--primary-color);
+        }
+
+        .left {
+            left: 0;
+        }
+
+        .right {
+            left: 50%;
+        }
+
+        .right::after {
+            left: -10px;
+        }
+
+        .timeline-content {
+            padding: 20px 30px;
+            background: var(--card-bg);
+            position: relative;
+            border-radius: var(--border-radius);
+            box-shadow: var(--box-shadow);
+            border: 1px solid rgba(0,0,0,0.05);
+            transition: transform 0.3s ease;
+        }
+
+        .timeline-item:hover .timeline-content {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0, 230, 118, 0.15);
+        }
+        
+        .timeline-item:hover::after {
+            transform: scale(1.2);
+        }
+
+        .timeline-date {
+            font-family: var(--font-family-primary);
+            font-weight: 700;
+            color: var(--primary-color);
+            font-size: 0.9rem;
+            margin-bottom: 5px;
+        }
+
+        .timeline-content h3 {
+            font-family: var(--font-family-primary);
+            font-size: 1.1rem;
+            color: var(--text-color);
+            margin-bottom: 10px;
+        }
+
+        .timeline-content p {
+            font-family: var(--font-family-secondary);
+            font-size: 0.9rem;
+            color: var(--text-color);
+            opacity: 0.8;
+            margin: 0;
+        }
+
+        @media screen and (max-width: 600px) {
+            .timeline::after {
+                left: 31px;
+            }
+            .timeline-item {
+                width: 100%;
+                padding-left: 70px;
+                padding-right: 25px;
+            }
+            .timeline-item::after {
+                left: 21px;
+            }
+            .right {
+                left: 0%;
+            }
+        }
+
+        /* Animations */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+            to {
+                opacity: 1;
+            }
+        }
+
+        /* Mobile Navigation */
+        .mobile-menu-btn {
+            display: none;
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            color: var(--text-color);
+            cursor: pointer;
+            z-index: 1001;
+        }
+
+        .mobile-menu-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(5px);
+            z-index: 999;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .mobile-menu-overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .mobile-nav {
+            position: fixed;
+            top: 0;
+            right: -100%;
+            width: 300px;
+            height: 100%;
+            background: var(--card-bg);
+            box-shadow: -5px 0 25px rgba(0, 0, 0, 0.1);
+            z-index: 1000;
+            padding: 80px 20px 40px;
+            transition: right 0.3s ease;
+            overflow-y: auto;
+        }
+
+        .mobile-nav.active {
+            right: 0;
+        }
+
+        .mobile-nav-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+            padding-bottom: 20px;
+        }
+
+        .close-menu-btn {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            color: var(--text-color);
+            cursor: pointer;
+        }
+
+        .mobile-nav-links {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .mobile-nav-links li {
+            margin-bottom: 15px;
+        }
+
+        .mobile-nav-links a {
+            display: block;
+            text-decoration: none;
+            color: var(--text-color);
+            font-weight: 600;
+            font-family: var(--font-family-secondary);
+            padding: 15px;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+            border-left: 3px solid transparent;
+        }
+
+        .mobile-nav-links a:hover {
+            background: rgba(102, 126, 234, 0.1);
+            color: var(--primary-color);
+            border-left-color: var(--primary-color);
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .section-title {
+                font-size: 2rem;
+                margin-bottom: 30px;
+            }
+            
+            .card-grid,
+            .methods-grid,
+            .fund-grid,
+            .commission-grid,
+            .ranks-grid {
+                grid-template-columns: 1fr;
+                gap: 20px;
+            }
+            
+            .example-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .flow-container {
+                flex-direction: column;
+                align-items: center;
+                gap: 30px;
+            }
+
+            .flow-container::before, .flow-container::after {
+                display: none;
+            }
+
+            .flow-step {
+                width: 100%;
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                text-align: center;
+                margin-bottom: 20px;
+            }
+
+            .flow-step:last-child {
+                margin-bottom: 0;
+            }
+            
+            .navbar {
+                padding: 1rem;
+            }
+            
+            .nav-links {
+                display: none;
+            }
+
+            .mobile-menu-btn {
+                display: block;
+            }
+
+            .container {
+                padding: 0 15px;
+            }
+
+            .card {
+                padding: 25px 20px;
+            }
+
+            .distribution-content {
+                padding: 25px 20px;
+            }
+
+            .legitimacy-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .withdrawal-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .security-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .stats-grid {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 15px;
+            }
+
+            .stat-card {
+                padding: 20px 15px;
+            }
+
+            .stat-number {
+                font-size: 1.5rem;
+            }
+
+            .community-grid {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 15px;
+            }
+
+            .community-card {
+                padding: 20px 15px;
+            }
+
+            .testimonial-slider {
+                padding: 15px 0;
+            }
+
+            .testimonial-content {
+                padding: 20px;
+            }
+
+            .testimonial-text {
+                font-size: 1rem;
+            }
+
+            .final-cta {
+                padding: 40px 20px;
+            }
+
+            .final-cta p {
+                font-size: 1rem;
+            }
+
+            .cta-button {
+                padding: 12px 30px;
+                font-size: 1rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .section-title {
+                font-size: 1.5rem;
+            }
+            
+            .card {
+                padding: 20px 15px;
+            }
+            
+            .distribution-content {
+                padding: 20px 15px;
+            }
+
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .community-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .stat-number {
+                font-size: 1.2rem;
+            }
+
+            .final-cta {
+                padding: 30px 15px;
+            }
+
+            .final-cta .section-title {
+                font-size: 1.5rem;
+            }
+
+            .cta-button {
+                padding: 10px 20px;
+                font-size: 0.9rem;
+            }
+        }
+
+        /* Touch-friendly enhancements */
+        @media (max-width: 768px) {
+            .card,
+            .method-card,
+            .rank-card,
+            .legitimacy-card,
+            .withdrawal-card,
+            .security-card,
+            .community-card,
+            .stat-card {
+                min-height: auto;
+                margin-bottom: 15px;
+            }
+
+            .card:hover,
+            .method-card:hover,
+            .rank-card:hover,
+            .legitimacy-card:hover,
+            .withdrawal-card:hover,
+            .security-card:hover,
+            .community-card:hover,
+            .stat-card:hover {
+                transform: none; /* Disable hover effects on mobile */
+            }
+
+            /* Increase touch targets */
+            .nav-links a {
+                padding: 15px 10px;
+                min-height: 44px;
+                display: flex;
+                align-items: center;
+            }
+
+            .mobile-nav-links a {
+                min-height: 48px;
+                display: flex;
+                align-items: center;
+            }
+
+            /* Better spacing for mobile content */
+            .content-section {
+                padding: 100px 0 60px;
+            }
+
+            .card p,
+            .method-card p,
+            .legitimacy-card p,
+            .withdrawal-card p,
+            .security-card p {
+                font-size: 0.95rem;
+                line-height: 1.7;
+            }
+
+            /* Improve readability */
+            .section-title::after {
+                width: 60px;
+                bottom: -10px;
+            }
+        }
+
+        /* Scroll behavior */
+        html {
+            scroll-behavior: smooth;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Main Content Section -->
+    <div class="content-section">
+        <div class="container">
+            <!-- Company Introduction -->
+            <section class="intro-section" id="intro">
+                <h2 class="section-title">পরিচিতি</h2>
+                <div class="intro-content">
+                    <br>IoLent হলো একটি অনলাইন ফিনান্স ও ই-কমার্স কোম্পানি যা ব্যবহারকারীদের বিভিন্ন অনলাইন উপার্জনের সুযোগ প্রদান করে। IoLent এর মূল লক্ষ্য হলো অনলাইন এবং অফলাইনে আয়ের সহজ এবং নির্ভরযোগ্য মাধ্যম তৈরি করা। IoLent প্রতিষ্ঠান তাদের কার্যক্রম শুরু করেছিল ০১/০২/২০২৩ সালে।<br></br></p>
+                </div>
+            </section>
+
+            <!-- Mission and Vision -->
+            <section class="mission-vision" id="mission">
+                <div class="card-grid">
+                    <div class="card">
+                        <div class="card-icon">
+                            <i class="fas fa-bullseye"></i>
+                        </div>
+                        <h3>মিশন</h3>
+                        <p>IoLent-এর মিশন হলো একটি সুরক্ষিত, সহজলভ্য, এবং লাভজনক প্ল্যাটফর্ম তৈরি করা যেখানে ব্যবহারকারীরা অনলাইন এবং অফলাইনে আয়ের সুযোগ পেতে পারেন। আমরা সবার জন্য অর্থনৈতিক স্বাধীনতা নিশ্চিত করতে চাই এবং আমাদের ব্যবহারকারীদের নির্ভরযোগ্য ও স্থিতিশীল একটি আয়ের উৎস প্রদান করতে চাই।</p>
+                    </div>
+                    
+                    <div class="card">
+                        <div class="card-icon">
+                            <i class="fas fa-eye"></i>
+                        </div>
+                        <h3>ভিশন</h3>
+                        <p>IoLent-এর ভিশন হলো ফিনান্স ও ই-কমার্সের ক্ষেত্রে একটি অগ্রগণ্য প্রতিষ্ঠান হিসেবে প্রতিষ্ঠা লাভ করা, যা ব্যবহারকারীদের জন্য একটি আদর্শ প্ল্যাটফর্ম হিসেবে বিবেচিত হবে। আমরা চাই সবাই IoLent-এর সাহায্যে তাদের জীবনযাত্রার মান উন্নত করতে পারে এবং অর্থনৈতিকভাবে স্বাবলম্বী হতে পারে।</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Company Legitimacy -->
+            <section class="legitimacy-section" id="company-info">
+                <h2 class="section-title">কোম্পানির তথ্য</h2>
+                <div class="legitimacy-grid">
+                    <!-- Company Registration -->
+                    <div class="legitimacy-card">
+                        <div class="legit-header">
+                            <div class="legit-icon">
+                                <i class="fas fa-certificate"></i>
+                            </div>
+                            <h3>নিবন্ধন তথ্য</h3>
+                        </div>
+                        <ul class="legit-details">
+                            <li><i class="fas fa-check-circle"></i> <strong>Trade License:</strong> NO</li>
+                            <li><i class="fas fa-check-circle"></i> <strong>TIN Certificate:</strong> NO</li>
+                            <li><i class="fas fa-check-circle"></i> <strong>BIN No:</strong> NO</li>
+                            <li><i class="fas fa-check-circle"></i> <strong>Status:</strong> Active & Verified</li>
+                        </ul>
+                    </div>
+
+                    <!-- Office Address -->
+                    <div class="legitimacy-card">
+                        <div class="legit-header">
+                            <div class="legit-icon">
+                                <i class="fas fa-building"></i>
+                            </div>
+                            <h3>অফিসের ঠিকানা</h3>
+                        </div>
+                        <ul class="legit-details">
+                            <li><i class="fas fa-map-marker-alt"></i> <strong>Head Office:</strong> Rajshahi, Chapainawabgonj, Kalinagar,</li>
+                            <li><i class="fas fa-envelope"></i> <strong>Email:</strong> iolentsupport@gmail.com</li>
+                            <li><i class="fas fa-phone-alt"></i> <strong>Helpline:</strong> +880 1821237525</li>
+                            <li><i class="fas fa-clock"></i> <strong>Working Hours:</strong> Any Time 24/7</li>
+                        </ul>
+                    </div>
+
+                    <!-- Founder Info -->
+                    <div class="legitimacy-card">
+                        <div class="legit-header">
+                            <div class="legit-icon">
+                                <i class="fas fa-user-tie"></i>
+                            </div>
+                            <h3>প্রতিষ্ঠাতা ও ব্যবস্থাপনা</h3>
+                        </div>
+                        <ul class="legit-details">
+                            <li><i class="fas fa-user"></i> <strong>Founder & CEO:</strong> Md. Atikur Rahman</li>
+                            <li><i class="fas fa-briefcase"></i> <strong>Experience:</strong> 5+ Years in Finance Technology</li>
+                            <li><i class="fas fa-users"></i> <strong>Core Team:</strong> 50+ Dedicated Professionals</li>
+                            <li><i class="fas fa-shield-alt"></i> <strong>Legal Advisor:</strong> No</li>
+                        </ul>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Core Operations -->
+            <section class="operations" id="operations">
+                <h2 class="section-title">মূল কার্যক্রম</h2>
+                <div class="operations-content">
+                    <p>IoLent এর মাধ্যমে ব্যবহারকারীরা বিভিন্ন মাধ্যমে Point উপার্জন করতে পারেন, যেখানে ১ টাকা = ১০০ পয়েন্ট। পয়েন্ট উপার্জনের প্রধান লক্ষ্য হলো রোবট সক্রিয়করণ। একটি রোবট সক্রিয় করতে ১০০০ পয়েন্ট প্রয়োজন অর্থাত ১০ টাকা। পয়েন্ট উপার্জনের অন্যান্য মাধ্যমগুলোর তৈরির কাজ চলছে যেখান থেকে ফ্রিতে পয়েন্ট উপার্জন করা যাবে। সেই রোবটটি তার জন্য মাইন করবে প্রতি ৪ ঘন্টা পর পর যা মাইন হবে তা ক্লেইম করে আবারো মাইনিং স্টার্ট হয়ে যাবে পরবর্তী ৪ ঘন্টার জন্য। ১ টি রোবট সর্বমোট ২০ টাকা মাইন করে দিবে তারপর সেই রোবটটি ডেএক্টিভ হয়ে যাবে অর্থাত প্রতি ২০ টা মাইনিং ইনকাম কালেক্ট হলে অ্যাকাউন্ট থেকে একটা রোবট রিমুভ হয়ে যাবে। এবং ১০০০ পয়েন্ট দিয়ে একটি রোবট এক্টিভ করলে তার বিনিময়ে ২০ টাকা উপার্জন দিয়ে রোবট টি বন্ধ হয়ে যাবে।<br></br></p>
+                </div>
+            </section>
+
+            <!-- How IoLent Works -->
+            <section class="how-it-works-section" id="how-it-works">
+                <h2 class="section-title">কীভাবে কাজ করে?</h2>
+                <div class="how-it-works-flow">
+                    <div class="flow-container">
+                        <!-- Step 1 -->
+                        <div class="flow-step">
+                            <div class="step-icon">
+                                <i class="fas fa-user-plus"></i>
+                                <span class="step-number">১</span>
+                            </div>
+                            <h3>অ্যাকাউন্ট তৈরি</h3>
+                            <p>IoLent-এ একটি নতুন অ্যাকাউন্ট রেজিস্ট্রেশন করুন</p>
+                        </div>
+                        
+                        <!-- Step 2 -->
+                        <div class="flow-step">
+                            <div class="step-icon">
+                                <i class="fas fa-coins"></i>
+                                <span class="step-number">২</span>
+                            </div>
+                            <h3>পয়েন্ট উপার্জন</h3>
+                            <p>বিভিন্ন কাজের মাধ্যমে পয়েন্ট সংগ্রহ করুন</p>
+                        </div>
+
+                        <!-- Step 3 -->
+                        <div class="flow-step">
+                            <div class="step-icon">
+                                <i class="fas fa-robot"></i>
+                                <span class="step-number">৩</span>
+                            </div>
+                            <h3>রোবট সক্রিয়</h3>
+                            <p>১০০০ পয়েন্ট দিয়ে আপনার আর্নিং রোবট চালু করুন</p>
+                        </div>
+
+                        <!-- Step 4 -->
+                        <div class="flow-step">
+                            <div class="step-icon">
+                                <i class="fas fa-hammer"></i>
+                                <span class="step-number">৪</span>
+                            </div>
+                            <h3>মাইনিং ইনকাম</h3>
+                            <p>প্রতি ৪ ঘণ্টা পরপর মাইনিং ক্লেম করুন</p>
+                        </div>
+
+                        <!-- Step 5 -->
+                        <div class="flow-step">
+                            <div class="step-icon">
+                                <i class="fas fa-hand-holding-usd"></i>
+                                <span class="step-number">৫</span>
+                            </div>
+                            <h3>উত্তোলন</h3>
+                            <p>আয়কৃত টাকা সরাসরি পেমেন্ট মেথডে তুলে নিন</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Income Methods -->
+            <section class="income-methods">
+                <h2 class="section-title">পয়েন্ট উপার্জনের মাধ্যম</h2>
+                <div class="methods-grid">
+                    <div class="method-card">
+                        <div class="method-icon">
+                            <i class="fas fa-globe"></i>
+                        </div>
+                        <h3>অনলাইন প্ল্যাটফর্ম</h3>
+                        <p>বিভিন্ন অনলাইন প্ল্যাটফর্ম ব্যবহার করে পয়েন্ট উপার্জন</p>
+                    </div>
+                    <div class="method-card">
+                        <div class="method-icon">
+                            <i class="fas fa-robot"></i>
+                        </div>
+                        <h3>রোবট সক্রিয়করণ</h3>
+                        <p>১০০০ পয়েন্ট দিয়ে রোবট এক্টিভ করে মাইনিং ইনকাম</p>
+                    </div>
+                    <div class="method-card">
+                        <div class="method-icon">
+                            <i class="fas fa-tasks"></i>
+                        </div>
+                        <h3>বিভিন্ন কাজ</h3>
+                        <p>প্ল্যাটফর্মের বিভিন্ন কাজ করে পয়েন্ট অর্জন</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Withdrawal System -->
+            <section class="withdrawal-section" id="withdrawal">
+                <h2 class="section-title">উত্তোলন ব্যবস্থা</h2>
+                <div class="withdrawal-grid">
+                    <!-- Minimum Withdraw -->
+                    <div class="withdrawal-card">
+                        <div class="icon-wrapper">
+                            <i class="fas fa-wallet"></i>
+                        </div>
+                        <h3>সর্বনিম্ন উত্তোলন</h3>
+                        <p>10 টাকা</p>
+                    </div>
+                    
+                    <!-- Payment Methods -->
+                    <div class="withdrawal-card">
+                        <div class="icon-wrapper">
+                            <i class="fas fa-university"></i>
+                        </div>
+                        <h3>পেমেন্ট মেথড</h3>
+                        <p>বিকাশ, নগদ, রকেট, উপায়</p>
+                        <div class="payment-methods" style="flex-wrap: wrap;">
+                            <!-- Using styling generic blocks to represent payment systems -->
+                            <span style="background: #e2136e; color: white; padding: 6px 12px; border-radius: 6px; font-size: 0.85rem; font-weight: bold; box-shadow: 0 2px 5px rgba(226, 19, 110, 0.3);">bKash</span>
+                            <span style="background: #f58220; color: white; padding: 6px 12px; border-radius: 6px; font-size: 0.85rem; font-weight: bold; box-shadow: 0 2px 5px rgba(245, 130, 32, 0.3);">Nagad</span>
+                            <span style="background: #8c1592; color: white; padding: 6px 12px; border-radius: 6px; font-size: 0.85rem; font-weight: bold; box-shadow: 0 2px 5px rgba(140, 21, 146, 0.3);">Rocket</span>
+                            <span style="background: #134685; color: #ffcc00; padding: 6px 12px; border-radius: 6px; font-size: 0.85rem; font-weight: bold; box-shadow: 0 2px 5px rgba(19, 70, 133, 0.3);">Upay</span>
+                        </div>
+                    </div>
+                    
+                    <!-- Time & Fee -->
+                    <div class="withdrawal-card">
+                        <div class="icon-wrapper">
+                            <i class="fas fa-clock"></i>
+                        </div>
+                        <h3>উত্তোলনের সময়</h3>
+                        <p>টাকা উত্তোলনের আবেদন সাধারণত ৫-৩০ মিনিটের মধ্যে যাচাই করা হয়। তবে ব্যবহারকারীর চাপ (High Traffic) বেশি থাকলে কিছুটা দেরি হতে পারে।</p>
+                        <p style="font-size: 0.85rem; color: #888; font-weight: normal; margin-top: 5px;">(উত্তোলন চার্জ: ৫+ ৫% টাকা)</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Robot Income Distribution -->
+            <section class="distribution">
+                <h2 class="section-title">রোবট ইনকাম বন্টন পদ্ধতি</h2>
+                <div class="distribution-content">
+                    <div class="distribution-example">
+                        <h3>উদাহরণ:</h3>
+                        <p>রোবট এক্টিভ এর টাকা দিয়ে কম্পানি বিভিন্ন ভাবে বিভিন্ন হালাল উপায়ে ব্যবসার মাধ্যমে প্রফিট করে তা বন্টন করবে। এই প্রফিটের টাকা ৪ ভাগে বন্টন হবে।<br></br></p>
+                    </div>
+                    
+                    <div class="fund-breakdown">
+                        <h3>ফান্ড বন্টন:</h3>
+                        <div class="fund-grid">
+                            <div class="fund-item">
+                                <span class="fund-name">Protection Reserve Fund</span>
+                                <span class="fund-percentage">20%</span>
+                            </div>
+                            <div class="fund-item">
+                                <span class="fund-name">Success Reward Fund</span>
+                                <span class="fund-percentage">10%</span>
+                            </div>
+                            <div class="fund-item">
+                                <span class="fund-name">Company Maintenance Fund</span>
+                                <span class="fund-percentage">5%</span>
+                            </div>
+                            <div class="fund-item">
+                                <span class="fund-name">Robot Revenue Sharing</span>
+                                <span class="fund-percentage">65%</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Referral System -->
+            <section class="referral">
+                <h2 class="section-title">রেফারেল সিস্টেম</h2>
+                <div class="referral-content">
+                    <p>IoLent এ রেফারেল সিস্টেমের মাধ্যমে ব্যবহারকারীরা অতিরিক্ত ইনকাম করতে পারেন। একজন ব্যবহারকারী অন্য একজনকে রেফার করলে, রেফার করা ব্যক্তিটি যতবার রোবট সক্রিয় করবে, রেফারকারী ততবার কমিশন পাবেন। ১ টি রোবটের মূল্যের ২৫% অর্থাৎ ২৫০ পয়েন্ট রেফার কমিশনে বন্টন করা হয়।<br></br></p>
+                    
+                    <div class="commission-breakdown">
+                        <h3>কমিশন বণ্টন:</h3>
+                        <div class="commission-grid">
+                            <div class="commission-item">
+                                <span class="generation">প্রথম জেনারেশন</span>
+                                <span class="commission-percentage">৩০% - ৭৫ পয়েন্ট</span>
+                            </div>
+                            <div class="commission-item">
+                                <span class="generation">দ্বিতীয় জেনারেশন</span>
+                                <span class="commission-percentage">২০% - ৫০ পয়েন্ট</span>
+                            </div>
+                            <div class="commission-item">
+                                <span class="generation">তৃতীয় জেনারেশন</span>
+                                <span class="commission-percentage">১৫% - ৩৭.৫ পয়েন্ট</span>
+                            </div>
+                            <div class="commission-item">
+                                <span class="generation">চতুর্থ জেনারেশন</span>
+                                <span class="commission-percentage">১৫% - ৩৭.৫ পয়েন্ট</span>
+                            </div>
+                            <div class="commission-item">
+                                <span class="generation">পঞ্চম জেনারেশন</span>
+                                <span class="commission-percentage">১০% - ২৫ পয়েন্ট</span>
+                            </div>
+                            <div class="commission-item">
+                                <span class="generation">ষষ্ঠ জেনারেশন</span>
+                                <span class="commission-percentage">১০% - ২৫ পয়েন্ট</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Ranks and Salary -->
+            <section class="ranks" id="ranks">
+                <h2 class="section-title">পদবি ও বেতন</h2>
+                <div class="ranks-grid">
+                    <div class="rank-card">
+                        <div class="rank-badge ifs">IFS</div>
+                        <h3>IOLENT FAST SELLER</h3>
+                        <p>5 ডেঅ্যাক্টিভ রোবট</p>
+                        <span class="salary">এককালীন অনির্দিষ্ট ক্যাশ</span>
+                        <div class="rank-progress">
+                            <div class="progress-bar-container">
+                                <div class="progress-bar" style="width: 0%" data-width="10%"></div>
+                            </div>
+                            <div class="progress-label">
+                                <span>Requirements</span>
+                                <span>5/500</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="rank-card">
+                        <div class="rank-badge ils">ILS</div>
+                        <h3>IOLENT LOCAL SELLER</h3>
+                        <p>10 ডেঅ্যাক্টিভ রোবট</p>
+                        <span class="salary">এককালীন অনির্দিষ্ট ক্যাশ</span>
+                        <div class="rank-progress">
+                            <div class="progress-bar-container">
+                                <div class="progress-bar" style="width: 0%" data-width="20%"></div>
+                            </div>
+                            <div class="progress-label">
+                                <span>Requirements</span>
+                                <span>10/500</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="rank-card">
+                        <div class="rank-badge iss">ISS</div>
+                        <h3>IOLENT SUPER SELLER</h3>
+                        <p>25 ডেঅ্যাক্টিভ রোবট</p>
+                        <span class="salary">এককালীন অনির্দিষ্ট ক্যাশ</span>
+                        <div class="rank-progress">
+                            <div class="progress-bar-container">
+                                <div class="progress-bar" style="width: 0%" data-width="30%"></div>
+                            </div>
+                            <div class="progress-label">
+                                <span>Requirements</span>
+                                <span>25/500</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="rank-card">
+                        <div class="rank-badge ibs">IBS</div>
+                        <h3>IOLENT BEST SELLER</h3>
+                        <p>50 ডেঅ্যাক্টিভ রোবট</p>
+                        <span class="salary">এককালীন অনির্দিষ্ট ক্যাশ</span>
+                        <div class="rank-progress">
+                            <div class="progress-bar-container">
+                                <div class="progress-bar" style="width: 0%" data-width="40%"></div>
+                            </div>
+                            <div class="progress-label">
+                                <span>Requirements</span>
+                                <span>50/500</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="rank-card">
+                        <div class="rank-badge ima">IMA</div>
+                        <h3>IOLENT MARKET ADVISER</h3>
+                        <p>80 ডেঅ্যাক্টিভ রোবট</p>
+                        <span class="salary">এককালীন অনির্দিষ্ট ক্যাশ</span>
+                        <div class="rank-progress">
+                            <div class="progress-bar-container">
+                                <div class="progress-bar" style="width: 0%" data-width="50%"></div>
+                            </div>
+                            <div class="progress-label">
+                                <span>Requirements</span>
+                                <span>80/500</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="rank-card">
+                        <div class="rank-badge ina">INA</div>
+                        <h3>IOLENT NATIONAL ADVISER</h3>
+                        <p>130 ডেঅ্যাক্টিভ রোবট</p>
+                        <span class="salary">এককালীন অনির্দিষ্ট ক্যাশ</span>
+                        <div class="rank-progress">
+                            <div class="progress-bar-container">
+                                <div class="progress-bar" style="width: 0%" data-width="60%"></div>
+                            </div>
+                            <div class="progress-label">
+                                <span>Requirements</span>
+                                <span>130/500</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="rank-card">
+                        <div class="rank-badge iea">IEA</div>
+                        <h3>IOLENT EXPERT ADVISER</h3>
+                        <p>200 ডেঅ্যাক্টিভ রোবট</p>
+                        <span class="salary">এককালীন অনির্দিষ্ট ক্যাশ</span>
+                    </div>
+                    <div class="rank-card">
+                        <div class="rank-badge iga">IGA</div>
+                        <h3>IOLENT GLOBAL ADVISER</h3>
+                        <p>300 ডেঅ্যাক্টিভ রোবট</p>
+                        <span class="salary">এককালীন অনির্দিষ্ট ক্যাশ</span>
+                    </div>
+                    <div class="rank-card">
+                        <div class="rank-badge ima2">IXA</div>
+                        <h3>IOLENT EXECUTIVE ADVISER</h3>
+                        <p>400 ডেঅ্যাক্টিভ রোবট</p>
+                        <span class="salary">এককালীন অনির্দিষ্ট ক্যাশ</span>
+                    </div>
+                    <div class="rank-card">
+                        <div class="rank-badge ica">ICA</div>
+                        <h3>IOLENT CHIEF ADVISER</h3>
+                        <p>500 ডেঅ্যাক্টিভ রোবট</p>
+                        <span class="salary">এককালীন অনির্দিষ্ট ক্যাশ</span>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Platform Security -->
+            <section class="security-section" id="security">
+                <h2 class="section-title">প্ল্যাটফর্ম সিকিউরিটি</h2>
+                <div class="security-grid">
+                    <!-- Secure Transactions -->
+                    <div class="security-card">
+                        <div class="security-icon">
+                            <i class="fas fa-lock"></i>
+                        </div>
+                        <h3>নিরাপদ ট্রানজাকশন</h3>
+                        <p>আপনার সমস্ত লেনদেন এন্ড-টু-এন্ড এনক্রিপশন (End-to-End Encryption) দ্বারা সুরক্ষিত। আপনার আর্থিক ডেটা ১০০% নিরাপদ।</p>
+                    </div>
+
+                    <!-- Anti-Fraud System -->
+                    <div class="security-card">
+                        <div class="security-icon">
+                            <i class="fas fa-shield-alt"></i>
+                        </div>
+                        <h3>অ্যান্টি-ফ্রড সিস্টেম</h3>
+                        <p>আমাদের আধুনিক AI ভিত্তিক অ্যান্টি-ফ্রড সিস্টেম সব ধরনের জালিয়াতি ও স্প্যাম কার্যকলাপ সার্বক্ষণিক নিয়ন্ত্রণ করে।</p>
+                    </div>
+
+                    <!-- Account Protection -->
+                    <div class="security-card">
+                        <div class="security-icon">
+                            <i class="fas fa-user-shield"></i>
+                        </div>
+                        <h3>অ্যাকাউন্ট প্রটেকশন</h3>
+                        <p>টু-ফ্যাক্টর অথেনটিকেশন (2FA) এবং রিয়েল-টাইম লগইন অ্যালার্টের মাধ্যমে আপনার অ্যাকাউন্টের নিরাপত্তা নিশ্চিত করা হয়।</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- User Statistics -->
+            <section class="stats-section" id="statistics">
+                <h2 class="section-title">সরাসরি পরিসংখ্যান</h2>
+                <div class="stats-grid">
+                    <!-- Total Users -->
+                    <div class="stat-card">
+                        <div class="stat-icon">
+                            <i class="fas fa-users"></i>
+                        </div>
+                        <div class="stat-number" data-target="152430">0</div>
+                        <div class="stat-label">Total Users</div>
+                    </div>
+
+                    <!-- Daily Active Users -->
+                    <div class="stat-card">
+                        <div class="stat-icon">
+                            <i class="fas fa-user-clock"></i>
+                        </div>
+                        <div class="stat-number" data-target="45800">0</div>
+                        <div class="stat-label">Daily Active Users</div>
+                    </div>
+
+                    <!-- New Users Today -->
+                    <div class="stat-card">
+                        <div class="stat-icon">
+                            <i class="fas fa-user-plus"></i>
+                        </div>
+                        <div class="stat-number" data-target="1250">0</div>
+                        <div class="stat-label">New Users Today</div>
+                    </div>
+
+                    <!-- Active Robots -->
+                    <div class="stat-card highlight">
+                        <div class="stat-icon">
+                            <i class="fas fa-robot"></i>
+                        </div>
+                        <div class="stat-number" data-target="85420">0</div>
+                        <div class="stat-label">Active Robots</div>
+                    </div>
+
+                    <!-- Deactive Robots -->
+                    <div class="stat-card">
+                        <div class="stat-icon">
+                            <i class="fas fa-power-off"></i>
+                        </div>
+                        <div class="stat-number" data-target="124500">0</div>
+                        <div class="stat-label">Deactive Robots</div>
+                    </div>
+
+                    <!-- Total Withdraw -->
+                    <div class="stat-card highlight">
+                        <div class="stat-icon">
+                            <i class="fas fa-money-bill-wave"></i>
+                        </div>
+                        <div class="stat-number"><span data-target="45">0</span>M+</div>
+                        <div class="stat-label">Total Withdraw (BDT)</div>
+                    </div>
+
+                    <!-- Total Transactions -->
+                    <div class="stat-card">
+                        <div class="stat-icon">
+                            <i class="fas fa-exchange-alt"></i>
+                        </div>
+                        <div class="stat-number" data-target="450200">0</div>
+                        <div class="stat-label">Total Transactions</div>
+                    </div>
+
+                    <!-- Total Projects -->
+                    <div class="stat-card">
+                        <div class="stat-icon">
+                            <i class="fas fa-project-diagram"></i>
+                        </div>
+                        <div class="stat-number" data-target="15">0</div>
+                        <div class="stat-label">Total Projects</div>
+                    </div>
+
+                    <!-- Total Admins -->
+                    <div class="stat-card">
+                        <div class="stat-icon">
+                            <i class="fas fa-user-shield"></i>
+                        </div>
+                        <div class="stat-number" data-target="8">0</div>
+                        <div class="stat-label">Total Agent</div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Testimonials -->
+            <section class="testimonial-section" id="testimonials">
+                <h2 class="section-title">ব্যবহারকারীদের মতামত</h2>
+                <div class="testimonial-slider">
+                    <div class="testimonial-track" id="testimonialTrack">
+                        
+                        <!-- Testimonial 1 -->
+                        <div class="testimonial-card">
+                            <div class="testimonial-content">
+                                <i class="fas fa-quote-left testimonial-icon"></i>
+                                <p class="testimonial-text">"আমি IoLent থেকে নিয়মিত আয় করছি। এই প্ল্যাটফর্মটি সত্যিই অসাধারণ এবং ১০০% ট্রাস্টেড। উইথড্র দিলে খুব দ্রুত টাকা পাওয়া যায়।"</p>
+                                <div class="testimonial-author">
+                                    <img class="author-avatar" src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=150&h=150&fit=crop&crop=face" alt="Rahim Islam">
+                                    <div class="author-info">
+                                        <h4>Rahim Islam</h4>
+                                        <p>ঢাকা, বাংলাদেশ</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Testimonial 2 -->
+                        <div class="testimonial-card">
+                            <div class="testimonial-content">
+                                <i class="fas fa-quote-left testimonial-icon"></i>
+                                <p class="testimonial-text">"প্রথমদিকে বিশ্বাস করতে পারিনি, কিন্তু রোবট অ্যাক্টিভ করার পর থেকে আমার প্রতিদিনের ইনকাম শুরু হয়েছে। অসাধারণ একটি সাপোর্ট টিম!"</p>
+                                <div class="testimonial-author">
+                                    <img class="author-avatar" src="https://images.unsplash.com/photo-1494790108755-2616b612b786?w=150&h=150&fit=crop&crop=face" alt="Sumiya Rahman">
+                                    <div class="author-info">
+                                        <h4>Sumiya Rahman</h4>
+                                        <p>চট্টগ্রাম, বাংলাদেশ</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Testimonial 3 -->
+                        <div class="testimonial-card">
+                            <div class="testimonial-content">
+                                <i class="fas fa-quote-left testimonial-icon"></i>
+                                <p class="testimonial-text">"IoLent-এর সবচেয়ে ভালো দিক হলো এর নিরাপত্তা আর দ্রুত পেমেন্ট সিস্টেম। বিকাশ এবং নগদে পেমেন্ট নেওয়া খুবই সহজ।"</p>
+                                <div class="testimonial-author">
+                                    <img class="author-avatar" src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150&h=150&fit=crop&crop=face" alt="Tanvir Hasan">
+                                    <div class="author-info">
+                                        <h4>Tanvir Hasan</h4>
+                                        <p>সিলেট, বাংলাদেশ</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Testimonial 4 -->
+                        <div class="testimonial-card">
+                            <div class="testimonial-content">
+                                <i class="fas fa-quote-left testimonial-icon"></i>
+                                <p class="testimonial-text">"আমি একটি স্টুডেন্ট এবং পার্ট-টাইম কাজ হিসেবে IoLent খুব ভালো আয় দিচ্ছে। আমার বন্ধুদেরও ইনভাইট করেছি এবং তারাও উপকৃত।"</p>
+                                <div class="testimonial-author">
+                                    <img class="author-avatar" src="https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=150&h=150&fit=crop&crop=face" alt="Nafis Ahmed">
+                                    <div class="author-info">
+                                        <h4>Nafis Ahmed</h4>
+                                        <p>রাজশাহী, বাংলাদেশ</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Testimonial 5 -->
+                        <div class="testimonial-card">
+                            <div class="testimonial-content">
+                                <i class="fas fa-quote-left testimonial-icon"></i>
+                                <p class="testimonial-text">"একাউন্ট প্রটেকশন আর রিয়াল-টাইম ইনকাম দেখে বুঝতে পেরেছি এটা একটা অথেনটিক প্ল্যাটফর্ম। ইনকামের সেরা সুযোগ!"</p>
+                                <div class="testimonial-author">
+                                    <img class="author-avatar" src="https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=150&h=150&fit=crop&crop=face" alt="Abir Mahmud">
+                                    <div class="author-info">
+                                        <h4>Abir Mahmud</h4>
+                                        <p>খুলনা, বাংলাদেশ</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                    
+                    <!-- Slider Controls -->
+                    <div class="slider-controls">
+                        <button class="slider-dot active" data-index="0"></button>
+                        <button class="slider-dot" data-index="1"></button>
+                        <button class="slider-dot" data-index="2"></button>
+                        <button class="slider-dot" data-index="3"></button>
+                        <button class="slider-dot" data-index="4"></button>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Community Section -->
+            <section class="community-section" id="community">
+                <h2 class="section-title">আমাদের কমিউনিটি</h2>
+                <div class="community-grid">
+                    <!-- Telegram -->
+                    <a href="javascript:void(0)" class="community-card telegram" onclick="var value='https://t.me/iolent'; Android.openLink(value);">
+                        <div class="community-icon">
+                            <i class="fab fa-telegram-plane"></i>
+                        </div>
+                        <span>Telegram</span>
+                    </a>
+                    
+                    <!-- Facebook -->
+                    <a href="javascript:void(0)" class="community-card facebook" onclick="var value='https://www.facebook.com/share/18g4ke9wvR/'; Android.openLink(value);">
+                        <div class="community-icon">
+                            <i class="fab fa-facebook-f"></i>
+                        </div>
+                        <span>Facebook</span>
+                    </a>
+
+                    <!-- WhatsApp -->
+                    <a href="javascript:void(0)" class="community-card whatsapp" onclick="var value='https://whatsapp.com/channel/0029VbBFP5y8PgsN5UVW0a1K'; Android.openLink(value);">
+                        <div class="community-icon">
+                            <i class="fab fa-whatsapp"></i>
+                        </div>
+                        <span>WhatsApp</span>
+                    </a>
+
+                    <!-- Instagram -->
+                    <a href="javascript:void(0)" class="community-card instagram">
+                        <div class="community-icon">
+                            <i class="fab fa-instagram"></i>
+                        </div>
+                        <span>Instagram</span>
+                    </a>
+
+                    <!-- YouTube -->
+                    <a href="javascript:void(0)" class="community-card youtube" onclick="var value='https://youtube.com/@iolent_official?si=KWOUeSYUb3wEOpYs'; Android.openLink(value);">
+                        <div class="community-icon">
+                            <i class="fab fa-youtube"></i>
+                        </div>
+                        <span>YouTube</span>
+                    </a>
+                </div>
+            </section>
+
+            <!-- Footer CTA -->
+            <section class="final-cta">
+                <h2 class="section-title">তৈরি হচ্ছে আরও অনেক কিছু</h2>
+                <p>IoLent এর বিভিন্ন সুবিধা ও সুযোগ নিয়ে আমরা কাজ করছি। আমাদের সাথে থাকুন আরও অনেক কিছু আসছে!</p>
+            </section>
+        </div>
+    </div>
+
+    <script>
+        // JavaScript for Business Plan Website
+
+        document.addEventListener('DOMContentLoaded', function() {
+            // Animate Numbers function
+            const animateNumbers = () => {
+                const statNumbers = document.querySelectorAll('.stat-number');
+                const observer = new IntersectionObserver((entries, observer) => {
+                    entries.forEach(entry => {
+                        if (entry.isIntersecting) {
+                            const numbers = entry.target.querySelectorAll('[data-target]');
+                            numbers.forEach(number => {
+                                const target = +number.getAttribute('data-target');
+                                const duration = 2000;
+                                const increment = target / (duration / 16); 
+                                let current = 0;
+
+                                const updateCounter = () => {
+                                    current += increment;
+                                    if(current < target) {
+                                        // format number with commas
+                                        number.innerText = Math.ceil(current).toLocaleString();
+                                        requestAnimationFrame(updateCounter);
+                                    } else {
+                                        number.innerText = target.toLocaleString();
+                                    }
+                                };
+                                updateCounter();
+                            });
+                            observer.unobserve(entry.target);
+                        }
+                    });
+                }, { threshold: 0.5 });
+                
+                const statsSection = document.querySelector('.stats-section');
+                if(statsSection) {
+                    observer.observe(statsSection);
+                }
+            };
+
+            // Init animations
+            animateNumbers();
+
+            // Progress Bar Animation
+            const animateProgressBars = () => {
+                const progressBars = document.querySelectorAll('.progress-bar');
+                const observer = new IntersectionObserver((entries, observer) => {
+                    entries.forEach(entry => {
+                        if (entry.isIntersecting) {
+                            const bar = entry.target;
+                            const width = bar.getAttribute('data-width');
+                            setTimeout(() => {
+                                bar.style.width = width;
+                            }, 200);
+                            observer.unobserve(bar);
+                        }
+                    });
+                }, { threshold: 0.2 });
+
+                progressBars.forEach(bar => {
+                    observer.observe(bar);
+                });
+            };
+
+            animateProgressBars();
+
+            // Testimonial Slider
+            const track = document.getElementById('testimonialTrack');
+            const dots = document.querySelectorAll('.slider-dot');
+            let slideIndex = 0;
+            const slideCount = dots.length;
+
+            const goToSlide = (index) => {
+                slideIndex = index;
+                // Update transform
+                track.style.transform = `translateX(-${slideIndex * 100}%)`;
+                
+                // Update dots
+                dots.forEach(dot => dot.classList.remove('active'));
+                dots[slideIndex].classList.add('active');
+            };
+
+            // Click dots
+            dots.forEach(dot => {
+                dot.addEventListener('click', () => {
+                    const index = parseInt(dot.getAttribute('data-index'));
+                    goToSlide(index);
+                });
+            });
+
+            // Auto slide
+            setInterval(() => {
+                let nextIndex = slideIndex + 1;
+                if (nextIndex >= slideCount) {
+                    nextIndex = 0;
+                }
+                goToSlide(nextIndex);
+            }, 5000); // 5 seconds per slide
+
+            // Smooth scrolling for navigation links
+            function smoothScroll(target, duration = 800) {
+                const targetElement = document.querySelector(target);
+                if (targetElement) {
+                    const targetPosition = targetElement.offsetTop - 80;
+                    const startPosition = window.pageYOffset;
+                    const distance = targetPosition - startPosition;
+                    let startTime = null;
+
+                    function animation(currentTime) {
+                        if (startTime === null) startTime = currentTime;
+                        const timeElapsed = currentTime - startTime;
+                        const run = easeInOutQuad(timeElapsed, startPosition, distance, duration);
+                        window.scrollTo(0, run);
+                        if (timeElapsed < duration) requestAnimationFrame(animation);
+                    }
+
+                    function easeInOutQuad(t, b, c, d) {
+                        t /= d / 2;
+                        if (t < 1) return c / 2 * t * t + b;
+                        t--;
+                        return -c / 2 * (t * (t - 2) - 1) + b;
+                    }
+
+                    requestAnimationFrame(animation);
+                }
+            }
+
+            // Navigation link functionality
+            const navLinks = document.querySelectorAll('.nav-links a');
+            navLinks.forEach(link => {
+                link.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    const target = this.getAttribute('href');
+                    smoothScroll(target);
+                });
+            });
+
+            // Intersection Observer for scroll animations
+            const observerOptions = {
+                threshold: 0.1,
+                rootMargin: '0px 0px -50px 0px'
+            };
+
+            const observer = new IntersectionObserver(function(entries, observer) {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.style.opacity = '1';
+                        entry.target.style.transform = 'translateY(0)';
+                        observer.unobserve(entry.target);
+                    }
+                });
+            }, observerOptions);
+
+            // Observe all sections for fade-in effect
+            const sections = document.querySelectorAll('section');
+            sections.forEach(section => {
+                section.style.opacity = '0';
+                section.style.transform = 'translateY(30px)';
+                section.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
+                observer.observe(section);
+            });
+
+            // Add hover effects to cards
+            const cards = document.querySelectorAll('.card, .method-card, .rank-card');
+            cards.forEach(card => {
+                card.addEventListener('mouseenter', function() {
+                    this.style.transform = 'translateY(-10px) scale(1.02)';
+                });
+                
+                card.addEventListener('mouseleave', function() {
+                    this.style.transform = 'translateY(0) scale(1)';
+                });
+            });
+
+            // Add click animation to buttons
+            const buttons = document.querySelectorAll('.cta-button');
+            buttons.forEach(button => {
+                button.addEventListener('click', function() {
+                    this.style.transform = 'scale(0.95)';
+                    setTimeout(() => {
+                        this.style.transform = '';
+                    }, 150);
+                });
+            });
+
+            // Add some interactive elements
+            const rankCards = document.querySelectorAll('.rank-card');
+            rankCards.forEach(card => {
+                card.addEventListener('click', function() {
+                    // Add a ripple effect
+                    const ripple = document.createElement('span');
+                    ripple.style.position = 'absolute';
+                    ripple.style.borderRadius = '50%';
+                    ripple.style.background = 'rgba(255, 255, 255, 0.6)';
+                    ripple.style.transform = 'scale(0)';
+                    ripple.style.animation = 'ripple 0.6s linear';
+                    ripple.style.left = '50%';
+                    ripple.style.top = '50%';
+                    ripple.style.width = '20px';
+                    ripple.style.height = '20px';
+                    ripple.style.marginLeft = '-10px';
+                    ripple.style.marginTop = '-10px';
+                    this.appendChild(ripple);
+                    
+                    setTimeout(() => {
+                        ripple.remove();
+                    }, 600);
+                });
+            });
+
+            // Add CSS for ripple animation
+            const style = document.createElement('style');
+            style.textContent = `
+                @keyframes ripple {
+                    to {
+                        transform: scale(4);
+                        opacity: 0;
+                    }
+                }
+                
+                .rank-card {
+                    position: relative;
+                    overflow: hidden;
+                }
+                
+                .rank-card span {
+                    position: absolute;
+                    border-radius: 50%;
+                    background: rgba(255, 255, 255, 0.6);
+                    transform: scale(0);
+                    animation: ripple 0.6s linear;
+                    left: 50%;
+                    top: 50%;
+                    width: 20px;
+                    height: 20px;
+                    margin-left: -10px;
+                    margin-top: -10px;
+                }
+            `;
+            document.head.appendChild(style);
+        });
+    </script>
+</body>
+</html>

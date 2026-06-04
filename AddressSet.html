@@ -1,0 +1,399 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Address Setup</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        obsidian: '#0B111B',
+                        accent: '#84cc16'
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body {
+            background-color: #0B111B;
+            color: #FFFFFF;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            -webkit-tap-highlight-color: transparent;
+        }
+        /* Custom dropdown arrow for dark background */
+        select {
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3E%3Cpath stroke='%239CA3AF' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3E%3C/svg%3E");
+            background-position: right 1rem center;
+            background-repeat: no-repeat;
+            background-size: 1.5em 1.5em;
+        }
+        select:focus {
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3E%3Cpath stroke='%2384cc16' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3E%3C/svg%3E");
+        }
+        /* Hide scrollbar for a cleaner look, but keep functionality */
+        ::-webkit-scrollbar {
+            width: 4px;
+        }
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #374151;
+            border-radius: 2px;
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col items-center p-4 sm:p-6 antialiased pb-24">
+    <div class="w-full max-w-md mt-4 sm:mt-8">
+        <h1 class="text-2xl sm:text-3xl font-bold mb-2 text-center tracking-tight text-white">Address Setup</h1>
+        <p class="text-gray-400 text-sm sm:text-base text-center mb-8">Please select your location details.</p>
+
+        <div class="space-y-6">
+            <!-- Division -->
+            <div id="divisionContainer" class="flex flex-col opacity-100 transition-opacity duration-300">
+                <label for="divisionSelect" class="text-sm font-medium text-gray-300 mb-2">Division</label>
+                <select id="divisionSelect" class="w-full bg-gray-900 border border-gray-700 rounded-xl px-4 py-3 min-h-[44px] focus:outline-none focus:ring-1 focus:ring-accent focus:border-accent text-white appearance-none transition-all cursor-pointer shadow-sm">
+                    <option value="" disabled selected>Select Division</option>
+                </select>
+            </div>
+
+            <!-- District -->
+            <div id="districtContainer" class="flex flex-col hidden opacity-0 transition-opacity duration-300">
+                <label for="districtSelect" class="text-sm font-medium text-gray-300 mb-2">District</label>
+                <select id="districtSelect" class="w-full bg-gray-900 border border-gray-700 rounded-xl px-4 py-3 min-h-[44px] focus:outline-none focus:ring-1 focus:ring-accent focus:border-accent text-white appearance-none transition-all cursor-pointer shadow-sm">
+                    <option value="" disabled selected>Select District</option>
+                </select>
+            </div>
+
+            <!-- Upazila -->
+            <div id="upazilaContainer" class="flex flex-col hidden opacity-0 transition-opacity duration-300">
+                <label for="upazilaSelect" class="text-sm font-medium text-gray-300 mb-2">Upazila</label>
+                <select id="upazilaSelect" class="w-full bg-gray-900 border border-gray-700 rounded-xl px-4 py-3 min-h-[44px] focus:outline-none focus:ring-1 focus:ring-accent focus:border-accent text-white appearance-none transition-all cursor-pointer shadow-sm">
+                    <option value="" disabled selected>Select Upazila</option>
+                </select>
+            </div>
+
+            <!-- Union -->
+            <div id="unionContainer" class="flex flex-col hidden opacity-0 transition-opacity duration-300">
+                <label for="unionSelect" class="text-sm font-medium text-gray-300 mb-2">Union</label>
+                <select id="unionSelect" class="w-full bg-gray-900 border border-gray-700 rounded-xl px-4 py-3 min-h-[44px] focus:outline-none focus:ring-1 focus:ring-accent focus:border-accent text-white appearance-none transition-all cursor-pointer shadow-sm">
+                    <option value="" disabled selected>Select Union</option>
+                </select>
+            </div>
+
+            <!-- Continue Button -->
+            <button id="continueBtn" disabled class="w-full bg-accent text-obsidian font-bold rounded-xl px-4 py-3 min-h-[44px] mt-8 hover:bg-lime-400 active:bg-lime-600 focus:outline-none focus:ring-2 focus:ring-lime-300 focus:ring-offset-2 focus:ring-offset-obsidian transition-all disabled:opacity-50 disabled:cursor-not-allowed flex justify-center items-center shadow-[0_0_15px_rgba(132,204,22,0.15)] disabled:shadow-none">
+                Continue
+            </button>
+        </div>
+    </div>
+
+    <!-- Loading Overlay -->
+    <div id="loadingOverlay" class="fixed inset-0 bg-obsidian/80 backdrop-blur-sm z-50 hidden flex-col items-center justify-center transition-opacity">
+        <div class="animate-spin rounded-full h-12 w-12 border-4 border-gray-700 border-t-accent mb-4"></div>
+        <p class="text-white font-medium animate-pulse" id="loadingText">Processing...</p>
+    </div>
+
+    <!-- Error Dialog Overlay -->
+    <div id="errorDialog" class="fixed inset-0 bg-obsidian/90 backdrop-blur-md z-50 hidden flex-col items-center justify-center p-4 transition-opacity">
+        <div class="bg-gray-900 border border-gray-700 rounded-2xl p-6 max-w-sm w-full shadow-2xl transform scale-95 transition-transform duration-200">
+            <div class="w-12 h-12 rounded-full bg-red-500/20 flex items-center justify-center mx-auto mb-4">
+                <svg class="w-6 h-6 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                </svg>
+            </div>
+            <h3 class="text-xl font-bold text-white text-center mb-2">Error</h3>
+            <p id="errorDialogMessage" class="text-gray-300 text-center mb-6"></p>
+            <button onclick="closeErrorDialog()" class="w-full bg-gray-800 hover:bg-gray-700 text-white font-medium py-3 px-4 rounded-xl transition-colors focus:outline-none focus:ring-2 focus:ring-gray-600">
+                Dismiss
+            </button>
+        </div>
+    </div>
+
+    <script>
+        // Data State Object
+        const state = {
+            division_id: "",
+            district_id: "",
+            upazila_id: "",
+            union_id: ""
+        };
+
+        // Cache for loaded JSON
+        const cache = {
+            divisions: null,
+            districts: null,
+            upazilas: null,
+            unions: null
+        };
+
+        // DOM Elements Map
+        const els = {
+            divSelect: document.getElementById('divisionSelect'),
+            distSelect: document.getElementById('districtSelect'),
+            upaSelect: document.getElementById('upazilaSelect'),
+            uniSelect: document.getElementById('unionSelect'),
+            
+            divCont: document.getElementById('divisionContainer'),
+            distCont: document.getElementById('districtContainer'),
+            upaCont: document.getElementById('upazilaContainer'),
+            uniCont: document.getElementById('unionContainer'),
+            
+            btn: document.getElementById('continueBtn'),
+            overlay: document.getElementById('loadingOverlay'),
+            loadingText: document.getElementById('loadingText')
+        };
+
+        // Security: Sanitize strings
+        function sanitize(str) {
+            if (!str) return "";
+            const temp = document.createElement('div');
+            temp.textContent = str;
+            return temp.innerHTML; // It's safe here because the textContent automatically encodes, returning safe HTML
+        }
+
+        // UI Helpers
+        function showLoading(text) {
+            els.loadingText.textContent = text;
+            els.overlay.classList.remove('hidden');
+            els.overlay.classList.add('flex');
+        }
+
+        function hideLoading() {
+            els.overlay.classList.remove('flex');
+            els.overlay.classList.add('hidden');
+        }
+
+        function showContainer(containerEl) {
+            containerEl.classList.remove('hidden');
+            // Micro-delay ensures display:block applies before opacity transition starts
+            setTimeout(() => {
+                containerEl.classList.remove('opacity-0');
+                containerEl.classList.add('opacity-100');
+                
+                // UX: Smooth auto-scroll to the newly visible element
+                containerEl.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            }, 10);
+        }
+
+        function hideContainer(containerEl) {
+            containerEl.classList.remove('opacity-100');
+            containerEl.classList.add('opacity-0');
+            setTimeout(() => {
+                containerEl.classList.add('hidden');
+            }, 300);
+        }
+
+        // Error Dialog UI Helpers
+        function showErrorDialog(message) {
+            document.getElementById('errorDialogMessage').textContent = message;
+            const dialog = document.getElementById('errorDialog');
+            dialog.classList.remove('hidden');
+            dialog.classList.add('flex');
+            // Micro-delay for scale animation
+            setTimeout(() => {
+                const dialogCard = dialog.querySelector('.bg-gray-900');
+                dialogCard.classList.remove('scale-95');
+                dialogCard.classList.add('scale-100');
+            }, 10);
+        }
+
+        function closeErrorDialog() {
+            const dialog = document.getElementById('errorDialog');
+            const dialogCard = dialog.querySelector('.bg-gray-900');
+            dialogCard.classList.remove('scale-100');
+            dialogCard.classList.add('scale-95');
+            setTimeout(() => {
+                dialog.classList.remove('flex');
+                dialog.classList.add('hidden');
+            }, 200);
+        }
+
+        // Bridge function for Android WebView response
+        function handleResponse(jsonString) {
+            // Reset button UI
+            els.btn.textContent = 'Continue';
+            updateButtonState(); // Ensure button state reflects selections
+
+            try {
+                const response = JSON.parse(jsonString);
+                
+                if (response.status === "error") {
+                    showErrorDialog(response.message);
+                } else if (response.status === "Dashboard") {
+                    window.location.href = "Loading.html";
+                }
+            } catch (e) {
+                console.error("Failed to parse response:", e);
+                showErrorDialog("An unexpected error occurred while processing the response.");
+            }
+        }
+
+        // Strict DOM manipulation (No innerHTML for dynamic content)
+        function resetSelect(selectEl, defaultText) {
+            // Clear all child nodes
+            while (selectEl.firstChild) {
+                selectEl.removeChild(selectEl.firstChild);
+            }
+            // Create default option
+            const defOpt = document.createElement('option');
+            defOpt.value = "";
+            defOpt.disabled = true;
+            defOpt.selected = true;
+            defOpt.textContent = defaultText;
+            selectEl.appendChild(defOpt);
+        }
+
+        function populateSelect(selectEl, data, defaultText) {
+            resetSelect(selectEl, defaultText);
+            data.forEach(item => {
+                const opt = document.createElement('option');
+                opt.value = sanitize(item.id);
+                opt.textContent = sanitize(item.name);
+                selectEl.appendChild(opt);
+            });
+        }
+
+        function updateButtonState() {
+            if (state.division_id && state.district_id && state.upazila_id && state.union_id) {
+                els.btn.disabled = false;
+            } else {
+                els.btn.disabled = true;
+            }
+        }
+
+        // Fetch Data Logic
+        async function fetchData(url, cacheKey) {
+            // Memory Cache
+            if (cache[cacheKey]) return cache[cacheKey];
+            
+            try {
+                showLoading("Loading data...");
+                const response = await fetch(url);
+                if (!response.ok) throw new Error("Network response was not ok");
+                const data = await response.json();
+                
+                // Save to cache
+                cache[cacheKey] = data;
+                return data;
+            } catch (error) {
+                console.error("Fetch Error:", error);
+                alert("Failed to load data. Please check your network connection.");
+                return [];
+            } finally {
+                hideLoading();
+            }
+        }
+
+        // Init
+        window.addEventListener('DOMContentLoaded', async () => {
+            const divisions = await fetchData('divisions.json', 'divisions');
+            populateSelect(els.divSelect, divisions, 'Select Division');
+        });
+
+        // Event Listeners for Cascading Logic
+        els.divSelect.addEventListener('change', async (e) => {
+            const val = e.target.value;
+            if (!val) return;
+            
+            // 1. Update State
+            state.division_id = val;
+            state.district_id = "";
+            state.upazila_id = "";
+            state.union_id = "";
+            
+            // 2. Reset Lower Levels
+            resetSelect(els.distSelect, 'Select District');
+            resetSelect(els.upaSelect, 'Select Upazila');
+            resetSelect(els.uniSelect, 'Select Union');
+            hideContainer(els.upaCont);
+            hideContainer(els.uniCont);
+            updateButtonState();
+
+            // 3. Load & Filter Next Level
+            const districts = await fetchData('districts.json', 'districts');
+            const filtered = districts.filter(d => d.division_id === state.division_id);
+            populateSelect(els.distSelect, filtered, 'Select District');
+            showContainer(els.distCont);
+        });
+
+        els.distSelect.addEventListener('change', async (e) => {
+            const val = e.target.value;
+            if (!val) return;
+            
+            state.district_id = val;
+            state.upazila_id = "";
+            state.union_id = "";
+            
+            resetSelect(els.upaSelect, 'Select Upazila');
+            resetSelect(els.uniSelect, 'Select Union');
+            hideContainer(els.uniCont);
+            updateButtonState();
+
+            const upazilas = await fetchData('upazilas.json', 'upazilas');
+            const filtered = upazilas.filter(u => u.district_id === state.district_id);
+            populateSelect(els.upaSelect, filtered, 'Select Upazila');
+            showContainer(els.upaCont);
+        });
+
+        els.upaSelect.addEventListener('change', async (e) => {
+            const val = e.target.value;
+            if (!val) return;
+            
+            state.upazila_id = val;
+            state.union_id = "";
+            
+            resetSelect(els.uniSelect, 'Select Union');
+            updateButtonState();
+
+            const unions = await fetchData('unions.json', 'unions');
+            // Ensure matching correct foreign key in JSON (upazilla_id)
+            const filtered = unions.filter(u => u.upazilla_id === state.upazila_id);
+            populateSelect(els.uniSelect, filtered, 'Select Union');
+            showContainer(els.uniCont);
+        });
+
+        els.uniSelect.addEventListener('change', (e) => {
+            const val = e.target.value;
+            if (!val) return;
+            
+            state.union_id = val;
+            updateButtonState();
+        });
+
+        // Submission
+        els.btn.addEventListener('click', () => {
+            // Final validation before processing
+            if (!state.division_id || !state.district_id || !state.upazila_id || !state.union_id) {
+                alert("Please complete all selections.");
+                return;
+            }
+
+            const payload = JSON.stringify(state);
+            
+            // Visual feedback
+            els.btn.disabled = true;
+            els.btn.textContent = 'Processing...';
+
+            // Slight delay ensures UI renders the button state before Android blocks thread
+            setTimeout(() => {
+                if (typeof Android !== "undefined" && Android.setAddress) {
+                    Android.setAddress(payload);
+                } else {
+                    console.log("Mock Android Interface triggered.");
+                    console.log("Payload:", payload);
+                    // Optional fallback reset for testing
+                    setTimeout(() => {
+                        els.btn.textContent = 'Continue';
+                        els.btn.disabled = false;
+                    }, 500);
+                }
+            }, 100);
+        });
+    </script>
+</body>
+</html>

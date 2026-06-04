@@ -1,0 +1,841 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IoLent Transfer - Everything is Money</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        :root {
+            --primary-gradient: #00e676;
+            --accent-gradient: #00e676;
+            --neon-blue: #00e676;
+            --neon-purple: #00e676;
+            --neon-green: #00e676;
+            --bg-dark: #0B111B;
+            --bg-gradient: #0B111B;
+            --glass-bg: rgba(255, 255, 255, 0.05);
+            --glass-border: rgba(255, 255, 255, 0.1);
+            --text-main: #ffffff;
+            --text-dim: rgba(255, 255, 255, 0.6);
+            --font-primary: 'Space Grotesk', sans-serif;
+            --font-secondary: 'Inter', sans-serif;
+            --card-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            font-family: var(--font-secondary);
+            background-color: var(--bg-dark) !important;
+            background-image: none !important;
+            background-attachment: fixed;
+            color: var(--text-main);
+            min-height: 100vh;
+            overflow-x: hidden;
+            padding: 20px 15px 40px;
+        }
+
+        .container {
+            max-width: 500px;
+            margin: 0 auto;
+        }
+
+        /* Glassmorphism Styles */
+        .glass-card {
+            background: var(--glass-bg);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid var(--glass-border);
+            border-radius: 20px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: var(--card-shadow);
+            opacity: 0;
+            transform: translateY(20px);
+            animation: fadeInUp 0.6s ease forwards;
+        }
+
+        @keyframes fadeInUp {
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Page Header */
+        header {
+            text-align: center;
+            margin-bottom: 30px;
+            animation: fadeInDown 0.8s ease forwards;
+        }
+
+        @keyframes fadeInDown {
+            from { opacity: 0; transform: translateY(-20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        header h1 {
+            font-family: var(--font-primary);
+            font-size: 1.8rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            margin-bottom: 8px;
+        }
+
+        header h1 i {
+            color: var(--neon-blue);
+            text-shadow: 0 0 10px rgba(0, 230, 118, 0.5);
+        }
+
+        header p {
+            font-size: 0.9rem;
+            color: var(--text-dim);
+            max-width: 80%;
+            margin: 0 auto;
+        }
+
+        /* Balance Card */
+        .balance-card {
+            position: relative;
+            overflow: hidden;
+        }
+
+        .balance-card::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -50%;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle, rgba(0, 230, 118, 0.15) 0%, transparent 70%);
+            z-index: 0;
+        }
+
+        .balance-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 15px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .balance-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 15px;
+            background: rgba(0, 0, 0, 0.2);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: 12px;
+        }
+
+        .bal-info {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .bal-info i {
+            width: 32px;
+            height: 32px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.9rem;
+        }
+
+        .bal-label {
+            font-size: 0.8rem;
+            color: var(--text-dim);
+            display: block;
+        }
+
+        .bal-val {
+            font-family: var(--font-primary);
+            font-weight: 700;
+            font-size: 1.1rem;
+            color: #fff;
+        }
+
+        .bal-val .symbol {
+            font-size: 0.9rem;
+            color: var(--text-dim);
+            margin-left: 2px;
+        }
+
+        /* Transfer Form */
+        .form-group {
+            position: relative;
+            margin-bottom: 25px;
+        }
+
+        .form-input {
+            width: 100%;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--glass-border);
+            border-radius: 12px;
+            padding: 16px 15px;
+            color: white;
+            font-family: var(--font-secondary);
+            font-size: 1rem;
+            outline: none;
+            transition: 0.3s;
+        }
+
+        .form-input:focus {
+            border-color: var(--neon-blue);
+            background: rgba(255, 255, 255, 0.08);
+            box-shadow: 0 0 15px rgba(0, 230, 118, 0.1);
+        }
+
+        .form-label {
+            position: absolute;
+            left: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-dim);
+            transition: 0.3s;
+            pointer-events: none;
+        }
+
+        .form-input:focus + .form-label,
+        .form-input:not(:placeholder-shown) + .form-label {
+            top: -10px;
+            left: 10px;
+            font-size: 0.75rem;
+            color: var(--neon-blue);
+            background: var(--bg-dark);
+            padding: 2px 8px;
+            border-radius: 4px;
+        }
+
+        select.form-input {
+            cursor: pointer;
+            appearance: none;
+        }
+
+        .select-wrapper::after {
+            content: '\f107';
+            font-family: 'Font Awesome 6 Free';
+            font-weight: 900;
+            position: absolute;
+            right: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-dim);
+            pointer-events: none;
+        }
+
+        /* Transfer Type Selector (Tabs) */
+        .type-selector {
+            display: flex;
+            background: rgba(0, 0, 0, 0.3);
+            border: 1px solid var(--glass-border);
+            border-radius: 12px;
+            padding: 5px;
+            margin-bottom: 25px;
+            position: relative;
+        }
+
+        .type-btn {
+            flex: 1;
+            padding: 12px;
+            border: none;
+            background: none;
+            color: var(--text-dim);
+            font-size: 0.9rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: 0.3s;
+            position: relative;
+            z-index: 1;
+            border-radius: 8px;
+        }
+
+        .type-btn.active {
+            color: var(--bg-dark);
+            background: var(--primary-gradient);
+            box-shadow: 0 4px 15px rgba(0, 230, 118, 0.3);
+        }
+
+        .type-btn i {
+            margin-right: 8px;
+        }
+
+        /* Recipient Preview */
+        .recipient-preview {
+            background: rgba(0, 230, 118, 0.08);
+            border: 1px dashed var(--neon-green);
+            border-radius: 15px;
+            padding: 15px;
+            display: none;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 25px;
+            animation: slideDown 0.4s ease;
+        }
+
+        @keyframes slideDown {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .recipient-avatar {
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            border: 2px solid var(--neon-green);
+        }
+
+        .recipient-info h4 {
+            font-size: 0.9rem;
+            margin-bottom: 2px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .recipient-info p {
+            font-size: 0.75rem;
+            color: var(--text-dim);
+        }
+
+        /* Quick Transfer */
+        .quick-actions {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 8px;
+            margin-bottom: 25px;
+        }
+
+        .quick-btn {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--glass-border);
+            border-radius: 10px;
+            padding: 10px 5px;
+            color: #fff;
+            font-size: 0.8rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        .quick-btn:hover {
+            background: var(--primary-gradient);
+            border-color: transparent;
+            transform: translateY(-2px);
+        }
+
+        /* Fee Info */
+        .info-box {
+            background: rgba(255, 255, 255, 0.03);
+            border-left: 4px solid var(--neon-purple);
+            padding: 12px 15px;
+            border-radius: 0 10px 10px 0;
+            margin-bottom: 25px;
+            font-size: 0.8rem;
+            color: var(--text-dim);
+        }
+
+        .info-box ul {
+            list-style: none;
+            margin-top: 5px;
+        }
+
+        .summary-card {
+            background: rgba(0, 0, 0, 0.3);
+            border: 1px solid var(--neon-blue);
+            border-radius: 15px;
+            padding: 15px;
+            margin-bottom: 25px;
+        }
+
+        .summary-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 8px;
+            font-size: 0.85rem;
+        }
+
+        .summary-row.total {
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            padding-top: 10px;
+            margin-top: 10px;
+            font-weight: 700;
+            color: var(--neon-blue);
+        }
+
+        /* Large Action Button */
+        .action-btn {
+            width: 100%;
+            padding: 18px;
+            border-radius: 16px;
+            border: none;
+            background: var(--primary-gradient);
+            color: var(--bg-dark);
+            font-weight: 700;
+            font-size: 1.1rem;
+            font-family: var(--font-primary);
+            letter-spacing: 1px;
+            cursor: pointer;
+            box-shadow: 0 10px 20px rgba(0, 230, 118, 0.3);
+            transition: 0.3s;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .action-btn:disabled {
+            filter: grayscale(1);
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .action-btn:active { transform: scale(0.98); }
+
+        /* History Section */
+        .section-title {
+            font-family: var(--font-primary);
+            font-size: 1rem;
+            margin: 30px 0 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .history-list {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .history-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px;
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            border-radius: 16px;
+        }
+
+        .hist-user {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .hist-user i {
+            color: var(--neon-blue);
+        }
+
+        .hist-name {
+            font-size: 0.85rem;
+            font-weight: 600;
+            display: block;
+        }
+
+        .hist-date {
+            font-size: 0.7rem;
+            color: var(--text-dim);
+        }
+
+        .hist-amount {
+            text-align: right;
+        }
+
+        .hist-val {
+            font-family: var(--font-primary);
+            font-weight: 700;
+            font-size: 0.95rem;
+        }
+
+        .hist-status {
+            font-size: 0.7rem;
+            padding: 2px 8px;
+            border-radius: 10px;
+            background: rgba(0, 230, 118, 0.1);
+            color: var(--neon-green);
+        }
+
+        /* Modal */
+        .modal-overlay {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(8px);
+            z-index: 1000;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .modal-content {
+            background: var(--bg-dark);
+            border: 1px solid var(--glass-border);
+            border-radius: 20px;
+            width: 100%;
+            max-width: 400px;
+            padding: 25px;
+            box-shadow: 0 0 30px rgba(0, 0, 0, 0.5);
+        }
+
+        .modal-buttons {
+            display: flex;
+            gap: 12px;
+            margin-top: 20px;
+        }
+
+        .modal-btn {
+            flex: 1;
+            padding: 12px;
+            border-radius: 10px;
+            border: none;
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+        .btn-cancel { background: rgba(255, 255, 255, 0.1); color: #fff; }
+        .btn-confirm { background: var(--primary-gradient); color: var(--bg-dark); }
+
+        /* Success Popup */
+        .success-popup {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: var(--bg-dark);
+            z-index: 1100;
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding: 20px;
+        }
+
+        .check-icon {
+            width: 80px;
+            height: 80px;
+            background: var(--neon-green);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2.5rem;
+            color: #fff;
+            margin-bottom: 20px;
+            box-shadow: 0 0 30px rgba(0, 230, 118, 0.4);
+            animation: bounceIn 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+        }
+
+        @keyframes bounceIn {
+            0% { transform: scale(0); }
+            100% { transform: scale(1); }
+        }
+
+        /* Toast */
+        .toast {
+            position: fixed;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%) translateY(100px);
+            background: rgba(0, 0, 0, 0.85);
+            backdrop-filter: blur(10px);
+            color: white;
+            padding: 12px 25px;
+            border-radius: 30px;
+            font-size: 0.9rem;
+            z-index: 2000;
+            transition: 0.5s cubic-bezier(0.18, 0.89, 0.32, 1.28);
+            border: 1px solid var(--neon-blue);
+            white-space: nowrap;
+        }
+
+        .toast.show { transform: translateX(-50%) translateY(0); }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <!-- 1️⃣ Page Header -->
+        <header>
+            <h1><i class="fas fa-paper-plane"></i> Transfer Balance</h1>
+            <p>Send points or balance to another IoLent user instantly.</p>
+        </header>
+        <!-- 2️⃣ Transfer Form -->
+        <div class="glass-card">
+            <div class="type-selector">
+                <button type="button" class="type-btn active" onclick="setTransferType('points', this)">
+                    <i class="fas fa-coins"></i> Points (PT)
+                </button>
+                <button type="button" class="type-btn" onclick="setTransferType('balance', this)">
+                    <i class="fas fa-wallet"></i> Balance (৳)
+                </button>
+                <input type="hidden" id="transferType" value="points">
+            </div>
+
+            <div class="form-group">
+                <input type="number" id="recipientId" class="form-input" placeholder=" " oninput="validateRecipient(this.value)" min="10000">
+                <label class="form-label">Recipient User ID</label>
+            </div>
+
+            <div id="recipientSection" class="recipient-preview">
+                <img src="https://i.ibb.co.com/mrmfDmqG/user.png" class="recipient-avatar" alt="Avatar">
+                <div class="recipient-info">
+                    <h4 id="recipientName">Rahim Ahmed <i class="fas fa-check-circle" style="color: var(--neon-green);"></i></h4>
+                    <p id="recipientIdDisplay">User ID: #24581</p>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <input type="number" id="transferAmount" class="form-input" placeholder=" " oninput="calculateSummary()">
+                <label class="form-label">Amount to Transfer</label>
+            </div>
+
+            <div class="quick-actions">
+                <button class="quick-btn" onclick="setAmount(10)">10</button>
+                <button class="quick-btn" onclick="setAmount(25)">25</button>
+                <button class="quick-btn" onclick="setAmount(50)">50</button>
+                <button class="quick-btn" onclick="setAmount(100)">100</button>
+            </div>
+
+
+            <div class="info-box">
+                <i class="fas fa-info-circle"></i> Transaction Rules:
+                <ul>
+                    <li>• Processing Fee: 2.0%</li>
+                    <li>• Points: Min 50 - Max 50,000</li>
+                    <li>• Money: Min 1 TK - Max 100 TK</li>
+                </ul>
+            </div>
+
+            <div class="summary-card">
+                <div class="summary-row">
+                    <span>Transfer Amount:</span>
+                    <span id="sumAmount">0 <span class="unit">PT</span></span>
+                </div>
+                <div class="summary-row">
+                    <span>Processing Fee (5%):</span>
+                    <span id="sumFee">0 <span class="unit">PT</span></span>
+                </div>
+                <div class="summary-row total">
+                    <span>Total Deduction:</span>
+                    <span id="sumTotal">0 <span class="unit">PT</span></span>
+                </div>
+            </div>
+
+            <button id="mainActionBtn" class="action-btn" onclick="openConfirmModal()" disabled>
+                CONFIRM TRANSFER
+            </button>
+        </div>
+
+    </div>
+
+    <!-- Modals -->
+    <div id="modalOverlay" class="modal-overlay">
+        <div class="modal-content">
+            <h3 style="margin-bottom: 15px; text-align: center;">Confirm Transfer</h3>
+            <div style="background: rgba(255,255,255,0.05); padding: 15px; border-radius: 12px; margin-bottom: 20px;">
+                <div class="summary-row"><span>To:</span> <span id="modRecipient">#24581</span></div>
+                <div class="summary-row"><span>Amount:</span> <span id="modAmount">0</span></div>
+                <div class="summary-row"><span>Fee:</span> <span id="modFee">0</span></div>
+                <div class="summary-row total"><span>Total:</span> <span id="modTotal">0</span></div>
+            </div>
+            <div class="modal-buttons">
+                <button class="modal-btn btn-cancel" onclick="closeModal()">Cancel</button>
+                <button class="modal-btn btn-confirm" onclick="executeTransfer()">Confirm Now</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="successPopup" class="success-popup">
+        <div class="check-icon"><i class="fas fa-check"></i></div>
+        <h2 style="margin-bottom: 15px;">Transfer Successful!</h2>
+        <p id="successMsg" style="color: var(--text-dim); margin-bottom: 30px;"></p>
+        <button class="action-btn" style="max-width: 200px;" onclick="location.reload()">Done</button>
+    </div>
+
+    <div id="toast" class="toast"></div>
+
+    <script>
+        // State Management
+        const balances = {
+            points: 5300,
+            balance: 1250,
+            mining: 48
+        };
+
+        const config = {
+            feePercent: 2,
+            minTransfer: 50,
+            maxTransfer: 10000
+        };
+
+        // Initialize on load
+        window.onload = () => {
+            // Initialization logic if needed
+        };
+
+
+        // Recipient Validation Simulation
+        function validateRecipient(id) {
+            const preview = document.getElementById('recipientSection');
+            const name = document.getElementById('recipientName');
+            const displayId = document.getElementById('recipientIdDisplay');
+
+            // Real-time input filtering for numbers only
+            const cleanedValue = id.replace(/[^0-9]/g, '');
+            if (cleanedValue !== id) {
+                document.getElementById('recipientId').value = cleanedValue;
+                return;
+            }
+
+            // Check if ID meets minimum requirement
+            const idNum = parseInt(cleanedValue);
+            if (cleanedValue.length >= 5 && !isNaN(idNum) && idNum >= 10000) {
+                // Simulate API found
+                preview.style.display = 'flex';
+                name.innerHTML = `Recipient Found <i class="fas fa-check-circle" style="color: var(--neon-green);"></i>`;
+                displayId.textContent = `User ID: ${cleanedValue}`;
+                validateForm();
+            } else {
+                preview.style.display = 'none';
+                validateForm();
+            }
+        }
+
+        // UI Updates based on Transfer Type
+        function setTransferType(type, btn) {
+            document.getElementById('transferType').value = type;
+            
+            // UI Toggle
+            document.querySelectorAll('.type-btn').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+
+            const units = document.querySelectorAll('.unit');
+            const label = type === 'points' ? 'Points' : 'TK';
+            
+            units.forEach(u => u.textContent = label);
+            
+            if (type === 'balance') {
+                config.minTransfer = 1;
+                config.maxTransfer = 1000;
+            } else {
+                config.minTransfer = 50;
+                config.maxTransfer = 10000;
+            }
+            
+            calculateSummary();
+        }
+
+        function setAmount(amt) {
+            document.getElementById('transferAmount').value = amt;
+            calculateSummary();
+        }
+
+        // Fee and Total Calculation
+        function calculateSummary() {
+            const amount = parseFloat(document.getElementById('transferAmount').value) || 0;
+            const fee = (amount * config.feePercent) / 100;
+            const total = amount + fee;
+            const type = document.getElementById('transferType').value;
+            const unit = type === 'points' ? ' PT' : ' TK';
+
+            document.getElementById('sumAmount').textContent = amount.toLocaleString() + unit;
+            document.getElementById('sumFee').textContent = fee.toLocaleString() + unit;
+            document.getElementById('sumTotal').textContent = total.toLocaleString() + unit;
+
+            validateForm();
+        }
+
+        // Form Validation
+        function validateForm() {
+            const id = document.getElementById('recipientId').value;
+            const amount = parseFloat(document.getElementById('transferAmount').value) || 0;
+            const type = document.getElementById('transferType').value;
+            const total = amount + (amount * (config.feePercent / 100));
+            
+            const available = type === 'points' ? balances.points : balances.balance;
+            const btn = document.getElementById('mainActionBtn');
+
+            // Check if ID is a valid number and minimum 10000
+            const idNum = parseInt(id);
+            const isValidId = !isNaN(idNum) && idNum >= 10000;
+
+            const isValid = isValidId && 
+                          amount >= config.minTransfer && 
+                          amount <= config.maxTransfer && 
+                          total <= available;
+
+            btn.disabled = !isValid;
+        }
+
+        // Modal Operations
+        function openConfirmModal() {
+            const type = document.getElementById('transferType').value;
+            const unit = type === 'points' ? ' PT' : ' TK';
+            const amount = parseFloat(document.getElementById('transferAmount').value);
+            const fee = (amount * (config.feePercent / 100));
+            const total = amount + fee;
+
+            document.getElementById('modRecipient').textContent = document.getElementById('recipientId').value;
+            document.getElementById('modAmount').textContent = amount.toLocaleString() + unit;
+            document.getElementById('modFee').textContent = fee.toLocaleString() + unit;
+            document.getElementById('modTotal').textContent = total.toLocaleString() + unit;
+
+            document.getElementById('modalOverlay').style.display = 'flex';
+        }
+
+        function closeModal() {
+            document.getElementById('modalOverlay').style.display = 'none';
+        }
+
+        // Final Execution
+        function executeTransfer() {
+            closeModal();
+            const btn = document.getElementById('mainActionBtn');
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> PROCESSING...';
+            btn.disabled = true;
+
+            setTimeout(() => {
+                const amount = document.getElementById('transferAmount').value;
+                const id = document.getElementById('recipientId').value;
+                const type = document.getElementById('transferType').value;
+                const unit = type === 'points' ? 'points' : 'balance';
+
+                document.getElementById('successMsg').textContent = `You sent ${amount} ${unit} to User ${id} successfully.`;
+                document.getElementById('successPopup').style.display = 'flex';
+            }, 1500);
+        }
+
+        function showToast(msg) {
+            const t = document.getElementById('toast');
+            t.textContent = msg;
+            t.classList.add('show');
+            setTimeout(() => t.classList.remove('show'), 3000);
+        }
+
+        // Ripple Effect
+        document.querySelectorAll('.action-btn, .quick-btn').forEach(button => {
+            button.addEventListener('click', function(e) {
+                let x = e.clientX - e.target.offsetLeft;
+                let y = e.clientY - e.target.offsetTop;
+                let ripple = document.createElement('span');
+                ripple.style.left = x + 'px';
+                ripple.style.top = y + 'px';
+                this.appendChild(ripple);
+                setTimeout(() => ripple.remove(), 600);
+            });
+        });
+    </script>
+</body>
+</html>

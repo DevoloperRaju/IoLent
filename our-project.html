@@ -1,0 +1,381 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IoLent - Our Project</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #00e676;
+            --secondary: #00c853;
+            --accent: #00e676;
+            --bg-color: #0B111B;
+            --card-bg: rgba(255, 255, 255, 0.05);
+            --card-border: rgba(255, 255, 255, 0.1);
+            --text-main: #ffffff;
+            --text-muted: #9ba1a6;
+            --shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            background-color: var(--bg-color) !important;
+            background-image: none !important;
+            color: var(--text-main);
+            min-height: 100vh;
+            padding: 20px 16px 80px;
+            display: flex;
+            justify-content: center;
+            -webkit-overflow-scrolling: touch;
+            overflow-scrolling: touch;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 500px;
+            margin: 0 auto;
+        }
+
+        /* === HEADER === */
+        .header {
+            text-align: center;
+            margin-bottom: 32px;
+            margin-top: 10px;
+            animation: fadeInDown 0.8s ease-out;
+        }
+
+        @keyframes fadeInDown {
+            from { opacity: 0; transform: translateY(-20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .header-icon {
+            width: 64px;
+            height: 64px;
+            background: var(--primary);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 16px;
+            font-size: 28px;
+            box-shadow: 0 0 20px rgba(0, 230, 118, 0.4);
+            animation: pulse 2s infinite alternate;
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); box-shadow: 0 0 15px rgba(0, 230, 118, 0.3); }
+            100% { transform: scale(1.05); box-shadow: 0 0 30px rgba(0, 230, 118, 0.6); }
+        }
+
+        .header h1 {
+            font-size: 26px;
+            font-weight: 800;
+            margin-bottom: 8px;
+            letter-spacing: -0.5px;
+            background: linear-gradient(to right, #fff, var(--accent));
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .header p {
+            color: var(--text-muted);
+            font-size: 14px;
+        }
+
+        /* === PROJECT LIST === */
+        .project-list {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        /* === PROJECT CARD === */
+        .project-card {
+            background: var(--card-bg);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid var(--card-border);
+            border-radius: 20px;
+            padding: 20px;
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+            animation: fadeInUp 0.6s ease-out both;
+        }
+
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .project-card:hover {
+            transform: translateY(-5px);
+            background: rgba(255, 255, 255, 0.08);
+            border-color: rgba(255, 255, 255, 0.2);
+            box-shadow: var(--shadow);
+        }
+
+        /* Performance optimizations for mobile */
+        .project-card {
+            will-change: transform;
+            transform: translateZ(0);
+        }
+
+        .project-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.05), transparent);
+            transition: 0.5s;
+        }
+
+        .project-card:hover::before {
+            left: 100%;
+        }
+
+        /* Updated card layout for right-aligned button */
+        .project-card {
+            background: var(--card-bg);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid var(--card-border);
+            border-radius: 20px;
+            padding: 20px;
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+            animation: fadeInUp 0.6s ease-out both;
+        }
+
+        .project-logo-container {
+            width: 60px;
+            height: 60px;
+            border-radius: 14px;
+            background: rgba(255, 255, 255, 0.03);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            border: 1px solid var(--card-border);
+            overflow: hidden;
+        }
+
+        .project-logo {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .project-info {
+            flex: 1;
+            margin-right: 10px;
+        }
+
+        .project-name {
+            font-size: 15px;
+            font-weight: 700;
+            margin-bottom: 4px;
+            color: #fff;
+        }
+
+        .project-desc {
+            font-size: 12px;
+            color: var(--text-muted);
+            line-height: 1.4;
+        }
+
+        .btn-open {
+            background: var(--primary);
+            color: var(--bg-color);
+            border: none;
+            padding: 6px 12px;
+            border-radius: 8px;
+            font-size: 11px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s;
+            box-shadow: 0 4px 15px rgba(0, 230, 118, 0.3);
+            text-transform: uppercase;
+            white-space: nowrap;
+        }
+
+        .btn-open:hover {
+            transform: scale(1.05);
+            box-shadow: 0 6px 20px rgba(0, 230, 118, 0.5);
+        }
+
+        /* Status Badge - Only Coming Soon */
+        .status-badge {
+            background: rgba(255, 152, 0, 0.1);
+            color: #ff9800;
+            border: 1px solid rgba(255, 152, 0, 0.2);
+            font-size: 10px;
+            font-weight: 700;
+            padding: 4px 10px;
+            border-radius: 20px;
+            text-transform: uppercase;
+            white-space: nowrap;
+        }
+
+        @media (max-width: 480px) {
+            .project-card {
+                padding: 16px;
+                gap: 12px;
+            }
+            .project-logo-container {
+                width: 50px;
+                height: 50px;
+            }
+            .btn-open {
+                padding: 6px 12px;
+                font-size: 11px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <div class="header">
+            <div class="header-icon">🚀</div>
+            <h1>Our Project</h1>
+            <p>Explore the IoLent Ecosystem</p>
+        </div>
+
+        <!-- Project List -->
+        <div class="project-list" id="project-list">
+            <!-- Cards will be injected by JavaScript -->
+        </div>
+    </div>
+
+    <script>
+        // === PROJECT DATA ===
+        const projectsData = [
+            {
+                id: 1,
+                name: "IoLent Mining",
+                logo: "https://images.unsplash.com/photo-1639762681485-074b7f938ba0?w=100&h=100&fit=crop",
+                description: "Automated mining system designed to reward users through smart robots.",
+                status: "active"
+            },
+            {
+                id: 2,
+                name: "IoLent Exchange",
+                logo: "https://images.unsplash.com/photo-1621761191319-c6fb62004040?w=100&h=100&fit=crop",
+                description: "Instant digital asset exchange system for seamless platform trading.",
+                status: "active"
+            },
+            {
+                id: 3,
+                name: "IoLent Referral",
+                logo: "https://images.unsplash.com/photo-1556742044-3c52d6e88c62?w=100&h=100&fit=crop",
+                description: "Advanced community growth system rewarding global expansion.",
+                status: "active"
+            },
+            {
+                id: 4,
+                name: "IoLent Robots",
+                logo: "https://images.unsplash.com/photo-1485827404703-89b55fcc595e?w=100&h=100&fit=crop",
+                description: "Fleet of smart mining robots engineered for maximum efficiency.",
+                status: "active"
+            },
+            {
+                id: 5,
+                name: "IoLent Reward Hub",
+                logo: "https://images.unsplash.com/photo-1513151233558-d860c5398176?w=100&h=100&fit=crop",
+                description: "Task-based reward center for active participants and contributors.",
+                status: "active"
+            },
+            {
+                id: 6,
+                name: "IoLent Community",
+                logo: "https://images.unsplash.com/photo-1521737711867-e3b97375f902?w=100&h=100&fit=crop",
+                description: "Centralized communication hub for the latest official news.",
+                status: "active"
+            },
+            {
+                id: 7,
+                name: "IoLent Wallet",
+                logo: "https://images.unsplash.com/photo-1621416848469-8fbf038d6fcb?w=100&h=100&fit=crop",
+                description: "Secure, high-speed wallet system for managing platform assets.",
+                status: "active"
+            },
+            {
+                id: 8,
+                name: "IoLent Leaderboard",
+                logo: "https://images.unsplash.com/photo-1533107862482-0e6974b06ec4?w=100&h=100&fit=crop",
+                description: "Competition system highlighting top performing community miners.",
+                status: "active"
+            },
+            {
+                id: 9,
+                name: "IoLent Education",
+                logo: "https://images.unsplash.com/photo-1509062522246-3755977927d7?w=100&h=100&fit=crop",
+                description: "Knowledge platform for mastering digital mining technologies.",
+                status: "upcoming"
+            },
+            {
+                id: 10,
+                name: "IoLent Future Labs",
+                logo: "https://images.unsplash.com/photo-1581093588401-fbb62a02f120?w=100&h=100&fit=crop",
+                description: "Experimental R&D division for innovative blockchain tech.",
+                status: "upcoming"
+            }
+        ];
+
+        // === RENDER CARDS ===
+        function renderProjectCards() {
+            const listContainer = document.getElementById('project-list');
+            
+            projectsData.forEach((project, index) => {
+                const card = document.createElement('div');
+                card.className = 'project-card';
+                card.style.animationDelay = `${index * 0.05}s`;
+                
+                const isUpcoming = project.status === 'upcoming';
+                
+                card.innerHTML = `
+                    <div class="project-logo-container">
+                        <img src="${project.logo}" class="project-logo" alt="${project.name}" onerror="this.src='https://via.placeholder.com/100?text=Logo'">
+                    </div>
+                    <div class="project-info">
+                        <h2 class="project-name">${project.name}</h2>
+                        <p class="project-desc">${project.description}</p>
+                    </div>
+                    ${isUpcoming ? '<span class="status-badge">Coming Soon</span>' : `<button class="btn-open" onclick="handleOpen(${project.id})">Open</button>`}
+                `;
+                
+                listContainer.appendChild(card);
+            });
+        }
+
+        // === HANDLE OPEN ===
+        function handleOpen(id) {
+            // No action for now as per requirements
+            console.log(`Project ${id} open clicked. Placeholder only.`);
+        }
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', renderProjectCards);
+    </script>
+</body>
+</html>

@@ -1,0 +1,342 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IoLent - Notifications</title>
+    <style>
+        :root {
+            --primary: #00e676;
+            --secondary: #00e676;
+            --accent: #00e676;
+            --bg-dark: #0B111B;
+            --card-bg: rgba(255, 255, 255, 0.05);
+            --card-border: rgba(255, 255, 255, 0.1);
+            --text-main: #ffffff;
+            --text-muted: #9ba1a6;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            background-color: var(--bg-dark) !important;
+            background-image: none !important;
+            color: var(--text-main);
+            min-height: 100vh;
+            padding: 20px 20px 80px 20px;
+            display: flex;
+            justify-content: center;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 500px;
+            margin: 0 auto;
+        }
+
+        /* Header */
+        .header {
+            text-align: center;
+            margin-bottom: 24px;
+            margin-top: 10px;
+            animation: slideDown 0.6s forwards;
+        }
+
+        @keyframes slideDown {
+            from { opacity: 0; transform: translateY(-20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .icon-circle {
+            width: 64px;
+            height: 64px;
+            background: var(--primary);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 16px;
+            box-shadow: 0 0 25px rgba(0, 230, 118, 0.5);
+            animation: pulseGlow 2.5s infinite alternate;
+        }
+
+        @keyframes pulseGlow {
+            0% { box-shadow: 0 0 15px rgba(0, 230, 118, 0.3); transform: scale(1); }
+            100% { box-shadow: 0 0 30px rgba(0, 230, 118, 0.6); transform: scale(1.03); }
+        }
+
+        .icon-circle svg {
+            width: 30px;
+            height: 30px;
+            fill: none;
+            stroke: white;
+            stroke-width: 2;
+            stroke-linecap: round;
+            stroke-linejoin: round;
+        }
+
+        .header h1 {
+            font-size: 26px;
+            margin-bottom: 8px;
+            background: var(--primary);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            font-weight: 800;
+        }
+
+        .header p {
+            color: var(--text-muted);
+            font-size: 14px;
+            margin-bottom: 12px;
+        }
+
+        /* Notification List */
+        .notification-list {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        /* Notification Card */
+        .notif-card {
+            background: var(--card-bg);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid var(--card-border);
+            border-radius: 16px;
+            padding: 16px;
+            display: flex;
+            gap: 14px;
+            position: relative;
+            transition: all 0.3s;
+            cursor: pointer;
+            animation: slideUp 0.5s forwards;
+            opacity: 0;
+            overflow: hidden;
+        }
+
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .notif-card:hover {
+            transform: translateY(-2px);
+            background: rgba(255,255,255,0.08);
+        }
+
+        /* Icons */
+        .notif-icon {
+            width: 44px;
+            height: 44px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            background: rgba(255,255,255,0.1);
+            font-size: 20px;
+        }
+
+        /* Specific Type Coloring */
+        .type-deposit .notif-icon { background: rgba(0,230,118,0.2); }
+        .type-withdraw .notif-icon { background: rgba(0,230,118,0.2); }
+        .type-transfer .notif-icon { background: rgba(0,230,118,0.2); }
+        .type-referral .notif-icon { background: rgba(0,230,118,0.2); }
+        .type-reward .notif-icon { background: rgba(0,230,118,0.2); }
+        .type-robot .notif-icon { background: rgba(0,230,118,0.2); }
+        .type-mining .notif-icon { background: rgba(0,230,118,0.2); }
+        .type-system .notif-icon { background: rgba(0,230,118,0.2); }
+        
+        /* Content */
+        .notif-content { flex: 1; }
+        
+        .notif-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 6px;
+        }
+
+        .notif-title {
+            font-size: 15px;
+            font-weight: 700;
+            color: #fff;
+            padding-right: 10px;
+        }
+
+        .notif-msg {
+            font-size: 13px;
+            color: var(--text-muted);
+            line-height: 1.4;
+            margin-bottom: 10px;
+        }
+
+        .notif-time {
+            font-size: 11px;
+            color: rgba(255,255,255,0.4);
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .notif-time svg {
+            width: 12px;
+            height: 12px;
+        }
+
+        /* Empty State */
+        .empty-state {
+            text-align: center;
+            padding: 50px 20px;
+            color: var(--text-muted);
+            display: none;
+            animation: fadeIn 0.5s forwards;
+        }
+
+        .empty-state svg {
+            width: 64px;
+            height: 64px;
+            margin-bottom: 16px;
+            opacity: 0.3;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        
+        <!-- Header -->
+        <div class="header">
+            <div class="icon-circle">
+                <svg viewBox="0 0 24 24">
+                    <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path>
+                    <path d="M13.73 21a2 2 0 0 1-3.46 0"></path>
+                </svg>
+            </div>
+            <h1>Notifications</h1>
+            <p>Your recent IoLent activity updates.</p>
+        </div>
+
+        <!-- List Container -->
+        <div class="notification-list" id="notification-list">
+            <!-- Notifications injected here via JS -->
+        </div>
+
+        <!-- Empty State -->
+        <div class="empty-state" id="empty-state">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path>
+                <line x1="2" y1="2" x2="22" y2="22"></line>
+            </svg>
+            <h3>No notifications yet</h3>
+            <p style="margin-top: 8px; font-size: 14px;">You're all caught up!</p>
+        </div>
+
+    </div>
+
+    <script>
+        // Icons mapping
+        const svgs = {
+            deposit: `💰`,
+            withdraw: `💸`,
+            transfer: `🔄`,
+            referral: `👥`,
+            reward: `🎁`,
+            robot: `🤖`,
+            mining: `⛏️`,
+            system: `⚙️`
+        };
+
+        // 20 Demo Notifications
+        let notificationsData = [
+            { id: 1, type: 'robot', title: 'Robot Purchased', message: 'You successfully purchased 1 Premium mining robot for your farm.', date: '13 Mar 2026 - 4:30 PM', read: false, category: 'system' },
+            { id: 2, type: 'mining', title: 'Mining Income Collected', message: 'You collected 12 TK from your active mining robots.', date: '13 Mar 2026 - 1:15 PM', read: false, category: 'system' },
+            { id: 3, type: 'deposit', title: 'Deposit Successful', message: 'Your deposit of 500 TK has been verified and added to balance.', date: '12 Mar 2026 - 8:35 AM', read: true, category: 'transactions' },
+            { id: 4, type: 'withdraw', title: 'Withdrawal Requested', message: 'Your withdrawal request of 100 TK is under review.', date: '11 Mar 2026 - 6:00 PM', read: true, category: 'transactions' },
+            { id: 5, type: 'referral', title: 'New Referral Joined', message: 'User Rahim joined using your referral code. Keep it up!', date: '11 Mar 2026 - 2:45 PM', read: true, category: 'system' },
+            { id: 6, type: 'reward', title: 'Reward Claimed', message: 'You claimed a 50 Points reward for task completion.', date: '10 Mar 2026 - 11:10 AM', read: true, category: 'rewards' },
+            { id: 7, type: 'transfer', title: 'Transfer Completed', message: 'You transferred 20 TK to user Karim successfully.', date: '09 Mar 2026 - 5:20 PM', read: true, category: 'transactions' },
+            { id: 8, type: 'system', title: 'Maintenance Notice', message: 'System maintenance scheduled for tomorrow at 2:00 AM UTC.', date: '08 Mar 2026 - 10:00 AM', read: true, category: 'system' },
+            { id: 9, type: 'deposit', title: 'Deposit Successful', message: 'Your deposit of 50 TK has been credited to your account.', date: '07 Mar 2026 - 1:15 PM', read: true, category: 'transactions' },
+            { id: 10, type: 'mining', title: 'Mining Speed Boost', message: 'Your overall mining speed has been boosted by 5% for 24h.', date: '07 Mar 2026 - 8:45 AM', read: true, category: 'system' },
+            { id: 11, type: 'reward', title: 'Daily Bonus', message: 'You earned 10 Points from today\'s daily quiz.', date: '06 Mar 2026 - 8:00 AM', read: true, category: 'rewards' },
+            { id: 12, type: 'robot', title: 'Robot Expired', message: 'Your Starter Robot has reached the end of its lifecycle.', date: '05 Mar 2026 - 11:30 PM', read: true, category: 'system' },
+            { id: 13, type: 'transfer', title: 'Received Transfer', message: 'You received 15 TK from user JohnDoe.', date: '04 Mar 2026 - 5:20 PM', read: true, category: 'transactions' },
+            { id: 14, type: 'withdraw', title: 'Withdrawal Completed', message: 'Your withdrawal of 200 TK was successfully processed.', date: '03 Mar 2026 - 10:10 AM', read: true, category: 'transactions' },
+            { id: 15, type: 'referral', title: 'Referral Bonus', message: 'You earned a 5 TK bonus from your referral\'s first deposit.', date: '02 Mar 2026 - 3:45 PM', read: true, category: 'rewards' },
+            { id: 16, type: 'reward', title: 'Achievement Unlocked', message: 'You unlocked the "Novice Miner" title and reward!', date: '02 Mar 2026 - 12:00 PM', read: true, category: 'rewards' },
+            { id: 17, type: 'mining', title: 'Mining Setup Complete', message: 'Your mining rig is now fully operational.', date: '01 Mar 2026 - 9:00 AM', read: true, category: 'system' },
+            { id: 18, type: 'system', title: 'Welcome to IoLent', message: 'Thank you for registering on IoLent platform!', date: '28 Feb 2026 - 10:00 AM', read: true, category: 'system' },
+            { id: 19, type: 'deposit', title: 'First Deposit Bonus', message: 'You received a 10% bonus on your first deposit.', date: '28 Feb 2026 - 10:15 AM', read: true, category: 'rewards' },
+            { id: 20, type: 'robot', title: 'Starter Robot Activated', message: 'Your free Starter Robot was deployed successfully.', date: '28 Feb 2026 - 10:20 AM', read: true, category: 'system' }
+        ];
+
+        let currentFilter = 'all';
+
+        // Initialize
+        function init() {
+            renderNotifications();
+        }
+
+        function renderNotifications() {
+            const listEl = document.getElementById('notification-list');
+            const emptyEl = document.getElementById('empty-state');
+            
+            listEl.innerHTML = '';
+            
+            if(notificationsData.length === 0) {
+                listEl.style.display = 'none';
+                emptyEl.style.display = 'block';
+                return;
+            }
+
+            listEl.style.display = 'flex';
+            emptyEl.style.display = 'none';
+
+            notificationsData.forEach((notif, index) => {
+                const icon = svgs[notif.type] || svgs['system'];
+                const card = document.createElement('div');
+                card.className = `notif-card type-${notif.type}`;
+                card.style.animationDelay = `${index * 0.05}s`;
+
+                card.innerHTML = `
+                    <div class="notif-icon">
+                        ${icon}
+                    </div>
+                    <div class="notif-content">
+                        <div class="notif-header">
+                            <div class="notif-title">${notif.title}</div>
+                        </div>
+                        <div class="notif-msg">${notif.message}</div>
+                        <div class="notif-time">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+                            ${notif.date}
+                        </div>
+                    </div>
+                `;
+
+                listEl.appendChild(card);
+            });
+        }
+
+        function init() {
+            renderNotifications();
+        }
+
+        // Run on load
+        window.onload = init;
+    </script>
+</body>
+</html>

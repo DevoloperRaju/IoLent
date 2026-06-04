@@ -1,0 +1,780 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IoLent - Exchange</title>
+    <style>
+        /* CSS variables for colors */
+        :root {
+            --primary: #00e676;
+            --secondary: #00c853;
+            --accent: #00e676;
+            --bg-color: #0B111B;
+            --card-bg: rgba(255, 255, 255, 0.05);
+            --card-border: rgba(255, 255, 255, 0.1);
+            --text-main: #ffffff;
+            --text-muted: #9ba1a6;
+            --danger: #ff4b4b;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-color) !important;
+            background-image: none !important;
+            color: var(--text-main);
+            min-height: 100vh;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 480px;
+            margin: 0 auto;
+            animation: fadeIn 0.6s ease-out;
+            padding-bottom: 40px;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Glassmorphism utility */
+        .glass-card {
+            background: var(--card-bg);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid var(--card-border);
+            border-radius: 20px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+        
+        .glass-card:hover {
+            box-shadow: 0 8px 32px rgba(0, 230, 118, 0.1);
+        }
+
+        /* Header */
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+            margin-top: 10px;
+        }
+
+        .icon-circle {
+            width: 60px;
+            height: 60px;
+            background: var(--primary);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 15px;
+            box-shadow: 0 0 20px rgba(0, 230, 118, 0.5);
+        }
+
+        .icon-circle svg {
+            width: 30px;
+            height: 30px;
+            fill: var(--bg-color);
+        }
+
+        .header h1 {
+            font-size: 24px;
+            margin-bottom: 8px;
+            color: #fff;
+        }
+
+        .header p {
+            color: var(--text-muted);
+            font-size: 14px;
+        }
+
+        /* Rate Card */
+        .rate-card {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .rate-info h3 {
+            font-size: 16px;
+            margin-bottom: 4px;
+        }
+
+        .rate-info p {
+            font-size: 12px;
+            color: var(--accent);
+        }
+
+        .rate-value {
+            font-size: 14px;
+            font-weight: bold;
+            color: var(--text-main);
+            background: rgba(0, 230, 118, 0.1);
+            padding: 8px 12px;
+            border-radius: 12px;
+            border: 1px solid rgba(0, 230, 118, 0.2);
+        }
+
+        /* Input Section */
+        .input-group {
+            margin-bottom: 20px;
+        }
+
+        .input-label {
+            display: block;
+            margin-bottom: 8px;
+            font-size: 14px;
+            color: var(--text-muted);
+        }
+
+        .input-wrapper {
+            position: relative;
+        }
+
+        .currency-icon {
+            position: absolute;
+            left: 16px;
+            top: 50%;
+            transform: translateY(-50%);
+            font-weight: bold;
+            color: var(--text-muted);
+        }
+
+        .amount-input {
+            width: 100%;
+            background: rgba(0, 0, 0, 0.2);
+            border: 1px solid var(--card-border);
+            border-radius: 16px;
+            padding: 16px 16px 16px 45px;
+            font-size: 18px;
+            color: white;
+            outline: none;
+            transition: all 0.3s;
+        }
+
+        .amount-input:focus {
+            border-color: var(--accent);
+            box-shadow: 0 0 15px rgba(0, 230, 118, 0.3);
+        }
+
+        /* Quick Buttons */
+        .quick-buttons {
+            display: flex;
+            gap: 10px;
+            margin-top: 15px;
+        }
+
+        .quick-btn {
+            flex: 1;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--card-border);
+            border-radius: 12px;
+            padding: 10px 0;
+            color: var(--text-main);
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .quick-btn:hover, .quick-btn:active {
+            background: rgba(0, 230, 118, 0.2);
+            border-color: var(--primary);
+            box-shadow: 0 0 10px rgba(0, 230, 118, 0.4);
+            color: var(--accent);
+        }
+
+        /* Preview */
+        .preview-card {
+            text-align: center;
+            background: rgba(0, 230, 118, 0.05);
+            border: 1px dashed var(--primary);
+        }
+
+        .preview-label {
+            font-size: 14px;
+            color: var(--text-muted);
+            margin-bottom: 10px;
+        }
+
+        .preview-amount {
+            font-size: 32px;
+            font-weight: bold;
+            color: var(--accent);
+            margin-bottom: 5px;
+            text-shadow: 0 0 10px rgba(0, 230, 118, 0.3);
+            transition: all 0.3s;
+        }
+
+        .preview-calc {
+            font-size: 12px;
+            color: var(--text-muted);
+        }
+
+        /* Summary */
+        .summary-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+            font-size: 14px;
+        }
+
+        .summary-row:last-child {
+            margin-bottom: 0;
+            padding-top: 10px;
+            border-top: 1px solid var(--card-border);
+            font-weight: bold;
+        }
+
+        .summary-label {
+            color: var(--text-muted);
+        }
+        
+        .summary-val {
+            color: var(--text-main);
+        }
+
+        .summary-highlight {
+            color: var(--accent);
+        }
+
+        /* Warning */
+        .warning-text {
+            color: var(--danger);
+            font-size: 12px;
+            margin-top: 8px;
+            display: none;
+            animation: fadeIn 0.3s ease;
+        }
+
+        /* Bonuses */
+        .info-box {
+            background: rgba(0, 230, 118, 0.05);
+            border-left: 3px solid var(--accent);
+            padding: 12px;
+            border-radius: 0 8px 8px 0;
+            font-size: 12px;
+            color: var(--text-muted);
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .alert-box {
+            background: rgba(255, 75, 75, 0.05);
+            border-left: 3px solid var(--danger);
+            padding: 12px;
+            border-radius: 0 8px 8px 0;
+            font-size: 12px;
+            color: var(--text-muted);
+            margin-bottom: 24px;
+        }
+
+        /* Button */
+        .convert-btn {
+            width: 100%;
+            background: var(--primary);
+            color: var(--bg-color);
+            border: none;
+            border-radius: 16px;
+            padding: 18px;
+            font-size: 18px;
+            font-weight: bold;
+            cursor: pointer;
+            box-shadow: 0 4px 15px rgba(0, 230, 118, 0.4);
+            transition: all 0.3s;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .convert-btn:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0, 230, 118, 0.6);
+        }
+
+        .convert-btn:active:not(:disabled) {
+            transform: translateY(1px);
+        }
+
+        .convert-btn:disabled {
+            background: rgba(255, 255, 255, 0.1);
+            color: rgba(255, 255, 255, 0.3);
+            cursor: not-allowed;
+            box-shadow: none;
+        }
+
+        /* Ripple effect */
+        .ripple {
+            position: absolute;
+            background: rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            transform: scale(0);
+            animation: ripple-anim 0.6s linear;
+            pointer-events: none;
+        }
+
+        @keyframes ripple-anim {
+            to {
+                transform: scale(4);
+                opacity: 0;
+            }
+        }
+
+        /* Modal */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.7);
+            backdrop-filter: blur(5px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s;
+        }
+
+        .modal-overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .modal-card {
+            background-color: var(--bg-color) !important;
+            background-image: none !important;
+            border: 1px solid var(--card-border);
+            border-radius: 20px;
+            width: 90%;
+            max-width: 350px;
+            padding: 24px;
+            transform: translateY(20px) scale(0.95);
+            transition: all 0.3s;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
+        }
+
+        .modal-overlay.active .modal-card {
+            transform: translateY(0) scale(1);
+        }
+
+        .modal-title {
+            font-size: 18px;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .modal-details {
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 12px;
+            padding: 15px;
+            margin-bottom: 20px;
+        }
+
+        .modal-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+            font-size: 14px;
+        }
+
+        .modal-row:last-child {
+            margin-bottom: 0;
+        }
+
+        .modal-actions {
+            display: flex;
+            gap: 12px;
+        }
+
+        .btn-cancel, .btn-confirm {
+            flex: 1;
+            padding: 14px;
+            border-radius: 12px;
+            font-size: 14px;
+            font-weight: bold;
+            cursor: pointer;
+            border: none;
+            transition: all 0.2s;
+        }
+
+        .btn-cancel {
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+        }
+
+        .btn-cancel:hover {
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        .btn-confirm {
+            background: var(--primary);
+            color: var(--bg-color);
+            box-shadow: 0 4px 10px rgba(0, 230, 118, 0.3);
+        }
+
+        .btn-confirm:hover {
+            box-shadow: 0 6px 15px rgba(0, 230, 118, 0.5);
+            transform: translateY(-1px);
+        }
+
+        /* Success screen */
+        .success-content {
+            display: none;
+            text-align: center;
+            padding: 10px 0;
+        }
+
+        .check-circle {
+            width: 80px;
+            height: 80px;
+            background: rgba(0, 230, 118, 0.1);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 20px;
+            border: 2px solid var(--accent);
+            box-shadow: 0 0 20px rgba(0, 230, 118, 0.4);
+            animation: popIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        .check-circle svg {
+            width: 40px;
+            height: 40px;
+            fill: var(--accent);
+        }
+
+        @keyframes popIn {
+            0% { transform: scale(0); }
+            50% { transform: scale(1.1); }
+            100% { transform: scale(1); }
+        }
+
+        .success-content h2 {
+            font-size: 20px;
+            margin-bottom: 12px;
+            color: var(--accent);
+        }
+
+        .success-content p {
+            font-size: 14px;
+            color: var(--text-muted);
+            margin-bottom: 24px;
+            line-height: 1.5;
+        }
+        
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <!-- Header -->
+        <div class="header">
+            <div class="icon-circle">
+                <svg viewBox="0 0 24 24">
+                    <path d="M19 8l-4 4h3c0 3.31-2.69 6-6 6-1.01 0-1.97-.25-2.8-.7l-1.46 1.46C8.97 19.54 10.43 20 12 20c4.42 0 8-3.58 8-8h3l-4-4zM6 12c0-3.31 2.69-6 6-6 1.01 0 1.97.25 2.8.7l1.46-1.46C15.03 4.46 13.57 4 12 4c-4.42 0-8 3.58-8 8H1l4 4 4-4H6z"/>
+                </svg>
+            </div>
+            <h1>Exchange Balance</h1>
+            <p>Convert your balance into IoLent points instantly.</p>
+        </div>
+
+        <!-- Exchange Rate -->
+        <div class="glass-card rate-card">
+            <div class="rate-info">
+                <h3>Exchange Rate</h3>
+                <p>No exchange fee applied.</p>
+            </div>
+            <div class="rate-value">1 TK = 100 Points</div>
+        </div>
+
+        <!-- Input Section -->
+        <div class="glass-card">
+            <div class="input-group">
+                <label class="input-label">Amount (TK)</label>
+                <div class="input-wrapper">
+                    <span class="currency-icon">TK</span>
+                    <input type="number" id="amount-input" class="amount-input" placeholder="Enter amount to convert" autocomplete="off" min="1">
+                </div>
+                <div id="warning-msg" class="warning-text">Insufficient balance.</div>
+            </div>
+
+            <div class="quick-buttons">
+                <button class="quick-btn" data-val="10">10 TK</button>
+                <button class="quick-btn" data-val="20">20 TK</button>
+                <button class="quick-btn" data-val="50">50 TK</button>
+                <button class="quick-btn" data-val="100">100 TK</button>
+            </div>
+        </div>
+
+        <!-- Live Preview -->
+        <div class="glass-card preview-card">
+            <div class="preview-label">You Will Receive</div>
+            <div class="preview-amount" id="preview-points">0 Points</div>
+            <div class="preview-calc" id="preview-calc">0 TK &rarr; 0 Points</div>
+        </div>
+
+        <!-- Summary -->
+        <div class="glass-card">
+            <div class="summary-row">
+                <span class="summary-label">Convert Amount:</span>
+                <span class="summary-val" id="summary-amount">0 TK</span>
+            </div>
+            <div class="summary-row">
+                <span class="summary-label">Exchange Fee:</span>
+                <span class="summary-val">0 TK</span>
+            </div>
+            <div class="summary-row">
+                <span class="summary-label">Points Received:</span>
+                <span class="summary-val summary-highlight" id="summary-points">0 Points</span>
+            </div>
+        </div>
+
+        <!-- Submit Button -->
+        <button id="convert-btn" class="convert-btn" disabled>Convert to Points</button>
+
+        <!-- Info Boxes -->
+        <div style="margin-top: 24px;">
+            <div class="info-box">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="12" cy="12" r="10"></circle>
+                    <line x1="12" y1="16" x2="12" y2="12"></line>
+                    <line x1="12" y1="8" x2="12.01" y2="8"></line>
+                </svg>
+                Points can be used to purchase mining robots.
+            </div>
+            <div class="alert-box" style="margin-bottom: 0;">
+                Converted points cannot be converted back to TK.
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal -->
+    <div class="modal-overlay" id="modal">
+        <div class="modal-card">
+            <div id="modal-confirm-content">
+                <h3 class="modal-title">Confirm Exchange</h3>
+                <div class="modal-details">
+                    <div class="modal-row">
+                        <span class="summary-label">Convert:</span>
+                        <span class="summary-val" id="modal-amount">0 TK</span>
+                    </div>
+                    <div class="modal-row">
+                        <span class="summary-label">Receive:</span>
+                        <span class="summary-highlight" id="modal-points">0 Points</span>
+                    </div>
+                    <div class="modal-row" style="margin-top: 12px; border-top: 1px dashed rgba(255,255,255,0.1); padding-top: 12px;">
+                        <span class="summary-label">Exchange Rate:</span>
+                        <span class="summary-val">1 TK = 100 Points</span>
+                    </div>
+                </div>
+                <div class="modal-actions">
+                    <button class="btn-cancel" id="btn-cancel">Cancel</button>
+                    <button class="btn-confirm" id="btn-confirm">Confirm Exchange</button>
+                </div>
+            </div>
+
+            <div id="modal-success-content" class="success-content">
+                <div class="check-circle">
+                    <svg viewBox="0 0 24 24">
+                        <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/>
+                    </svg>
+                </div>
+                <h2>Exchange Successful</h2>
+                <p id="success-message">0 TK has been converted into 0 Points.</p>
+                <button class="btn-cancel" style="width: 100%" id="btn-close-success">Done</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // Configuration
+            const RATE = 100; // 1 TK = 100 Pts
+            const MOCK_BALANCE = 5000; // Mock balance to test the "exceeds balance" rule
+
+            // DOM Elements
+            const amountInput = document.getElementById('amount-input');
+            const quickBtns = document.querySelectorAll('.quick-btn');
+            const warningMsg = document.getElementById('warning-msg');
+            
+            const previewPoints = document.getElementById('preview-points');
+            const previewCalc = document.getElementById('preview-calc');
+            
+            const summaryAmount = document.getElementById('summary-amount');
+            const summaryPoints = document.getElementById('summary-points');
+            
+            const convertBtn = document.getElementById('convert-btn');
+            
+            const modal = document.getElementById('modal');
+            const modalAmount = document.getElementById('modal-amount');
+            const modalPoints = document.getElementById('modal-points');
+            
+            const btnCancel = document.getElementById('btn-cancel');
+            const btnConfirm = document.getElementById('btn-confirm');
+            
+            const confirmContent = document.getElementById('modal-confirm-content');
+            const successContent = document.getElementById('modal-success-content');
+            const successMessage = document.getElementById('success-message');
+            const btnCloseSuccess = document.getElementById('btn-close-success');
+
+            // Format numbers with commas
+            const formatNumber = (num) => {
+                return num.toLocaleString('en-US');
+            };
+
+            // Update entire UI based on current input
+            const updateUI = (val) => {
+                const amountStr = val.trim();
+                const amount = parseFloat(amountStr);
+                
+                // Clear UI if empty or invalid
+                if (!amountStr || isNaN(amount) || amount <= 0) {
+                    previewPoints.textContent = '0 Points';
+                    previewCalc.innerHTML = '0 TK &rarr; 0 Points';
+                    summaryAmount.textContent = '0 TK';
+                    summaryPoints.textContent = '0 Points';
+                    convertBtn.disabled = true;
+                    
+                    if (amount < 0) {
+                        warningMsg.textContent = 'Amount must be greater than 0.';
+                        warningMsg.style.display = 'block';
+                    } else if (amount === 0) {
+                        warningMsg.textContent = 'Amount is too small.';
+                        warningMsg.style.display = 'block';
+                    } else {
+                        warningMsg.style.display = 'none';
+                    }
+                    return;
+                }
+
+                // Minimum exchange validation
+                if (amount < 1) {
+                    warningMsg.textContent = 'Minimum exchange amount is 1 TK.';
+                    warningMsg.style.display = 'block';
+                    convertBtn.disabled = true;
+                    return;
+                }
+
+                const points = amount * RATE;
+
+                // Update text values
+                previewPoints.textContent = `${formatNumber(points)} Points`;
+                previewCalc.innerHTML = `${formatNumber(amount)} TK &rarr; ${formatNumber(points)} Points`;
+                summaryAmount.textContent = `${formatNumber(amount)} TK`;
+                summaryPoints.textContent = `${formatNumber(points)} Points`;
+
+                // Validation rules
+                if (amount > MOCK_BALANCE) {
+                    warningMsg.textContent = 'Amount exceeds available balance.';
+                    warningMsg.style.display = 'block';
+                    convertBtn.disabled = true;
+                } else {
+                    warningMsg.style.display = 'none';
+                    convertBtn.disabled = false;
+                }
+
+                // Input focus glow effect manually triggered if value changed by quick buttons
+                amountInput.style.borderColor = 'var(--accent)';
+                amountInput.style.boxShadow = '0 0 15px rgba(0, 230, 118, 0.3)';
+                setTimeout(() => {
+                    if (document.activeElement !== amountInput) {
+                        amountInput.style.borderColor = 'var(--card-border)';
+                        amountInput.style.boxShadow = 'none';
+                    }
+                }, 300);
+            };
+
+            // Listeners
+            amountInput.addEventListener('input', (e) => {
+                updateUI(e.target.value);
+            });
+
+            amountInput.addEventListener('blur', () => {
+                amountInput.style.borderColor = 'var(--card-border)';
+                amountInput.style.boxShadow = 'none';
+            });
+            
+            amountInput.addEventListener('focus', () => {
+                amountInput.style.borderColor = 'var(--accent)';
+                amountInput.style.boxShadow = '0 0 15px rgba(0, 242, 254, 0.3)';
+            });
+
+            quickBtns.forEach(btn => {
+                btn.addEventListener('click', () => {
+                    const val = btn.getAttribute('data-val');
+                    amountInput.value = val;
+                    updateUI(val);
+                });
+            });
+
+            // Convert button Ripple & Modal Open
+            convertBtn.addEventListener('click', function(e) {
+                // Ripple Effect
+                const rect = this.getBoundingClientRect();
+                const x = e.clientX - rect.left;
+                const y = e.clientY - rect.top;
+                
+                const ripple = document.createElement('span');
+                ripple.className = 'ripple';
+                ripple.style.left = `${x}px`;
+                ripple.style.top = `${y}px`;
+                
+                this.appendChild(ripple);
+                setTimeout(() => ripple.remove(), 600);
+
+                // Setup Modal
+                const amount = parseFloat(amountInput.value);
+                const points = amount * RATE;
+                
+                modalAmount.textContent = `${formatNumber(amount)} TK`;
+                modalPoints.textContent = `${formatNumber(points)} Points`;
+                
+                confirmContent.style.display = 'block';
+                successContent.style.display = 'none';
+                modal.classList.add('active');
+            });
+
+            // Modal Handlers
+            btnCancel.addEventListener('click', () => {
+                modal.classList.remove('active');
+            });
+
+            btnConfirm.addEventListener('click', () => {
+                const amount = parseFloat(amountInput.value);
+                const points = amount * RATE;
+
+                // Switch to success state
+                confirmContent.style.display = 'none';
+                successContent.style.display = 'block';
+                
+                successMessage.textContent = `"${formatNumber(amount)} TK has been converted into ${formatNumber(points)} Points."`;
+            });
+
+            btnCloseSuccess.addEventListener('click', () => {
+                modal.classList.remove('active');
+                // Reset form
+                amountInput.value = '';
+                updateUI('');
+            });
+        });
+    </script>
+</body>
+</html>

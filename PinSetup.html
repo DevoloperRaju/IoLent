@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Set PIN - IoLent</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    @keyframes fadeSlideUp { 0% { opacity: 0; transform: translateY(30px); } 100% { opacity: 1; transform: translateY(0); } }
+    @keyframes inputPop { 0% { transform: scale(0.8); opacity: 0; } 100% { transform: scale(1); opacity: 1; } }
+
+    body { margin: 0; font-family: 'Inter', 'Segoe UI', sans-serif; background-color: #0B111B !important; background-image: none !important;
+           display: flex; align-items: center; justify-content: center; height: 100vh; color: #ffffff; }
+    .pin-container { background: rgba(255, 255, 255, 0.05); padding: 30px 25px; border-radius: 15px; box-shadow: 0 8px 32px rgba(0,0,0,0.3); border: 1px solid rgba(255, 255, 255, 0.1); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+                     text-align: center; max-width: 320px; width: 100%; animation: fadeSlideUp 0.8s ease-out; }
+    .pin-container h2 { margin-bottom: 10px; color: #00e676; font-weight: 800; }
+    .pin-container p { color: #9ba1a6; }
+    .pin-inputs { display: flex; justify-content: space-between; margin: 20px 0; }
+    .pin-inputs input { width: 50px; height: 60px; font-size: 24px; text-align: center; border: 2px solid rgba(255, 255, 255, 0.1); border-radius: 10px; background: rgba(0, 0, 0, 0.2); color: #ffffff;
+                        transition: all 0.3s; animation: inputPop 0.4s ease forwards; }
+    .pin-inputs input:focus { border-color: #00e676; outline: none; transform: scale(1.1); box-shadow: 0 0 15px rgba(0, 230, 118, 0.2); background: rgba(0, 230, 118, 0.05); }
+    .submit-btn { background: #00e676; color: #0B111B; padding: 12px 30px; border: none; border-radius: 10px; font-size: 16px; font-weight: bold;
+                  cursor: pointer; transition: all 0.3s; box-shadow: 0 4px 15px rgba(0, 230, 118, 0.3); width: 100%; }
+    .submit-btn:hover { transform: translateY(-2px); box-shadow: 0 8px 20px rgba(0, 230, 118, 0.5); }
+    .footer { margin-top: 20px; font-size: 14px; color: #9ba1a6; }
+
+    /* Modal Dialog */
+    .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(11, 17, 27, 0.8); backdrop-filter: blur(5px); display: flex; justify-content: center; align-items: center; z-index: 2000; opacity: 0; pointer-events: none; transition: opacity 0.3s ease; }
+    .modal-overlay.show { opacity: 1; pointer-events: auto; }
+    .modal-content { background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 20px; padding: 30px; width: 90%; max-width: 350px; text-align: center; box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3); transform: translateY(20px); transition: transform 0.3s ease; backdrop-filter: blur(20px); }
+    .modal-overlay.show .modal-content { transform: translateY(0); }
+    .modal-icon { color: #ff5252; margin-bottom: 15px; display: flex; justify-content: center; }
+    .modal-title { font-weight: 700; font-size: 1.5rem; margin-bottom: 10px; color: #ffffff; }
+    .modal-message { color: rgba(255, 255, 255, 0.8); font-size: 1rem; margin-bottom: 25px; line-height: 1.5; }
+    .modal-btn { background: #00e676; color: #000; border: none; padding: 12px 30px; border-radius: 10px; font-size: 1rem; font-weight: bold; cursor: pointer; transition: all 0.3s ease; width: 100%; }
+    .modal-btn:hover { background: #00c853; transform: translateY(-2px); }
+  </style>
+</head>
+<body>
+  <!-- Modal Dialog -->
+  <div id="messageModal" class="modal-overlay">
+    <div class="modal-content">
+      <div class="modal-icon">
+        <svg fill="currentColor" viewBox="0 0 20 20" style="width: 50px; height: 50px;">
+          <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd"></path>
+        </svg>
+      </div>
+      <h3 class="modal-title">Notice</h3>
+      <p id="modalMessage" class="modal-message"></p>
+      <button class="modal-btn" onclick="closeModal()">OK</button>
+    </div>
+  </div>
+
+  <div class="pin-container">
+    <h2>SetUp Your Pin</h2>
+    <p>Please enter new 4-digit secure PIN</p>
+    <div class="pin-inputs">
+      <input type="password" maxlength="1" inputmode="numeric" pattern="[0-9]*" oninput="moveToNext(this, 0)">
+      <input type="password" maxlength="1" inputmode="numeric" pattern="[0-9]*" oninput="moveToNext(this, 1)">
+      <input type="password" maxlength="1" inputmode="numeric" pattern="[0-9]*" oninput="moveToNext(this, 2)">
+      <input type="password" maxlength="1" inputmode="numeric" pattern="[0-9]*" oninput="moveToNext(this, 3)">
+    </div>
+    <button class="submit-btn" onclick="confirmPin()">Confirm</button>
+    <div class="footer">IoLent - Everything is Money</div>
+  </div>
+
+  <script>
+    function showModal(message) {
+      document.getElementById('modalMessage').textContent = message;
+      document.getElementById('messageModal').classList.add('show');
+    }
+
+    function closeModal() {
+      document.getElementById('messageModal').classList.remove('show');
+    }
+
+    function handleResponse(jsonString) {
+      try {
+        const data = JSON.parse(jsonString);
+        
+        if (data.status === "error") {
+            showModal(data.message);
+        } else if (data.status === "success") {
+            if (data.page === "SetUpline") {
+                window.location.href = "ReferralSetup.html";
+            } else if (data.page === "AccountSetup") {
+                window.location.href = "AccountSetup.html";
+            } else if (data.page === "SetAddress") {
+                window.location.href = "AddressSet.html";
+            } else if (data.page === "Dashboard") {
+                window.location.href = "Loading.html";
+            }
+        }
+      } catch (e) {
+        console.error("JSON parsing error:", e);
+        showModal("Invalid server response.");
+      }
+    }
+
+    const inputs = document.querySelectorAll('.pin-inputs input');
+
+    function moveToNext(current, index) {
+      // Allow only numeric input
+      current.value = current.value.replace(/[^0-9]/g, '');
+      
+      if (current.value.length === 1 && index < inputs.length - 1) {
+        inputs[index + 1].focus();
+      }
+    }
+
+    function confirmPin() {
+      let pin = '';
+      for (let input of inputs) {
+        if (input.value === '') {
+          alert("Please enter all 4 digits");
+          return;
+        }
+        pin += input.value;
+      }
+      // Android JavaScript Interface কল
+      if (typeof Android !== "undefined" && Android.setPIN) {
+       var value = pin;  
+        Android.setPIN(value);
+      } else {
+        alert("Android Interface not found!");
+      }
+    }
+  </script>
+</body>
+</html>

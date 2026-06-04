@@ -1,0 +1,762 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>About IoLent - Digital Earning Platform</title>
+    <style>
+        :root {
+            --primary: #00e676;
+            --secondary: #00c853;
+            --primary-dark: #009624;
+            --secondary-dark: #00600f;
+            --accent: #00e676;
+            --bg-color: #0B111B !important;
+            --card-bg: rgba(255, 255, 255, 0.05);
+            --card-border: rgba(255, 255, 255, 0.1);
+            --text-main: #ffffff;
+            --text-muted: #9ba1a6;
+            --success: #00e676;
+            --danger: #ff4b4b;
+            --warning: #ffb300;
+            --glass-bg: rgba(255, 255, 255, 0.03);
+            --glass-border: rgba(255, 255, 255, 0.1);
+            --floating-element-bg: transparent;
+            --floating-element-blur: 0px;
+            --particle-color: transparent;
+            --particle-line-color: transparent;
+        }
+
+        :root[data-theme="dark"] {
+            --primary: #00e676;
+            --secondary: #00c853;
+            --primary-dark: #009624;
+            --secondary-dark: #00600f;
+            --bg-color: #0B111B !important;
+            --card-bg: rgba(255, 255, 255, 0.05);
+            --glass-bg: rgba(255, 255, 255, 0.03);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            background: #0B111B !important;
+            color: var(--text-main);
+            min-height: 100vh;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            overflow-x: hidden;
+            -webkit-overflow-scrolling: touch;
+            overscroll-behavior-y: contain;
+            will-change: scroll-position;
+            position: relative;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 480px;
+            margin: 0 auto;
+        }
+
+        /* Header Section */
+        .header-section {
+            text-align: center;
+            margin-bottom: 30px;
+            position: relative;
+            padding: 20px 0;
+        }
+
+        .logo-container {
+            width: 80px;
+            height: 80px;
+            background: rgba(0, 230, 118, 0.1);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 16px;
+            box-shadow: 0 0 30px rgba(0, 230, 118, 0.3);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .logo-container::before {
+            display: none;
+        }
+
+        .logo-icon {
+            width: 50px;
+            height: 50px;
+            background: transparent;
+            border-radius: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: none;
+            background-image: url('https://i.ibb.co.com/QjvffmCv/ic-launcher.png');
+            background-size: contain;
+            background-repeat: no-repeat;
+            background-position: center;
+        }
+
+        @keyframes rotate {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .header-title {
+            font-size: 28px;
+            font-weight: 800;
+            margin-bottom: 8px;
+            color: #ffffff;
+        }
+
+        .header-subtitle {
+            color: var(--text-muted);
+            font-size: 14px;
+            line-height: 1.6;
+            opacity: 0.9;
+        }
+
+        /* Glass Card */
+        .glass-card {
+            background: var(--glass-bg);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid var(--glass-border);
+            border-radius: 20px;
+            padding: 24px 20px;
+            margin-bottom: 24px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+            transition: all 0.3s ease;
+            opacity: 0;
+            transform: translateY(30px);
+            animation: slideUp 0.6s forwards cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .glass-card:hover {
+            box-shadow: 0 8px 32px rgba(0, 242, 254, 0.1);
+            transform: translateY(-2px);
+        }
+
+        .glass-card.highlight {
+            border: 1px solid rgba(0, 230, 118, 0.5);
+            box-shadow: 0 0 25px rgba(0, 230, 118, 0.2);
+            background: rgba(0, 230, 118, 0.05);
+        }
+
+        .glass-card.feature-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+        }
+
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Section Headers */
+        .section-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .section-icon {
+            width: 32px;
+            height: 32px;
+            background: rgba(0, 230, 118, 0.1);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--accent);
+            font-size: 16px;
+        }
+
+        .section-title {
+            font-size: 18px;
+            font-weight: 700;
+            color: #fff;
+        }
+
+        /* Content Styles */
+        .content-text {
+            color: var(--text-muted);
+            line-height: 1.7;
+            font-size: 14px;
+            margin-bottom: 16px;
+        }
+
+        .highlight-text {
+            color: var(--accent);
+            font-weight: 600;
+            background: transparent;
+            padding: 2px 0px;
+            border-radius: 0px;
+            border: none;
+        }
+
+        /* Step Flow */
+        .step-flow {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .step-card {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 16px;
+            padding: 16px;
+            display: flex;
+            align-items: flex-start;
+            gap: 14px;
+            transition: all 0.3s ease;
+        }
+
+        .step-card:hover {
+            background: rgba(255, 255, 255, 0.06);
+            border-color: rgba(0, 242, 254, 0.3);
+        }
+
+        .step-number {
+            width: 32px;
+            height: 32px;
+            background: rgba(0, 230, 118, 0.2);
+            border: 1px solid var(--accent);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 800;
+            font-size: 14px;
+            color: var(--accent);
+            flex-shrink: 0;
+            box-shadow: 0 4px 15px rgba(0, 230, 118, 0.2);
+        }
+
+        .step-content h4 {
+            font-size: 14px;
+            font-weight: 700;
+            margin-bottom: 6px;
+            color: #fff;
+        }
+
+        .step-content p {
+            font-size: 13px;
+            color: var(--text-muted);
+            line-height: 1.5;
+        }
+
+        /* Feature Cards */
+        .feature-card {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 16px;
+            padding: 16px;
+            text-align: center;
+            transition: all 0.3s ease;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        .feature-card:hover {
+            background: rgba(255, 255, 255, 0.06);
+            border-color: rgba(0, 242, 254, 0.3);
+            transform: translateY(-2px);
+        }
+
+        .feature-icon {
+            width: 40px;
+            height: 40px;
+            background: rgba(0, 230, 118, 0.1);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--accent);
+            font-size: 20px;
+        }
+
+        .feature-title {
+            font-size: 13px;
+            font-weight: 700;
+            color: #fff;
+            text-align: center;
+        }
+
+        .feature-desc {
+            font-size: 12px;
+            color: var(--text-muted);
+            text-align: center;
+            line-height: 1.4;
+        }
+
+        /* Quote Section */
+        .quote-section {
+            background: rgba(255, 255, 255, 0.03);
+            border-left: 4px solid var(--accent);
+            padding: 20px;
+            border-radius: 0 16px 16px 0;
+            position: relative;
+        }
+
+        .quote-text {
+            font-size: 16px;
+            font-style: italic;
+            line-height: 1.6;
+            color: #fff;
+            margin-bottom: 12px;
+        }
+
+        .quote-author {
+            font-size: 13px;
+            color: var(--text-muted);
+            font-weight: 600;
+            text-align: right;
+        }
+
+        /* Safety Section */
+        .safety-list {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .safety-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px 12px;
+            background: rgba(255, 255, 255, 0.03);
+            border-radius: 12px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .safety-icon {
+            width: 20px;
+            height: 20px;
+            background: rgba(0, 230, 118, 0.2);
+            border: 1px solid rgba(0, 230, 118, 0.5);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--success);
+            font-size: 12px;
+        }
+
+        .safety-text {
+            font-size: 13px;
+            color: var(--text-muted);
+            line-height: 1.4;
+        }
+
+        /* Contact Section */
+        .contact-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 12px;
+        }
+
+        .contact-item {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            padding: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            transition: all 0.3s ease;
+        }
+
+        .contact-item:hover {
+            background: rgba(255, 255, 255, 0.06);
+            border-color: rgba(0, 242, 254, 0.3);
+        }
+
+        .contact-label {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 13px;
+            color: var(--text-muted);
+        }
+
+        .contact-icon {
+            width: 24px;
+            height: 24px;
+            background: rgba(0, 230, 118, 0.1);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--accent);
+            font-size: 14px;
+        }
+
+        .btn-contact {
+            background: rgba(0, 230, 118, 0.2);
+            border: 1px solid var(--accent);
+            color: var(--accent);
+            padding: 12px 20px;
+            border-radius: 12px;
+            font-weight: 600;
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(0, 230, 118, 0.2);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn-contact:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.6);
+        }
+
+        /* Footer */
+        .footer {
+            text-align: center;
+            padding: 20px 0;
+            color: var(--text-muted);
+            font-size: 12px;
+            border-top: 1px solid rgba(255,255,255,0.1);
+            margin-top: 20px;
+        }
+
+        .footer-powered {
+            color: var(--accent);
+            font-weight: 600;
+            margin-top: 4px;
+        }
+
+        /* Ripple Effect */
+        .ripple {
+            position: relative;
+            overflow: hidden;
+        }
+
+        .ripple::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 5px;
+            height: 5px;
+            background: rgba(255, 255, 255, 0.5);
+            opacity: 0;
+            border-radius: 100%;
+            transform: scale(1, 1) translate(-50%);
+            transform-origin: 50% 50%;
+        }
+
+        .ripple:active::after {
+            animation: ripple-animation 1s ease-out;
+        }
+
+        @keyframes ripple-animation {
+            0% {
+                transform: scale(0, 0);
+                opacity: 0.5;
+            }
+            100% {
+                transform: scale(20, 20);
+                opacity: 0;
+            }
+        }
+
+        /* Responsive Design */
+        @media (max-width: 480px) {
+            .feature-grid {
+                grid-template-columns: 1fr !important;
+            }
+        }
+
+        /* Mobile Performance Optimizations */
+        .glass-card {
+            will-change: transform, opacity;
+            transform: translateZ(0);
+        }
+
+        .step-card, .feature-card, .safety-item, .contact-item {
+            will-change: transform, background-color;
+            transform: translateZ(0);
+        }
+
+        /* Reduce animation complexity on mobile */
+        @media (max-width: 480px) {
+            .glass-card {
+                animation: none; /* Disable entrance animations */
+                opacity: 1;
+                transform: none;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Standard Background System Applied -->
+
+    <div class="container">
+        
+        <!-- Header Section -->
+        <div class="header-section">
+            <div class="logo-container">
+                <div class="logo-icon"></div>
+            </div>
+            <h1 class="header-title">About IoLent</h1>
+            <p class="header-subtitle">Building a smarter earning ecosystem through technology and real business solutions.</p>
+        </div>
+
+        <!-- Section 1: What is IoLent -->
+        <div class="glass-card">
+            <div class="section-header">
+                <div class="section-icon">❓</div>
+                <h2 class="section-title">What is IoLent</h2>
+            </div>
+            <p class="content-text">
+               IoLent is an online finance and e-commerce company that provides users with diverse online earning opportunities. The primary goal of IoLent is to create easy and reliable income streams both online and offline. The company officially launched its operations on February 1, 2023.
+            </p>
+            <p class="content-text">
+                Our platform focuses on creating value through user participation, task completion, and community building rather than financial investment or guaranteed returns.
+            </p>
+        </div>
+
+        <!-- Section 2: How IoLent Works -->
+        <div class="glass-card">
+            <div class="section-header">
+                <div class="section-icon">⚙️</div>
+                <h2 class="section-title">How IoLent Works</h2>
+            </div>
+            <div class="step-flow">
+                <div class="step-card">
+                    <div class="step-number">1</div>
+                    <div class="step-content">
+                        <h4>Earn Points</h4>
+                        <p>Complete tasks, participate in activities, and invite friends to earn reward points.</p>
+                    </div>
+                </div>
+                <div class="step-card">
+                    <div class="step-number">2</div>
+                    <div class="step-content">
+                        <h4>Point Conversion</h4>
+                        <p>100 points can be converted to 1 BDT within the platform's reward system.</p>
+                    </div>
+                </div>
+                <div class="step-card">
+                    <div class="step-number">3</div>
+                    <div class="step-content">
+                        <h4>Activate Robots</h4>
+                        <p>1000 points activates 1 digital robot that participates in the platform's earning activities.</p>
+                    </div>
+                </div>
+                <div class="step-card">
+                    <div class="step-number">4</div>
+                    <div class="step-content">
+                        <h4>Generate Earnings</h4>
+                        <p>Activated robots generate earnings over time through the platform's business operations.</p>
+                    </div>
+                </div>
+                <div class="step-card">
+                    <div class="step-number">5</div>
+                    <div class="step-content">
+                        <h4>Collect Rewards</h4>
+                        <p>Users can periodically collect their generated earnings from the platform.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Section 3: Business Model -->
+        <div class="glass-card highlight">
+            <div class="section-header">
+                <div class="section-icon">💼</div>
+                <h2 class="section-title">Business Model</h2>
+            </div>
+            <p class="content-text">
+                <span class="highlight-text">IoLent generates revenue through multiple real business activities</span> such as digital services, advertising, partnerships, and platform operations. User rewards are distributed from these business profits, ensuring a sustainable ecosystem that benefits from actual business growth rather than user investments.
+            </p>
+            <p class="content-text">
+                Our model focuses on creating value through legitimate business operations and user engagement, maintaining transparency and fairness for all participants.
+            </p>
+        </div>
+
+        <!-- Section 4: Why Choose IoLent -->
+        <div class="glass-card feature-grid">
+            <div class="feature-card">
+                <div class="feature-icon">⚡</div>
+                <div class="feature-title">Smart Earning System</div>
+                <div class="feature-desc">Engage with meaningful activities that contribute to platform growth and user rewards.</div>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">📊</div>
+                <div class="feature-title">Transparent Tracking</div>
+                <div class="feature-desc">Monitor your progress and earnings with clear, real-time activity tracking.</div>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">🔒</div>
+                <div class="feature-title">Secure Transactions</div>
+                <div class="feature-desc">All platform activities and rewards are protected with advanced security measures.</div>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">🚀</div>
+                <div class="feature-title">Growth Rewards</div>
+                <div class="feature-desc">Benefit from platform growth through structured reward systems and community building.</div>
+            </div>
+        </div>
+
+        <!-- Section 5: Safety & Transparency -->
+        <div class="glass-card">
+            <div class="section-header">
+                <div class="section-icon">🛡️</div>
+                <h2 class="section-title">Safety & Transparency</h2>
+            </div>
+            <ul class="safety-list">
+                <li class="safety-item">
+                    <div class="safety-icon">⚠️</div>
+                    <div class="safety-text">No guaranteed income - earnings depend on platform activity and business performance</div>
+                </li>
+                <li class="safety-item">
+                    <div class="safety-icon">🎯</div>
+                    <div class="safety-text">Rewards are based on user participation and platform engagement</div>
+                </li>
+                <li class="safety-item">
+                    <div class="safety-icon">📜</div>
+                    <div class="safety-text">Platform follows fair usage policies and transparent guidelines</div>
+                </li>
+                <li class="safety-item">
+                    <div class="safety-icon">🔍</div>
+                    <div class="safety-text">Active anti-fraud systems protect the integrity of the ecosystem</div>
+                </li>
+            </ul>
+        </div>
+
+        <!-- Section 6: Community & Growth -->
+        <div class="glass-card">
+            <div class="section-header">
+                <div class="section-icon">👥</div>
+                <h2 class="section-title">Community & Growth</h2>
+            </div>
+            <p class="content-text">
+                IoLent is not just an earning platform — it's a growing digital ecosystem where users can build networks, achieve ranks, and unlock new opportunities. Our community-focused approach ensures that everyone can participate and benefit from the platform's success.
+            </p>
+            <p class="content-text">
+                Through structured progression systems and community rewards, users can advance their status and access enhanced features as the platform grows.
+            </p>
+        </div>
+
+        <!-- Section 7: Company Message -->
+        <div class="glass-card quote-section">
+            <div class="quote-text">
+                "IoLent's mission is to create a secure, accessible, and profitable platform where users can access earning opportunities both online and offline. We aim to ensure financial freedom for everyone and provide our users with a reliable and stable source of income."
+            </div>
+            <div class="quote-author">— IoLent Team</div>
+        </div>
+
+
+        <!-- Footer -->
+        <div class="footer">
+            <div>© 2026 IoLent. All rights reserved.</div>
+            <div class="footer-powered">Powered by innovation & real-world business.</div>
+        </div>
+
+    </div>
+
+    <script>
+        // Intersection Observer for scroll animations
+        document.addEventListener('DOMContentLoaded', () => {
+            const observerOptions = {
+                root: null,
+                rootMargin: '0px',
+                threshold: 0.1
+            };
+
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.style.opacity = '1';
+                        entry.target.style.transform = 'translateY(0)';
+                    }
+                });
+            }, observerOptions);
+
+            // Observe all glass cards
+            const cards = document.querySelectorAll('.glass-card');
+            cards.forEach(card => {
+                observer.observe(card);
+            });
+
+            // Typing animation for header subtitle
+            const subtitle = document.querySelector('.header-subtitle');
+            const text = subtitle.textContent;
+            subtitle.textContent = '';
+            
+            let i = 0;
+            const typeWriter = () => {
+                if (i < text.length) {
+                    subtitle.textContent += text.charAt(i);
+                    i++;
+                    setTimeout(typeWriter, 50);
+                }
+            };
+            
+            // Start typing after a short delay
+            setTimeout(typeWriter, 1000);
+        });
+
+        // Contact Support function
+        function contactSupport() {
+            // Simple demo function - in real implementation would open contact form
+            alert('Thank you for your interest! Our support team will get back to you shortly.');
+        }
+
+        // Ripple effect for buttons
+        document.querySelectorAll('.ripple').forEach(button => {
+            button.addEventListener('click', function(e) {
+                const rect = this.getBoundingClientRect();
+                const x = e.clientX - rect.left;
+                const y = e.clientY - rect.top;
+                
+                const ripple = document.createElement('span');
+                ripple.style.position = 'absolute';
+                ripple.style.borderRadius = '50%';
+                ripple.style.background = 'rgba(255, 255, 255, 0.6)';
+                ripple.style.transform = 'scale(0)';
+                ripple.style.animation = 'ripple-animation 0.6s linear';
+                ripple.style.left = x + 'px';
+                ripple.style.top = y + 'px';
+                ripple.style.width = ripple.style.height = '6px';
+                
+                this.appendChild(ripple);
+                
+                setTimeout(() => {
+                    ripple.remove();
+                }, 600);
+            });
+        });
+
+        // Premium Background System - Interaction removed
+    </script>
+</body>
+</html>

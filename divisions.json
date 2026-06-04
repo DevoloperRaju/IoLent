@@ -1,0 +1,42 @@
+[
+  {
+    "id": "1",
+    "name": "Chattagram",
+    "url": "www.chittagongdiv.gov.bd"
+  },
+  {
+    "id": "2",
+    "name": "Rajshahi",
+    "url": "www.rajshahidiv.gov.bd"
+  },
+  {
+    "id": "3",
+    "name": "Khulna",
+    "url": "www.khulnadiv.gov.bd"
+  },
+  {
+    "id": "4",
+    "name": "Barisal",
+    "url": "www.barisaldiv.gov.bd"
+  },
+  {
+    "id": "5",
+    "name": "Sylhet",
+    "url": "www.sylhetdiv.gov.bd"
+  },
+  {
+    "id": "6",
+    "name": "Dhaka",
+    "url": "www.dhakadiv.gov.bd"
+  },
+  {
+    "id": "7",
+    "name": "Rangpur",
+    "url": "www.rangpurdiv.gov.bd"
+  },
+  {
+    "id": "8",
+    "name": "Mymensingh",
+    "url": "www.mymensinghdiv.gov.bd"
+  }
+]

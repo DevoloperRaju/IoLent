@@ -1,0 +1,846 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Settings - IoLent</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    
+    <style>
+        /* CSS Variables */
+        :root {
+            --primary-color: #00e676;
+            --secondary-color: #00c853;
+            --accent-color: #00e676;
+            --text-color: #ffffff;
+            --light-text: #ffffff;
+            --bg-color: #0B111B;
+            --card-bg: rgba(255, 255, 255, 0.05);
+            --border-radius: 12px;
+            --box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            --transition-speed: 0.3s;
+            --font-family-primary: 'Space Grotesk', sans-serif;
+            --font-family-secondary: 'Inter', sans-serif;
+        }
+
+        /* Reset and Base Styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: var(--font-family-secondary);
+            background-color: var(--bg-color) !important;
+            background-image: none !important;
+            color: var(--text-color);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        /* Background Elements */
+        .background-elements {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            z-index: 1;
+            pointer-events: none;
+        }
+
+        .element {
+            position: absolute;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.1);
+            animation: float 6s ease-in-out infinite;
+        }
+
+        .element-1 {
+            width: 300px;
+            height: 300px;
+            top: -10%;
+            left: -10%;
+            animation-delay: 0s;
+        }
+
+        .element-2 {
+            width: 250px;
+            height: 250px;
+            top: 70%;
+            right: -10%;
+            animation-delay: 1s;
+        }
+
+        .element-3 {
+            width: 200px;
+            height: 200px;
+            bottom: -10%;
+            left: 20%;
+            animation-delay: 2s;
+        }
+
+        .element-4 {
+            width: 150px;
+            height: 150px;
+            top: 30%;
+            right: 10%;
+            animation-delay: 3s;
+        }
+
+        /* Container */
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            position: relative;
+            z-index: 10;
+        }
+
+        /* Header */
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .header h1 {
+            font-family: var(--font-family-primary);
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 10px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            animation: slideInDown 0.8s ease-out;
+        }
+
+        .header p {
+            color: rgba(255, 255, 255, 0.8);
+            font-size: 1rem;
+            animation: fadeIn 0.8s ease-out 0.2s both;
+        }
+
+        /* Settings Card */
+        .settings-card {
+            background: var(--card-bg);
+            backdrop-filter: blur(20px);
+            border-radius: 20px;
+            box-shadow: var(--box-shadow);
+            padding: 30px;
+            margin-bottom: 20px;
+            animation: fadeInUp 0.8s ease-out;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        /* Profile Section */
+        .profile-section {
+            text-align: center;
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .profile-picture {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            background: var(--primary-color);
+            margin: 0 auto 15px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            position: relative;
+            overflow: hidden;
+            border: 3px solid #2ed573;
+            backdrop-filter: blur(5px);
+        }
+
+        .profile-picture:hover {
+            transform: scale(1.1);
+            box-shadow: 0 15px 40px rgba(0, 230, 118, 0.4);
+        }
+
+        .profile-picture i {
+            font-size: 3rem;
+            color: white;
+            z-index: 2;
+        }
+
+        .profile-picture::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 50%;
+        }
+
+        .iolent-logo {
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            object-fit: cover;
+            position: absolute;
+            top: 0;
+            left: 0;
+            z-index: 1;
+        }
+
+        .profile-picture-text {
+            font-family: var(--font-family-secondary);
+            font-size: 0.9rem;
+            color: #666;
+            cursor: pointer;
+        }
+
+        .profile-picture-text:hover {
+            color: var(--primary-color);
+        }
+
+        /* Form Section */
+        .form-section {
+            margin-bottom: 30px;
+        }
+
+        .section-title {
+            font-family: var(--font-family-primary);
+            font-size: 1.2rem;
+            color: var(--text-color);
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .section-title i {
+            color: var(--primary-color);
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: var(--text-color);
+            font-size: 0.9rem;
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            font-family: var(--font-family-secondary);
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            background: rgba(0, 0, 0, 0.2);
+            color: var(--text-color);
+            box-sizing: border-box;
+        }
+
+        .form-input:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(0, 230, 118, 0.1);
+        }
+
+        /* Toggle Switch */
+        .toggle-group {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding: 15px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 10px;
+            transition: all 0.3s ease;
+        }
+
+        .toggle-group:hover {
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .toggle-label {
+            font-family: var(--font-family-secondary);
+            font-weight: 600;
+            color: var(--text-color);
+        }
+
+        .toggle-switch {
+            position: relative;
+            display: inline-block;
+            width: 50px;
+            height: 24px;
+        }
+
+        .toggle-switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #ccc;
+            transition: .4s;
+            border-radius: 24px;
+        }
+
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 16px;
+            width: 16px;
+            left: 4px;
+            bottom: 4px;
+            background-color: white;
+            transition: .4s;
+            border-radius: 50%;
+        }
+
+        input:checked + .slider {
+            background-color: var(--primary-color);
+        }
+
+        input:checked + .slider:before {
+            transform: translateX(26px);
+        }
+
+        /* Action Buttons */
+        .action-buttons {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .action-btn {
+            padding: 15px;
+            border-radius: 10px;
+            font-family: var(--font-family-secondary);
+            font-weight: 600;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            border: 2px solid transparent;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        .btn-save {
+            background: var(--primary-color);
+            color: var(--bg-color);
+            box-shadow: 0 4px 15px rgba(0, 230, 118, 0.4);
+        }
+
+        .btn-save:hover {
+            box-shadow: 0 6px 20px rgba(0, 230, 118, 0.6);
+            transform: translateY(-2px);
+        }
+
+        .btn-logout {
+            background: transparent;
+            color: var(--text-color);
+            border-color: rgba(255, 255, 255, 0.2);
+        }
+
+        .btn-logout:hover {
+            background: rgba(255, 255, 255, 0.05);
+            color: var(--primary-color);
+            border-color: var(--primary-color);
+        }
+
+        .btn-delete {
+            background: transparent;
+            color: #ff4757;
+            border-color: #ff4757;
+        }
+
+        .btn-delete:hover {
+            background: rgba(255, 71, 87, 0.1);
+            color: #ff4757;
+            border-color: #ff4757;
+        }
+
+        /* Hidden File Input */
+        #fileInput {
+            display: none;
+        }
+
+        /* PIN Strength Indicator */
+        .pin-strength-bar {
+            margin-top: 8px;
+            display: none;
+        }
+
+        .pin-strength-track {
+            height: 5px;
+            background: rgba(0,0,0,0.07);
+            border-radius: 3px;
+            overflow: hidden;
+            margin-bottom: 5px;
+        }
+
+        .pin-strength-fill {
+            height: 100%;
+            width: 0;
+            border-radius: 3px;
+            transition: width 0.4s ease, background 0.4s ease;
+        }
+
+        .pin-strength-text {
+            font-size: 0.78rem;
+            font-weight: 600;
+        }
+        .pin-strength-text.weak   { color: #ff4757; }
+        .pin-strength-text.medium { color: #ffa502; }
+        .pin-strength-text.strong { color: #2ed573; }
+
+        /* Information Section */
+        .info-links {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .info-link-btn {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 12px 15px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 10px;
+            text-decoration: none;
+            color: var(--text-color);
+            font-size: 0.9rem;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .info-link-btn:hover {
+            background: rgba(255, 255, 255, 0.1);
+            transform: translateX(5px);
+        }
+
+        .info-link-btn i {
+            color: var(--primary-color);
+            font-size: 0.8rem;
+        }
+
+        .version-text {
+            text-align: center;
+            font-size: 0.8rem;
+            color: #999;
+            margin-top: 15px;
+            font-family: var(--font-family-secondary);
+        }
+
+        /* Animations */
+        @keyframes fadeInUp {
+            from {
+            
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes slideInDown {
+            from {
+                opacity: 0;
+                transform: translateY(-50px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+            to {
+                opacity: 1;
+            }
+        }
+
+        @keyframes float {
+            0%, 100% {
+                transform: translateY(0px);
+            }
+            50% {
+                transform: translateY(-20px);
+            }
+        }
+
+        /* Responsive Design */
+        @media (max-width: 480px) {
+            .container {
+                padding: 0 15px;
+            }
+            
+            .settings-card {
+                padding: 20px;
+            }
+            
+            .header h1 {
+                font-size: 1.5rem;
+            }
+            
+            .profile-picture {
+                width: 80px;
+                height: 80px;
+            }
+            
+            .profile-picture i {
+                font-size: 2.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Background Elements -->
+    <div class="background-elements">
+        <div class="element element-1"></div>
+        <div class="element element-2"></div>
+        <div class="element element-3"></div>
+        <div class="element element-4"></div>
+    </div>
+
+    <!-- Container -->
+    <div class="container">
+        <!-- Header -->
+        <div class="header">
+            <h1>Settings</h1>
+            <p>Manage your account preferences</p>
+        </div>
+
+        <!-- Settings Card -->
+        <div class="settings-card">
+            <!-- Profile Section -->
+            <div class="profile-section">
+                <div class="profile-picture" id="profilePicture">
+                    <img src="https://i.ibb.co.com/QjvffmCv/ic-launcher.png" alt="ic launcher" border="0">
+                </div>
+                <p class="profile-picture-text" id="profileText">Tap to update profile picture</p>
+                <input type="file" id="fileInput" accept="image/*">
+            </div>
+
+            <!-- PIN Change Section -->
+            <div class="form-section">
+                <h3 class="section-title">
+                    <i class="fas fa-lock"></i> Change PIN
+                </h3>
+                
+                <form id="pinChangeForm">
+                    <div class="form-group">
+                        <label class="form-label" for="currentPin">Current PIN</label>
+                        <input type="password" id="currentPin" name="currentPin" class="form-input pin-input" placeholder="Enter your current PIN" maxlength="4" inputmode="numeric" pattern="[0-9]*" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label" for="newPin">New PIN</label>
+                        <input type="password" id="newPin" name="newPin" class="form-input pin-input" placeholder="Enter new 4-digit PIN" maxlength="4" inputmode="numeric" pattern="[0-9]*" required>
+                        <!-- PIN Strength Bar -->
+                        <div class="pin-strength-bar" id="pinStrengthBar">
+                            <div class="pin-strength-track">
+                                <div class="pin-strength-fill" id="pinStrengthFill"></div>
+                            </div>
+                            <span class="pin-strength-text" id="pinStrengthText"></span>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label" for="confirmPin">Confirm New PIN</label>
+                        <input type="password" id="confirmPin" name="confirmPin" class="form-input pin-input" placeholder="Confirm your new PIN" maxlength="4" inputmode="numeric" pattern="[0-9]*" required>
+                    </div>
+
+                    <div class="action-buttons">
+                        <button type="submit" class="action-btn btn-save">
+                            <i class="fas fa-save"></i> Save Changes
+                        </button>
+                    </div>
+                </form>
+            </div>
+
+
+            <!-- Account Actions Section -->
+            <div class="form-section">
+                <h3 class="section-title">
+                    <i class="fas fa-user-cog"></i> Account Actions
+                </h3>
+                
+                <div class="action-buttons">
+                    <button type="button" class="action-btn btn-logout" id="nidVerificationBtn">
+                        <i class="fas fa-id-card"></i> NID VERIFICATION
+                    </button>
+                    <button type="button" class="action-btn btn-logout" id="logoutBtn">
+                        <i class="fas fa-sign-out-alt"></i> Logout
+                    </button>
+                    
+                    <button type="button" class="action-btn btn-delete" id="deleteAccountBtn">
+                        <i class="fas fa-trash"></i> Delete Account
+                    </button>
+                </div>
+            </div>
+
+            <!-- Information Section -->
+            <div class="form-section" style="margin-bottom: 0;">
+                <h3 class="section-title">
+                    <i class="fas fa-info-circle"></i> About IoLent
+                </h3>
+                
+                <div class="info-links">
+                    <a href="terms-and-conditions.html" class="info-link-btn">
+                        <span><i class="fas fa-file-contract"></i> &nbsp; Terms & Conditions</span>
+                        <i class="fas fa-chevron-right"></i>
+                    </a>
+                    <a href="privacy-policy.html" class="info-link-btn">
+                        <span><i class="fas fa-user-shield"></i> &nbsp; Privacy Policy</span>
+                        <i class="fas fa-chevron-right"></i>
+                    </a>
+                    <a href="Support.html" class="info-link-btn">
+                        <span><i class="fas fa-headset"></i> &nbsp; Support</span>
+                        <i class="fas fa-chevron-right"></i>
+                    </a>
+                </div>
+                
+                <div class="version-text">Version 1.0</div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // JavaScript for Settings Page
+
+        document.addEventListener('DOMContentLoaded', function() {
+            const profilePicture = document.getElementById('profilePicture');
+            const profileText = document.getElementById('profileText');
+            const fileInput = document.getElementById('fileInput');
+            const pinChangeForm = document.getElementById('pinChangeForm');
+            const nidVerificationBtn = document.getElementById('nidVerificationBtn');
+            const logoutBtn = document.getElementById('logoutBtn');
+            const deleteAccountBtn = document.getElementById('deleteAccountBtn');
+
+        // Profile Picture Click Handler
+            profilePicture.addEventListener('click', function() {
+                // File picker removed - will be connected to server later
+            });
+
+            profileText.addEventListener('click', function() {
+                // File picker removed - will be connected to server later
+            });
+
+            // File Input Change Handler
+            fileInput.addEventListener('change', function(e) {
+                const file = e.target.files[0];
+                if (file) {
+                    const reader = new FileReader();
+                    reader.onload = function(e) {
+                        // Create circular image
+                        profilePicture.innerHTML = '';
+                        const img = document.createElement('img');
+                        img.src = e.target.result;
+                        img.style.width = '100%';
+                        img.style.height = '100%';
+                        img.style.borderRadius = '50%';
+                        img.style.objectFit = 'cover';
+                        profilePicture.appendChild(img);
+                        
+                        // Update text
+                        profileText.textContent = 'Profile picture updated';
+                        profileText.style.color = 'var(--primary-color)';
+                    };
+                    reader.readAsDataURL(file);
+                }
+            });
+
+            // Restrict PIN fields to numbers only
+            document.querySelectorAll('.pin-input').forEach(input => {
+                input.addEventListener('input', function() {
+                    this.value = this.value.replace(/[^0-9]/g, '');
+                });
+                input.addEventListener('keydown', function(e) {
+                    const allowed = ['Backspace','Delete','Tab','ArrowLeft','ArrowRight'];
+                    if (!allowed.includes(e.key) && !/^[0-9]$/.test(e.key)) {
+                        e.preventDefault();
+                    }
+                });
+            });
+
+            // PIN Strength Indicator
+            const newPinInput = document.getElementById('newPin');
+            const pinStrengthBar = document.getElementById('pinStrengthBar');
+            const pinStrengthFill = document.getElementById('pinStrengthFill');
+            const pinStrengthText = document.getElementById('pinStrengthText');
+            const WEAK_PINS = ['0000','1111','2222','3333','4444','5555','6666','7777','8888','9999','1234','4321','0123','9876'];
+
+            newPinInput.addEventListener('input', function() {
+                const pin = this.value;
+                if (pin.length < 4) {
+                    pinStrengthBar.style.display = 'none';
+                    return;
+                }
+                pinStrengthBar.style.display = 'block';
+                let strength, width, cls, label;
+                if (WEAK_PINS.includes(pin)) {
+                    strength = 'weak'; width = '33%'; label = 'Weak 🔴';
+                } else if (new Set(pin.split('')).size <= 2) {
+                    strength = 'medium'; width = '66%'; label = 'Medium 🟡';
+                } else {
+                    strength = 'strong'; width = '100%'; label = 'Strong 🟢';
+                }
+                const bgMap = { weak: '#ff4757', medium: '#ffa502', strong: '#2ed573' };
+                pinStrengthFill.style.width = width;
+                pinStrengthFill.style.background = bgMap[strength];
+                pinStrengthText.className = 'pin-strength-text ' + strength;
+                pinStrengthText.textContent = 'PIN Strength: ' + label;
+            });
+
+            // PIN Change Form Handler
+            pinChangeForm.addEventListener('submit', function(e) {
+                e.preventDefault();
+                
+                const currentPin = document.getElementById('currentPin').value.trim();
+                const newPin = document.getElementById('newPin').value.trim();
+                const confirmPin = document.getElementById('confirmPin').value.trim();
+
+                // Validate PINs
+                if (!currentPin || !newPin || !confirmPin) {
+                    alert('Please fill in all PIN fields.');
+                    return;
+                }
+
+                if (currentPin.length !== 4 || newPin.length !== 4 || confirmPin.length !== 4) {
+                    alert('All PINs must be 4 digits.');
+                    return;
+                }
+
+                if (newPin !== confirmPin) {
+                    alert('New PIN and Confirm PIN do not match.');
+                    return;
+                }
+
+                if (currentPin === newPin) {
+                    alert('New PIN must be different from current PIN.');
+                    return;
+                }
+
+                // Here you would send the data to your server
+                console.log('PIN change request:', {
+                    currentPin: currentPin,
+                    newPin: newPin,
+                    timestamp: new Date().toISOString()
+                });
+
+                // Show success message
+                alert('PIN change request submitted successfully!');
+                
+                // Reset form
+                pinChangeForm.reset();
+                
+                // Add click animation to save button
+                const saveBtn = e.target.querySelector('.btn-save');
+                saveBtn.style.transform = 'scale(0.95)';
+                setTimeout(() => {
+                    saveBtn.style.transform = '';
+                }, 100);
+            });
+
+            // Logout Handler
+            logoutBtn.addEventListener('click', function() {
+                // Add click animation
+                this.style.transform = 'scale(0.95)';
+                setTimeout(() => {
+                    this.style.transform = '';
+                }, 100);
+                
+                // Show confirmation dialog
+                if (confirm('Are you sure you want to logout?')) {
+                    console.log('User logged out');
+                    // Here you would redirect to login page or clear session
+                    alert('You have been logged out successfully.');
+                }
+            });
+
+            // NID Verification Handler
+            nidVerificationBtn.addEventListener('click', function() {
+                // Add click animation
+                this.style.transform = 'scale(0.95)';
+                setTimeout(() => {
+                    this.style.transform = '';
+                }, 100);
+                
+                // Redirect to NID verification page
+                window.location.href = 'nid-verification.html';
+            });
+
+            // Delete Account Handler
+            deleteAccountBtn.addEventListener('click', function() {
+                // Add click animation
+                this.style.transform = 'scale(0.95)';
+                setTimeout(() => {
+                    this.style.transform = '';
+                }, 100);
+                
+                // Show confirmation dialog
+                if (confirm('Are you sure you want to delete your account? This action cannot be undone.')) {
+                    console.log('Account deletion request submitted');
+                    // Here you would send the deletion request to your server
+                    alert('Account deletion request submitted. Your data will be removed shortly.');
+                }
+            });
+
+            // Parallax effect for background elements
+            window.addEventListener('mousemove', function(e) {
+                const elements = document.querySelectorAll('.element');
+                const x = e.clientX / window.innerWidth;
+                const y = e.clientY / window.innerHeight;
+                
+                elements.forEach((element, index) => {
+                    const speed = 0.5 + (index * 0.1);
+                    const xPos = (x - 0.5) * speed * 50;
+                    const yPos = (y - 0.5) * speed * 50;
+                    
+                    element.style.transform = `translate(${xPos}px, ${yPos}px)`;
+                });
+            });
+
+            // Form input animations
+            const formInputs = document.querySelectorAll('.form-input');
+            formInputs.forEach(input => {
+                input.addEventListener('focus', function() {
+                    this.parentElement.style.transform = 'translateY(-2px)';
+                    this.parentElement.style.transition = 'transform 0.3s ease';
+                });
+                
+                input.addEventListener('blur', function() {
+                    this.parentElement.style.transform = 'translateY(0)';
+                });
+            });
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>IoLent - NID Verification</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        obsidian: '#0B111B',
+                        lime: '#39FF14',
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        /* Mobile Performance & UX Overrides */
+        body {
+            background-color: #0B111B;
+            color: #FFFFFF;
+            -webkit-tap-highlight-color: transparent;
+            touch-action: manipulation;
+            font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+        }
+        
+        /* Smooth scrolling */
+        html { scroll-behavior: smooth; }
+
+        /* Custom Scrollbar for hidden horizontal overflow but keeping vertical */
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-thumb { background-color: #39FF14; border-radius: 10px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+
+        /* Input specific styles */
+        input[type="date"]::-webkit-calendar-picker-indicator {
+            filter: invert(1);
+            cursor: pointer;
+        }
+        input:-webkit-autofill {
+            -webkit-box-shadow: 0 0 0 1000px #0B111B inset !important;
+            -webkit-text-fill-color: white !important;
+            transition: background-color 5000s ease-in-out 0s;
+        }
+        
+        .file-upload-wrapper {
+            position: relative;
+            overflow: hidden;
+        }
+        .file-upload-input {
+            position: absolute;
+            top: 0; right: 0; bottom: 0; left: 0;
+            opacity: 0;
+            cursor: pointer;
+            width: 100%; height: 100%;
+        }
+    </style>
+</head>
+<body class="min-h-screen w-full flex items-center justify-center p-4">
+
+    <!-- Main Container Card -->
+    <main class="w-full max-w-md bg-obsidian border border-white/10 rounded-xl p-5 sm:p-8 flex flex-col gap-6" role="main">
+        
+        <!-- Header Section -->
+        <header class="text-center flex flex-col gap-2">
+            <h1 class="text-2xl font-bold text-white tracking-wide">NID Verification</h1>
+            <p class="text-lime text-xs font-semibold uppercase tracking-widest">Step 1 of 1 &mdash; Identity Verification</p>
+            <p class="text-gray-400 text-sm mt-1">Please provide your correct information for verification. Ensure all documents are clearly visible.</p>
+            <div id="form-error-alert" class="hidden mt-3 p-3 bg-red-500/10 border border-red-500/50 rounded text-red-400 text-sm text-center"></div>
+        </header>
+
+        <!-- Form Section -->
+        <form id="nid-verification-form" class="flex flex-col gap-5 w-full" novalidate>
+            
+            <!-- Full Name Field -->
+            <div class="flex flex-col gap-1.5 w-full">
+                <label for="fullName" class="text-sm font-medium text-gray-300">Full Name (English Only)</label>
+                <input type="text" id="fullName" name="fullName" placeholder="e.g. John Doe"
+                    class="w-full min-h-[44px] bg-transparent border border-white/20 rounded-lg px-4 py-2 text-white placeholder-gray-500 focus:outline-none focus:border-lime focus:ring-1 focus:ring-lime transition-colors">
+                <span id="error-fullName" class="hidden text-xs text-red-400">Please enter a valid English name.</span>
+            </div>
+
+            <!-- NID Number Field -->
+            <div class="flex flex-col gap-1.5 w-full">
+                <label for="nidNumber" class="text-sm font-medium text-gray-300">NID Number</label>
+                <input type="tel" id="nidNumber" name="nidNumber" placeholder="Enter NID Number" inputmode="numeric"
+                    class="w-full min-h-[44px] bg-transparent border border-white/20 rounded-lg px-4 py-2 text-white placeholder-gray-500 focus:outline-none focus:border-lime focus:ring-1 focus:ring-lime transition-colors">
+                <span id="error-nidNumber" class="hidden text-xs text-red-400">Please enter a valid numerical NID.</span>
+            </div>
+
+            <!-- Date of Birth Field -->
+            <div class="flex flex-col gap-1.5 w-full">
+                <label for="dob" class="text-sm font-medium text-gray-300">Date of Birth</label>
+                <input type="date" id="dob" name="dob"
+                    class="w-full min-h-[44px] bg-transparent border border-white/20 rounded-lg px-4 py-2 text-white placeholder-gray-500 focus:outline-none focus:border-lime focus:ring-1 focus:ring-lime transition-colors">
+                <span id="error-dob" class="hidden text-xs text-red-400">Please select your Date of Birth.</span>
+            </div>
+
+            <!-- Document Upload Grid -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                
+                <!-- NID Front -->
+                <div class="flex flex-col gap-1.5 w-full">
+                    <label class="text-sm font-medium text-gray-300">NID Front Side</label>
+                    <div class="file-upload-wrapper w-full h-32 bg-white/5 border border-dashed border-white/20 rounded-lg flex flex-col items-center justify-center gap-2 hover:border-lime hover:bg-lime/5 transition-colors">
+                        <input type="file" id="nidFront" accept="image/*" class="file-upload-input" onchange="updateFileName('nidFront', 'label-nidFront')">
+                        <svg class="w-6 h-6 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"></path></svg>
+                        <span id="label-nidFront" class="text-xs text-gray-400 text-center px-2">Tap to upload front</span>
+                    </div>
+                    <span id="error-nidFront" class="hidden text-xs text-red-400">Required.</span>
+                </div>
+
+                <!-- NID Back -->
+                <div class="flex flex-col gap-1.5 w-full">
+                    <label class="text-sm font-medium text-gray-300">NID Back Side</label>
+                    <div class="file-upload-wrapper w-full h-32 bg-white/5 border border-dashed border-white/20 rounded-lg flex flex-col items-center justify-center gap-2 hover:border-lime hover:bg-lime/5 transition-colors">
+                        <input type="file" id="nidBack" accept="image/*" class="file-upload-input" onchange="updateFileName('nidBack', 'label-nidBack')">
+                        <svg class="w-6 h-6 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"></path></svg>
+                        <span id="label-nidBack" class="text-xs text-gray-400 text-center px-2">Tap to upload back</span>
+                    </div>
+                    <span id="error-nidBack" class="hidden text-xs text-red-400">Required.</span>
+                </div>
+
+            </div>
+
+             <!-- Selfie Upload -->
+             <div class="flex flex-col gap-1.5 w-full">
+                <label class="text-sm font-medium text-gray-300">Selfie (Face Verification)</label>
+                <div class="file-upload-wrapper w-full h-32 bg-white/5 border border-dashed border-white/20 rounded-lg flex flex-col items-center justify-center gap-2 hover:border-lime hover:bg-lime/5 transition-colors">
+                    <input type="file" id="selfieImg" accept="image/*" capture="user" class="file-upload-input" onchange="updateFileName('selfieImg', 'label-selfieImg')">
+                    <svg class="w-6 h-6 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5.121 17.804A13.937 13.937 0 0112 16c2.5 0 4.847.655 6.879 1.804M15 10a3 3 0 11-6 0 3 3 0 016 0zm6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                    <span id="label-selfieImg" class="text-xs text-gray-400 text-center px-2">Tap to take a selfie</span>
+                </div>
+                <span id="error-selfieImg" class="hidden text-xs text-red-400">Required.</span>
+            </div>
+
+            <!-- Submit Button -->
+            <button type="submit" id="submitBtn" class="w-full min-h-[48px] mt-2 bg-lime text-black font-bold rounded-lg hover:bg-lime/90 active:scale-[0.98] transition-all flex items-center justify-center gap-2 shadow-[0_0_15px_rgba(57,255,20,0.2)]">
+                Submit Verification
+            </button>
+            
+        </form>
+    </main>
+
+    <script>
+        // Simple File Name display updater
+        function updateFileName(inputId, labelId) {
+            const inputElement = document.getElementById(inputId);
+            const labelElement = document.getElementById(labelId);
+            
+            if (inputElement.files && inputElement.files.length > 0) {
+                // Get the file name securely using DOM properties
+                let fileName = inputElement.files[0].name;
+                // Truncate long file names
+                if (fileName.length > 20) {
+                    fileName = fileName.substring(0, 10) + '...' + fileName.substring(fileName.length - 6);
+                }
+                // Use textContent to prevent XSS
+                labelElement.textContent = "Selected: " + fileName;
+                labelElement.classList.replace('text-gray-400', 'text-lime');
+                
+                // Hide error if selected
+                document.getElementById('error-' + inputId).classList.add('hidden');
+            } else {
+                labelElement.textContent = "Tap to upload";
+                labelElement.classList.replace('text-lime', 'text-gray-400');
+            }
+        }
+
+        // Form Submission and Validation Logic
+        document.getElementById('nid-verification-form').addEventListener('submit', function(e) {
+            // Prevent default form submission
+            e.preventDefault();
+            
+            let isValid = true;
+
+            // Secure field mapping: Field ID -> Error ID
+            const fields = {
+                'fullName': 'error-fullName',
+                'nidNumber': 'error-nidNumber',
+                'dob': 'error-dob',
+                'nidFront': 'error-nidFront',
+                'nidBack': 'error-nidBack',
+                'selfieImg': 'error-selfieImg'
+            };
+
+            // Hide all error messages initially
+            for (let id in fields) {
+                document.getElementById(fields[id]).classList.add('hidden');
+            }
+            
+            const formErrorAlert = document.getElementById('form-error-alert');
+            formErrorAlert.classList.add('hidden');
+            formErrorAlert.textContent = ""; // Clear via textContent safely
+
+            // Get Sanitize inputs (basic layer for frontend logic)
+            // .value is safe from XSS execution context unless we insert it into innerHTML
+            const fullName = document.getElementById('fullName').value.trim();
+            const nidNumber = document.getElementById('nidNumber').value.trim();
+            const dob = document.getElementById('dob').value.trim();
+            const nidFront = document.getElementById('nidFront').files.length;
+            const nidBack = document.getElementById('nidBack').files.length;
+            const selfieImg = document.getElementById('selfieImg').files.length;
+
+            // 1. Full Name Validation (Only English letters and spaces)
+            const englishLettersPattern = /^[A-Za-z\s]+$/;
+            if (fullName === "") {
+                document.getElementById('error-fullName').classList.remove('hidden');
+                document.getElementById('error-fullName').textContent = "Full name is required.";
+                isValid = false;
+            } else if (!englishLettersPattern.test(fullName)) {
+                document.getElementById('error-fullName').classList.remove('hidden');
+                document.getElementById('error-fullName').textContent = "Only English letters are allowed.";
+                isValid = false;
+            }
+
+            // 2. NID Number Validation (Numeric only)
+            const numericPattern = /^[0-9]+$/;
+            if (nidNumber === "") {
+                document.getElementById('error-nidNumber').classList.remove('hidden');
+                document.getElementById('error-nidNumber').textContent = "NID Number is required.";
+                isValid = false;
+            } else if (!numericPattern.test(nidNumber)) {
+                document.getElementById('error-nidNumber').classList.remove('hidden');
+                document.getElementById('error-nidNumber').textContent = "Only numeric values are allowed.";
+                isValid = false;
+            } else if (nidNumber.length < 10) {
+                 // basic length check
+                document.getElementById('error-nidNumber').classList.remove('hidden');
+                document.getElementById('error-nidNumber').textContent = "Enter a valid NID length (min 10 digits).";
+                isValid = false;
+            }
+
+            // 3. Date of Birth Validation
+            if (dob === "") {
+                document.getElementById('error-dob').classList.remove('hidden');
+                isValid = false;
+            }
+
+            // 4. File Upload Validations
+            if (nidFront === 0) {
+                document.getElementById('error-nidFront').classList.remove('hidden');
+                isValid = false;
+            }
+            if (nidBack === 0) {
+                document.getElementById('error-nidBack').classList.remove('hidden');
+                isValid = false;
+            }
+            if (selfieImg === 0) {
+                document.getElementById('error-selfieImg').classList.remove('hidden');
+                isValid = false;
+            }
+
+            // Final check
+            if (isValid) {
+                // Processing UI State Update
+                const btn = document.getElementById('submitBtn');
+                const originalText = btn.textContent;
+                btn.textContent = "Verifying...";
+                btn.disabled = true;
+                btn.classList.add('opacity-70', 'cursor-not-allowed');
+
+                // Simulate API Call / Secure Logic delay here
+                setTimeout(() => {
+                    // Using standard JS alert for demo purposes
+                    alert("Verification data submitted successfully! (Demo mode)");
+                    
+                    // Reset Form
+                    document.getElementById('nid-verification-form').reset();
+                    btn.textContent = originalText;
+                    btn.disabled = false;
+                    btn.classList.remove('opacity-70', 'cursor-not-allowed');
+                    
+                    // Reset labels
+                    document.getElementById('label-nidFront').textContent = "Tap to upload front";
+                    document.getElementById('label-nidFront').classList.replace('text-lime', 'text-gray-400');
+                    document.getElementById('label-nidBack').textContent = "Tap to upload back";
+                    document.getElementById('label-nidBack').classList.replace('text-lime', 'text-gray-400');
+                    document.getElementById('label-selfieImg').textContent = "Tap to take a selfie";
+                    document.getElementById('label-selfieImg').classList.replace('text-lime', 'text-gray-400');
+
+                }, 1500);
+            } else {
+                formErrorAlert.textContent = "Please fix the errors above before submitting.";
+                formErrorAlert.classList.remove('hidden');
+                // Smooth scroll to top of form
+                document.querySelector('header').scrollIntoView({ behavior: 'smooth' });
+            }
+        });
+    </script>
+</body>
+</html>

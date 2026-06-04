@@ -1,0 +1,723 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IoLent - Achievements</title>
+    <style>
+        :root {
+            --primary: #00e676;
+            --secondary: #00c853;
+            --accent: #00e676;
+            --bg-dark: #0B111B;
+            --card-bg: rgba(255, 255, 255, 0.05);
+            --card-border: rgba(255, 255, 255, 0.1);
+            --text-main: #ffffff;
+            --text-muted: #9ba1a6;
+            
+            /* Status Colors */
+            --locked: #757575;
+            --in-progress: #00e676;
+            --unlocked: #00e676;
+            
+            /* Badge Colors */
+            --bronze: linear-gradient(135deg, #cd7f32, #8b4513);
+            --silver: linear-gradient(135deg, #e0e0e0, #9e9e9e);
+            --gold: linear-gradient(135deg, #FFD700, #FDB931);
+            --diamond: linear-gradient(135deg, #00f2fe, #4facfe);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            background-color: var(--bg-dark) !important;
+            background-image: none !important;
+            color: var(--text-main);
+            min-height: 100vh;
+            padding: 20px 20px 80px 20px;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 480px;
+            margin: 0 auto;
+        }
+
+        /* Glassmorphism utility */
+        .glass-card {
+            background: var(--card-bg);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid var(--card-border);
+            border-radius: 20px;
+            padding: 20px;
+            margin-bottom: 24px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+            opacity: 0;
+            transform: translateY(20px);
+            animation: slideUp 0.6s forwards cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            transition: all 0.3s ease;
+        }
+
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Header */
+        .header {
+            text-align: center;
+            margin-bottom: 24px;
+            margin-top: 10px;
+            animation: slideUp 0.6s forwards;
+        }
+
+        .icon-circle {
+            width: 64px;
+            height: 64px;
+            background: var(--primary);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 16px;
+            box-shadow: 0 0 25px rgba(0, 230, 118, 0.5);
+            animation: floatIcon 3s ease-in-out infinite;
+        }
+
+        @keyframes floatIcon {
+            0% { transform: translateY(0px); }
+            50% { transform: translateY(-8px); }
+            100% { transform: translateY(0px); }
+        }
+
+        .icon-circle svg {
+            width: 32px;
+            height: 32px;
+            fill: none;
+            stroke: white;
+            stroke-width: 2;
+            stroke-linecap: round;
+            stroke-linejoin: round;
+        }
+
+        .header h1 {
+            font-size: 26px;
+            margin-bottom: 8px;
+            background: var(--primary);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            font-weight: 800;
+        }
+
+        .header p {
+            color: var(--text-muted);
+            font-size: 14px;
+            line-height: 1.5;
+        }
+
+        /* Hero Progress Card */
+        .hero-progress {
+            background: rgba(0, 230, 118, 0.1);
+            border: 1px solid rgba(0, 230, 118, 0.3);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        /* Animated glow behind the hero card */
+        .hero-progress::before {
+            content: '';
+            position: absolute;
+            top: -50%; left: -50%;
+            width: 200%; height: 200%;
+            background: radial-gradient(circle, rgba(0, 230, 118, 0.1) 0%, transparent 70%);
+            animation: rotateBg 10s linear infinite;
+            z-index: 0;
+            pointer-events: none;
+        }
+
+        @keyframes rotateBg {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .hero-content {
+            position: relative;
+            z-index: 1;
+        }
+
+        .hero-stats {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .total-number {
+            font-size: 42px;
+            font-weight: 800;
+            color: var(--accent);
+            text-shadow: 0 0 15px rgba(0, 230, 118, 0.4);
+            line-height: 1;
+            margin-bottom: 4px;
+        }
+
+        .total-label {
+            font-size: 13px;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-weight: 600;
+        }
+
+        .rank-transition {
+            background: rgba(0,0,0,0.3);
+            border-radius: 16px;
+            padding: 16px;
+            border: 1px solid rgba(255,255,255,0.05);
+        }
+
+        .rank-flex {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+        }
+
+        .rf-label {
+            font-size: 11px;
+            color: var(--text-muted);
+            margin-bottom: 4px;
+        }
+
+        .rf-value {
+            font-size: 14px;
+            font-weight: bold;
+            color: #fff;
+        }
+        
+        .rf-current {
+            color: var(--gold);
+        }
+
+        .hero-arrow {
+            color: var(--text-muted);
+            opacity: 0.5;
+        }
+
+        /* Progress Bar */
+        .progress-wrapper {
+            margin-top: 10px;
+        }
+
+        .progress-stats {
+            display: flex;
+            justify-content: space-between;
+            font-size: 12px;
+            margin-bottom: 6px;
+        }
+
+        .progress-bar-bg {
+            width: 100%;
+            height: 8px;
+            background: rgba(255,255,255,0.1);
+            border-radius: 4px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: var(--primary);
+            border-radius: 4px;
+            transition: width 1.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            box-shadow: 0 0 10px var(--accent);
+            width: 0%; /* JS will calculate */
+        }
+        
+        .needed-text {
+            text-align: center;
+            font-size: 12px;
+            color: var(--text-muted);
+            margin-top: 10px;
+        }
+        .needed-num {
+            color: var(--accent);
+            font-weight: bold;
+        }
+
+        /* Explanation Card */
+        .info-card {
+            background: rgba(0, 230, 118, 0.1);
+            border: 1px solid rgba(0, 230, 118, 0.3);
+            border-radius: 16px;
+            padding: 14px;
+            display: flex;
+            gap: 12px;
+            align-items: flex-start;
+            margin-bottom: 24px;
+        }
+
+        .info-card svg {
+            color: var(--primary);
+            flex-shrink: 0;
+            margin-top: 2px;
+        }
+
+        .info-card p {
+            font-size: 13px;
+            color: var(--text-muted);
+            line-height: 1.5;
+        }
+
+        /* Achievement List */
+        .section-title {
+            font-size: 18px;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 16px;
+        }
+        
+        .title-accent {
+            color: var(--accent);
+        }
+
+        .achievements-grid {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+        
+        .ach-card {
+            background: rgba(0, 0, 0, 0.2);
+            border: 1px solid var(--card-border);
+            border-radius: 16px;
+            padding: 16px;
+            display: flex;
+            align-items: center;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .ach-card:hover {
+            background: rgba(255,255,255,0.05);
+            transform: translateX(4px);
+        }
+
+        /* Card Status Styling */
+        .ach-card.locked {
+            border-left: 4px solid var(--locked);
+            opacity: 0.6;
+        }
+        
+        .ach-card.in-progress {
+            border-left: 4px solid var(--in-progress);
+            background: linear-gradient(90deg, rgba(0, 230, 118, 0.05), transparent);
+        }
+        
+        .ach-card.unlocked {
+            border-left: 4px solid var(--unlocked);
+            background: linear-gradient(90deg, rgba(0, 230, 118, 0.05), transparent);
+        }
+        
+        /* Highlight Current Rank */
+        .ach-card.current-rank {
+            border: 1px solid var(--accent);
+            box-shadow: 0 0 15px rgba(0, 230, 118, 0.15) inset, 0 0 15px rgba(0, 230, 118, 0.15);
+            opacity: 1;
+            transform: scale(1.02);
+            animation: pulseCard 3s infinite;
+        }
+
+        @keyframes pulseCard {
+            0% { box-shadow: 0 0 15px rgba(0, 230, 118, 0.15) inset, 0 0 15px rgba(0, 230, 118, 0.15); }
+            50% { box-shadow: 0 0 25px rgba(0, 230, 118, 0.3) inset, 0 0 25px rgba(0, 230, 118, 0.3); }
+            100% { box-shadow: 0 0 15px rgba(0, 230, 118, 0.15) inset, 0 0 15px rgba(0, 230, 118, 0.15); }
+        }
+        
+        .current-badge-label {
+            position: absolute;
+            top: 0; right: 20px;
+            background: var(--accent);
+            color: #000;
+            font-size: 10px;
+            font-weight: 800;
+            padding: 2px 8px;
+            border-bottom-left-radius: 8px;
+            border-bottom-right-radius: 8px;
+            letter-spacing: 1px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.5);
+        }
+
+        /* Achievement Icon */
+        .ach-icon {
+            width: 48px;
+            height: 48px;
+            border-radius: 12px;
+            background: rgba(255,255,255,0.05);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 16px;
+            flex-shrink: 0;
+            font-weight: 800;
+            font-size: 18px;
+            color: #fff;
+            position: relative;
+        }
+
+        .ach-card.unlocked .ach-icon {
+            background: #ffffff;
+            color: #000;
+            box-shadow: 0 0 15px rgba(255, 255, 255, 0.3);
+        }
+        
+        .ach-card.in-progress .ach-icon {
+            background: rgba(0, 230, 118, 0.1);
+            color: var(--in-progress);
+            border: 1px solid rgba(0, 230, 118, 0.3);
+        }
+
+        .ach-card.locked .ach-icon {
+            filter: grayscale(1);
+            opacity: 0.5;
+        }
+
+        .ach-details {
+            flex: 1;
+        }
+
+        .ach-title {
+            font-size: 15px;
+            font-weight: 700;
+            margin-bottom: 4px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .ach-code {
+            font-size: 11px;
+            background: rgba(255,255,255,0.1);
+            padding: 2px 6px;
+            border-radius: 4px;
+            color: var(--text-muted);
+            font-weight: bold;
+        }
+
+        .ach-card.unlocked .ach-code {
+            background: rgba(0, 230, 118, 0.2);
+            color: var(--unlocked);
+        }
+
+        .ach-req {
+            font-size: 12px;
+            color: var(--text-muted);
+            margin-bottom: 2px;
+             display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+        
+        .ach-req svg {
+            color: #f5576c;
+        }
+
+        .ach-reward {
+            font-size: 12px;
+            color: var(--accent);
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .ach-status-icon {
+            margin-left: 10px;
+        }
+
+        /* Checkmark for unlocked */
+        .check-icon {
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            background: var(--unlocked);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #000;
+            box-shadow: 0 0 10px rgba(0, 230, 118, 0.3);
+        }
+        
+        /* Lock for locked */
+        .lock-icon {
+            width: 24px;
+            height: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--locked);
+        }
+        
+        /* Loading for in progress */
+        .progress-icon {
+            width: 24px;
+            height: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--in-progress);
+        }
+
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <!-- Header -->
+        <div class="header">
+            <div class="icon-circle">
+                <svg viewBox="0 0 24 24">
+                    <path d="M5 3v4M19 3v4M5 7h14a2 2 0 0 1 2 2v2a8 8 0 0 1-16 0V9a2 2 0 0 1 2-2z"></path>
+                    <path d="M12 17v4M8 21h8"></path>
+                    <polygon points="12 7 13.5 10 17 10 14.5 12.5 15.5 16 12 14 8.5 16 9.5 12.5 7 10 10.5 10"></polygon>
+                </svg>
+            </div>
+            <h1>Achievements</h1>
+            <p>Unlock special titles by growing your IoLent robot network.</p>
+        </div>
+
+        <!-- Reward Information -->
+        <div class="info-card" style="animation: slideUp 0.6s forwards 0.1s; opacity:0;">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>
+            <p>Achievement rewards are one-time cash bonuses determined by the company based on user performance & activity.</p>
+        </div>
+
+        <!-- Hero Progress Card (Dynamically updated) -->
+        <div class="glass-card hero-progress" style="animation-delay: 0.2s;">
+            <div class="hero-content">
+                <div class="hero-stats">
+                    <div class="total-number counter" id="ui-total-robots">0</div>
+                    <div class="total-label">Total Deactive Robots</div>
+                </div>
+
+                <div class="rank-transition">
+                    <div class="rank-flex">
+                        <div>
+                            <div class="rf-label">Current Title</div>
+                            <div class="rf-value rf-current" id="ui-current-title">Calculating...</div>
+                        </div>
+                        <div class="hero-arrow">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"></polyline></svg>
+                        </div>
+                        <div style="text-align: right;">
+                            <div class="rf-label">Next Title</div>
+                            <div class="rf-value" id="ui-next-title">Calculating...</div>
+                        </div>
+                    </div>
+
+                    <div class="progress-wrapper">
+                        <div class="progress-stats">
+                            <span style="color:var(--text-muted); font-size:11px;" id="ui-progress-text">Progress: 0 / 0</span>
+                            <span style="color:var(--accent); font-weight:bold; font-size:11px;" id="ui-progress-percent">0%</span>
+                        </div>
+                        <div class="progress-bar-bg">
+                            <div class="progress-fill" id="ui-progress-bar"></div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="needed-text" id="ui-needed-text">
+                    You need <span class="needed-num">0</span> more robots to unlock the next title!
+                </div>
+            </div>
+        </div>
+
+        <!-- Achievement List Container -->
+        <div class="section-title" style="margin-top: 30px;">
+            <span class="title-accent">◆</span> Rank Titles Structure
+        </div>
+
+        <div class="achievements-grid" id="achievements-container">
+            <!-- Cards injected via JS -->
+        </div>
+        
+        <div style="text-align: center; color: var(--text-muted); font-size: 13px; margin-top: 30px; margin-bottom: 20px;">
+            "Reach higher ranks to unlock exclusive rewards."
+        </div>
+
+    </div>
+
+    <script>
+        // --- 8️⃣ Dynamic Rank Calculation Logic ---
+        // You can change this single variable to test the UI dynamic states
+        const userDeactiveRobots = 55; 
+
+        // Achievement Definition Array
+        const achievementsList = [
+            { code: "IFS", title: "IOLENT FAST SELLER", req: 5, emoji: "⚡" },
+            { code: "ILS", title: "IOLENT LOCAL SELLER", req: 10, emoji: "🏠" },
+            { code: "ISS", title: "IOLENT SUPER SELLER", req: 25, emoji: "🔥" },
+            { code: "IBS", title: "IOLENT BEST SELLER", req: 50, emoji: "🏆" },
+            { code: "IMA", title: "IOLENT MARKET ADVISER", req: 80, emoji: "📊" },
+            { code: "INA", title: "IOLENT NATIONAL ADVISER", req: 130, emoji: "🏛️" },
+            { code: "IEA", title: "IOLENT EXPERT ADVISER", req: 200, emoji: "🎓" },
+            { code: "IGA", title: "IOLENT GLOBAL ADVISER", req: 300, emoji: "🌐" },
+            { code: "IXA", title: "IOLENT EXECUTIVE ADVISER", req: 400, emoji: "💼" },
+            { code: "ICA", title: "IOLENT CHIEF ADVISER", req: 500, emoji: "👑" }
+        ];
+
+        document.addEventListener('DOMContentLoaded', () => {
+            initPageLogic();
+        });
+
+        function initPageLogic() {
+            let currentRankIndex = -1;
+            
+            // Determine current rank based on userDeactiveRobots
+            for(let i = 0; i < achievementsList.length; i++) {
+                if (userDeactiveRobots >= achievementsList[i].req) {
+                    currentRankIndex = i;
+                } else {
+                    break;
+                }
+            }
+
+            // Derive current and next objects
+            const currentRank = currentRankIndex >= 0 ? achievementsList[currentRankIndex] : null;
+            const nextRank = currentRankIndex < achievementsList.length - 1 ? achievementsList[currentRankIndex + 1] : null;
+
+            // Update Hero Card UI variables
+            document.getElementById('ui-total-robots').setAttribute('data-target', userDeactiveRobots);
+            
+            if (currentRank) {
+                document.getElementById('ui-current-title').innerText = `${currentRank.code} (${currentRank.title})`;
+            } else {
+                document.getElementById('ui-current-title').innerText = `None (New User)`;
+            }
+
+            if (nextRank) {
+                document.getElementById('ui-next-title').innerText = `${nextRank.code}`;
+                
+                // Calculate progress
+                const robotsNeeded = nextRank.req - userDeactiveRobots;
+                document.getElementById('ui-needed-text').innerHTML = `You need <span class="needed-num">${robotsNeeded}</span> more robots to unlock next title!`;
+                
+                const percent = Math.min(100, Math.floor((userDeactiveRobots / nextRank.req) * 100));
+                
+                document.getElementById('ui-progress-text').innerText = `Progress: ${userDeactiveRobots} / ${nextRank.req}`;
+                document.getElementById('ui-progress-percent').innerText = `${percent}%`;
+                
+                // Animate Progress Bar
+                setTimeout(() => {
+                    document.getElementById('ui-progress-bar').style.width = `${percent}%`;
+                }, 800);
+
+            } else {
+                // User maxed out
+                document.getElementById('ui-next-title').innerText = `MAX RANK`;
+                document.getElementById('ui-needed-text').innerHTML = `You have reached the highest title!`;
+                document.getElementById('ui-progress-text').innerText = `Progress: MAX`;
+                document.getElementById('ui-progress-percent').innerText = `100%`;
+                setTimeout(() => {
+                    document.getElementById('ui-progress-bar').style.width = `100%`;
+                }, 800);
+            }
+
+            animateCounter();
+            renderAchievementCards(currentRankIndex, nextRank);
+        }
+
+        // Render Cards dynamically based on defined list
+        function renderAchievementCards(currentIndex, nextRankObj) {
+            const container = document.getElementById('achievements-container');
+            let html = '';
+
+            let delayCount = 3; // start from 0.3s for stagger
+
+            achievementsList.forEach((ach, index) => {
+                let statusClass = 'locked';
+                let statusIconHtml = `<div class="lock-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg></div>`;
+                let isCurrentRank = false;
+
+                if (index <= currentIndex) {
+                    statusClass = 'unlocked';
+                    statusIconHtml = `<div class="check-icon"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"></polyline></svg></div>`;
+                    if (index === currentIndex) {
+                        isCurrentRank = true;
+                    }
+                } else if (nextRankObj && ach.code === nextRankObj.code) {
+                    statusClass = 'in-progress';
+                    statusIconHtml = `<div class="progress-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg></div>`;
+                }
+
+                // Initial based off badge styling
+                let iconChar = ach.code.substring(0,2);
+                
+                let currentRankBadge = isCurrentRank ? `<div class="current-badge-label">CURRENT RANK</div>` : '';
+                let currentCardClass = isCurrentRank ? 'current-rank' : '';
+
+                html += `
+                <div class="ach-card ${statusClass} ${currentCardClass}" style="animation: slideUp 0.6s forwards ${delayCount * 0.1}s; opacity: 0;">
+                    ${currentRankBadge}
+                    <div class="ach-icon">${ach.emoji}</div>
+                    
+                    <div class="ach-details">
+                        <div class="ach-title">
+                            ${ach.title}
+                            <span class="ach-code">${ach.code}</span>
+                        </div>
+                        <div class="ach-req">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path></svg>
+                            Required: ${ach.req} Deactive Robots
+                        </div>
+                        <div class="ach-reward">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="7" width="20" height="14" rx="2" ry="2"></rect><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"></path></svg>
+                            One-Time Cash Bonus
+                        </div>
+                    </div>
+                    
+                    <div class="ach-status-icon">
+                        ${statusIconHtml}
+                    </div>
+                </div>
+                `;
+                
+                delayCount++;
+            });
+
+            container.innerHTML = html;
+        }
+
+        function animateCounter() {
+            const counters = document.querySelectorAll('.counter');
+            
+            counters.forEach(counter => {
+                const target = +counter.getAttribute('data-target');
+                const duration = 1500;
+                const steps = 60;
+                const stepTime = duration / steps;
+                let current = 0;
+                
+                const timer = setInterval(() => {
+                    current += target / steps;
+                    if (current >= target) {
+                        current = target;
+                        clearInterval(timer);
+                    }
+                    counter.innerText = Math.floor(current);
+                }, stepTime);
+            });
+        }
+    </script>
+</body>
+</html>

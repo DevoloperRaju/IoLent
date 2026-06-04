@@ -1,0 +1,773 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IoLent - Deposit Balance</title>
+    <style>
+        :root {
+            --primary: #00e676;
+            --secondary: #00c853;
+            --accent: #00e676;
+            --bg-dark: #0B111B;
+            --bg-card: rgba(255, 255, 255, 0.05);
+            --text-main: #ffffff;
+            --text-muted: #9ba1a6;
+            --success: #00e676;
+            --warning: #ffd166;
+            --danger: #ff4b4b;
+            --border-radius: 16px;
+            --border-radius-lg: 20px;
+            --glass-blur: 20px;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+        }
+
+        body {
+            background: #0B111B !important;
+            color: var(--text-main);
+            min-height: 100vh;
+            padding: 20px;
+            overflow-x: hidden; 
+        }
+
+        /* Animations */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes ripple {
+            0% { transform: scale(0); opacity: 1; }
+            100% { transform: scale(4); opacity: 0; }
+        }
+
+        @keyframes checkmark {
+            0% { transform: scale(0); }
+            50% { transform: scale(1.2); }
+            100% { transform: scale(1); }
+        }
+
+        @keyframes glow {
+            0% { box-shadow: 0 0 5px var(--primary); }
+            50% { box-shadow: 0 0 20px var(--primary); }
+            100% { box-shadow: 0 0 5px var(--primary); }
+        }
+
+        .fade-in {
+            animation: fadeIn 0.8s ease-out forwards;
+        }
+
+        /* Container */
+        .container {
+            max-width: 500px;
+            margin: 0 auto;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        /* Header */
+        .header {
+            text-align: center;
+            margin-bottom: 10px;
+        }
+
+        .header-icon {
+            width: 60px;
+            height: 60px;
+            background: rgba(0, 230, 118, 0.1);
+            border: 1px solid var(--primary);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 15px;
+            box-shadow: 0 0 20px rgba(0, 230, 118, 0.2);
+            font-size: 1.5rem;
+            color: var(--primary);
+        }
+
+        .header h1 {
+            font-size: 1.8rem;
+            margin-bottom: 5px;
+            color: #fff;
+        }
+
+        .header p {
+            color: var(--text-muted);
+            font-size: 0.9rem;
+        }
+
+        /* Cards */
+        .card {
+            background: var(--bg-card);
+            backdrop-filter: blur(var(--glass-blur));
+            -webkit-backdrop-filter: blur(var(--glass-blur));
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: var(--border-radius-lg);
+            padding: 20px;
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.3);
+        }
+
+        .card-title {
+            font-size: 1rem;
+            font-weight: 600;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: var(--accent);
+        }
+
+        /* Inputs */
+        .input-group {
+            position: relative;
+            margin-bottom: 15px;
+        }
+
+        .input-group label {
+            display: block;
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            margin-bottom: 8px;
+        }
+
+        .input-container {
+            position: relative;
+        }
+
+        .input-container i {
+            position: absolute;
+            left: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-muted);
+        }
+
+        input, select {
+            width: 100%;
+            padding: 14px 15px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            color: #fff;
+            font-size: 1rem;
+            outline: none;
+            transition: all 0.3s ease;
+        }
+
+        /* Remove number input spinners */
+        input[type="number"] {
+            -moz-appearance: textfield;
+        }
+
+        input[type="number"]::-webkit-outer-spin-button,
+        input[type="number"]::-webkit-inner-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
+        }
+
+        .has-icon input {
+            padding-left: 45px;
+        }
+
+        input:focus, select:focus {
+            border-color: var(--primary);
+            background: rgba(255, 255, 255, 0.08);
+            box-shadow: 0 0 15px rgba(102, 126, 234, 0.2);
+        }
+
+        /* Custom Dropdown Styling */
+        select {
+            appearance: none;
+            background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+            background-repeat: no-repeat;
+            background-position: right 15px center;
+            background-size: 16px;
+            cursor: pointer;
+        }
+
+        select option {
+            background-color: #fff;
+            color: #000;
+        }
+
+        /* Quick Buttons */
+        .quick-amounts {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 10px;
+            margin-top: 10px;
+        }
+
+        .quick-btn {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 12px 5px;
+            border-radius: 10px;
+            color: #fff;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 0.9rem;
+        }
+
+        .quick-btn:hover {
+            background: var(--primary);
+            border-color: var(--accent);
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.3);
+        }
+
+        /* Instruction Card */
+        #paymentInstructions {
+            display: none;
+            background: rgba(0, 230, 118, 0.05);
+            border: 1px dashed var(--primary);
+            padding: 15px;
+            border-radius: 12px;
+            margin-top: 15px;
+            animation: fadeIn 0.4s ease-out;
+        }
+
+        .instruction-header {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            margin-bottom: 10px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .payment-number-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: rgba(0, 0, 0, 0.2);
+            padding: 10px 15px;
+            border-radius: 8px;
+        }
+
+        .payment-number {
+            font-weight: 700;
+            letter-spacing: 1px;
+            color: var(--accent);
+        }
+
+        .copy-btn {
+            background: var(--primary);
+            border: none;
+            padding: 6px 12px;
+            border-radius: 6px;
+            color: #fff;
+            font-size: 0.75rem;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+
+        .copy-btn:active {
+            transform: scale(0.95);
+        }
+
+        /* Summary */
+        .summary-item {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 8px;
+            font-size: 0.9rem;
+        }
+
+        .summary-label { color: var(--text-muted); }
+        .summary-value { font-weight: 600; }
+        .summary-total {
+            margin-top: 10px;
+            padding-top: 10px;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            font-size: 1rem;
+            color: var(--success);
+        }
+
+        /* Main Submit Button */
+        .submit-btn {
+            width: 100%;
+            padding: 18px;
+            background: var(--primary);
+            border: none;
+            border-radius: 12px;
+            color: #0B111B;
+            font-size: 1.1rem;
+            font-weight: 700;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+            transition: all 0.3s;
+            box-shadow: 0 10px 20px rgba(0, 230, 118, 0.2);
+            margin-top: 10px;
+        }
+
+        .submit-btn:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 15px 30px rgba(102, 126, 234, 0.4);
+            filter: brightness(1.1);
+        }
+
+        .submit-btn:disabled {
+            filter: grayscale(1);
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+        .ripple {
+            position: absolute;
+            background: rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            transform: scale(0);
+            animation: ripple 0.6s linear;
+            pointer-events: none;
+        }
+
+        /* Info Texts */
+        .info-text {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            margin-top: 5px;
+            line-height: 1.4;
+        }
+
+        .error-border {
+            border-color: var(--danger) !important;
+        }
+
+        /* Modal */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(8px);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            padding: 20px;
+        }
+
+        .modal {
+            background: #0B111B;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 20px;
+            padding: 25px;
+            width: 100%;
+            max-width: 400px;
+            animation: fadeIn 0.3s ease-out;
+        }
+
+        .modal h2 {
+            font-size: 1.25rem;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .modal-details {
+            margin-bottom: 25px;
+            background: rgba(255, 255, 255, 0.03);
+            padding: 15px;
+            border-radius: 12px;
+        }
+
+        .modal-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+            font-size: 0.9rem;
+        }
+
+        .modal-row span:first-child { color: var(--text-muted); }
+        .modal-row span:last-child { font-weight: 600; color: var(--accent); }
+
+        .modal-actions {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+
+        .btn-modal {
+            padding: 12px;
+            border-radius: 10px;
+            font-weight: 600;
+            cursor: pointer;
+            border: none;
+            transition: 0.3s;
+        }
+
+        .btn-cancel {
+            background: rgba(255, 255, 255, 0.1);
+            color: #fff;
+        }
+
+        .btn-confirm {
+            background: var(--primary);
+            color: #fff;
+        }
+
+        /* Success Popup */
+        .success-content {
+            text-align: center;
+        }
+
+        .checkmark-container {
+            width: 80px;
+            height: 80px;
+            background: var(--success);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 20px;
+            box-shadow: 0 0 30px rgba(0, 255, 136, 0.3);
+            animation: checkmark 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+        }
+
+        .checkmark-container i {
+            color: #0f1220;
+            font-size: 2.5rem;
+        }
+
+        /* Notice Cards */
+        .notice-card {
+            background: rgba(255, 209, 102, 0.05);
+            border: 1px solid rgba(255, 209, 102, 0.2);
+            padding: 15px;
+            border-radius: 12px;
+            display: flex;
+            gap: 12px;
+            align-items: flex-start;
+        }
+
+        .notice-card.security {
+            background: rgba(0, 242, 254, 0.05);
+            border-color: rgba(0, 242, 254, 0.2);
+        }
+
+        .notice-icon {
+            font-size: 1.2rem;
+            color: var(--warning);
+        }
+
+        .security .notice-icon { color: var(--accent); }
+
+        .notice-content h4 {
+            font-size: 0.85rem;
+            margin-bottom: 4px;
+        }
+
+        .notice-content p {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            line-height: 1.4;
+        }
+
+        /* Mobile specific adjustments */
+        @media (max-width: 400px) {
+            .quick-btn { font-size: 0.8rem; }
+            .header h1 { font-size: 1.6rem; }
+        }
+    </style>
+    <!-- Font Awesome for Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+
+    <div class="container">
+        
+        <!-- Header -->
+        <header class="header fade-in" style="animation-delay: 0.1s;">
+            <div class="header-icon">
+                <i class="fas fa-wallet"></i>
+            </div>
+            <h1>Deposit Balance</h1>
+            <p>Submit your payment details to add balance to your IoLent account.</p>
+        </header>
+
+        <!-- Main Deposit Card (Merged) -->
+        <section class="card fade-in" style="animation-delay: 0.2s;">
+            <div class="card-title">
+                <i class="fas fa-file-invoice-dollar"></i> Deposit Information
+            </div>
+
+            <!-- 1. Deposit Amount -->
+            <div class="input-group">
+                <label>Deposit Amount</label>
+                <div class="input-container">
+                    <input type="number" id="depositAmount" placeholder="Enter deposit amount" min="1">
+                </div>
+                <div class="quick-amounts">
+                    <button class="quick-btn" onclick="setAmount(10)">10</button>
+                    <button class="quick-btn" onclick="setAmount(20)">20</button>
+                    <button class="quick-btn" onclick="setAmount(50)">50</button>
+                    <button class="quick-btn" onclick="setAmount(100)">100</button>
+                </div>
+            </div>
+
+            <div style="height: 20px; border-bottom: 1px solid rgba(255,255,255,0.05); margin-bottom: 20px;"></div>
+
+            <!-- 2. Payment Method -->
+            <div class="input-group">
+                <label>Select Payment Method</label>
+                <select id="paymentMethod" onchange="handleMethodChange()">
+                    <option value="" disabled selected>Select Payment Method</option>
+                    <option value="bKash">bKash</option>
+                    <option value="Nagad">Nagad</option>
+                    <option value="Rocket">Rocket</option>
+                    <option value="Binance Pay">Upay</option>
+                </select>
+            </div>
+
+            <!-- Instruction Panel -->
+            <div id="paymentInstructions" style="margin-bottom: 20px;">
+                <div class="instruction-header">Send money to:</div>
+                <div class="payment-number-row">
+                    <span class="payment-number" id="targetNumber">017XXXXXXXX</span>
+                    <button class="copy-btn" onclick="copyNumber()">Copy</button>
+                </div>
+                <div class="info-text" style="color: var(--warning); margin-top: 10px;">
+                    <i class="fas fa-info-circle"></i> Use "Send Money" or "Cash Out" as applicable.
+                </div>
+            </div>
+
+            <div style="height: 10px; border-bottom: 1px solid rgba(255,255,255,0.05); margin-bottom: 20px;"></div>
+
+            <!-- 3. Sender Details -->
+            <div class="input-group has-icon">
+                <label>Sender Number</label>
+                <div class="input-container">
+                    <i class="fas fa-phone-alt"></i>
+                    <input type="number" id="senderNumber" placeholder="Enter the number used for payment" minlength="11" maxlength="15">
+                </div>
+            </div>
+            <div class="input-group">
+                <label>Transaction ID</label>
+                <div class="input-container">
+                    <input type="text" id="transactionId" placeholder="Enter your transaction ID">
+                </div>
+                <p class="info-text">Transaction ID is required to verify your deposit.</p>
+            </div>
+        </section>
+
+
+        <!-- Summary & Submit -->
+        <section class="fade-in" style="animation-delay: 0.5s;">
+            <div class="card" style="margin-bottom: 15px;">
+                <div class="summary-item">
+                    <span class="summary-label">Deposit Amount:</span>
+                    <span class="summary-value" id="summaryAmount">0 TK</span>
+                </div>
+                <div class="summary-item">
+                    <span class="summary-label">Processing Fee:</span>
+                    <span class="summary-value">0 TK</span>
+                </div>
+                <div class="summary-item summary-total">
+                    <span class="summary-label" style="color: var(--success);">Total Balance Added:</span>
+                    <span class="summary-value" id="summaryTotal">0 TK</span>
+                </div>
+            </div>
+
+            <button class="submit-btn" id="submitBtn" onclick="openConfirmModal()" disabled>
+                Submit Deposit Request
+            </button>
+        </section>
+
+        <!-- Information Notices -->
+        <section class="notice-card fade-in" style="animation-delay: 0.6s; background: rgba(0, 230, 118, 0.05); border-color: rgba(0, 230, 118, 0.2);">
+            <div class="notice-icon" style="color: var(--primary);"><i class="fas fa-exclamation-circle"></i></div>
+            <div class="notice-content">
+                <h4>Daily Deposit Limit</h4>
+                <p>The maximum daily deposit limit for your account is 100 TK.</p>
+            </div>
+        </section>
+
+        <section class="notice-card fade-in" style="animation-delay: 0.7s;">
+            <div class="notice-icon"><i class="fas fa-clock"></i></div>
+            <div class="notice-content">
+                <h4>Deposit Processing Time</h4>
+                <p>Deposits are typically verified within 5–30 minutes. High traffic may cause slight delays.</p>
+            </div>
+        </section>
+
+        <section class="notice-card security fade-in" style="animation-delay: 0.8s;">
+            <div class="notice-icon"><i class="fas fa-shield-alt"></i></div>
+            <div class="notice-content">
+                <h4>Security Notice</h4>
+                <p>Always double-check the payment number before sending. We are not responsible for payments sent to wrong numbers.</p>
+            </div>
+        </section>
+
+        <div style="height: 40px;"></div>
+
+    </div>
+
+    <!-- Confirmation Modal -->
+    <div class="modal-overlay" id="confirmModal">
+        <div class="modal">
+            <h2>Confirm Deposit</h2>
+            <div class="modal-details">
+                <div class="modal-row">
+                    <span>Amount:</span>
+                    <span id="modalAmount">0 TK</span>
+                </div>
+                <div class="modal-row">
+                    <span>Method:</span>
+                    <span id="modalMethod">-</span>
+                </div>
+                <div class="modal-row">
+                    <span>Sender:</span>
+                    <span id="modalSender">-</span>
+                </div>
+                <div class="modal-row">
+                    <span>Trans. ID:</span>
+                    <span id="modalTxId">-</span>
+                </div>
+            </div>
+            <div class="modal-actions">
+                <button class="btn-modal btn-cancel" onclick="closeModal('confirmModal')">Cancel</button>
+                <button class="btn-modal btn-confirm" onclick="processDeposit()">Confirm Deposit</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Success Modal -->
+    <div class="modal-overlay" id="successModal">
+        <div class="modal">
+            <div class="success-content">
+                <div class="checkmark-container">
+                    <i class="fas fa-check"></i>
+                </div>
+                <h2>Deposit Submitted</h2>
+                <p class="info-text" style="text-align: center; margin-bottom: 25px; font-size: 0.9rem;">
+                    Our team will verify your payment and update your balance shortly.
+                </p>
+                <button class="submit-btn" onclick="location.reload()">Great!</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- JavaScript -->
+    <script>
+        const amountInput = document.getElementById('depositAmount');
+        const paymentMethod = document.getElementById('paymentMethod');
+        const senderNumber = document.getElementById('senderNumber');
+        const transactionId = document.getElementById('transactionId');
+        const submitBtn = document.getElementById('submitBtn');
+        const instrPanel = document.getElementById('paymentInstructions');
+        const targetNumber = document.getElementById('targetNumber');
+
+        // Payment numbers for different methods
+        const paymentData = {
+            'bKash': '01712345678',
+            'Nagad': '01987654321',
+            'Rocket': '01855667788',
+            'Binance Pay': 'iolent@binance'
+        };
+
+        // Initialize listeners
+        [amountInput, paymentMethod, senderNumber, transactionId].forEach(el => {
+            el.addEventListener('input', validateForm);
+        });
+
+        function setAmount(val) {
+            amountInput.value = val;
+            validateForm();
+        }
+
+        function handleMethodChange() {
+            const method = paymentMethod.value;
+            if (method) {
+                targetNumber.textContent = paymentData[method];
+                instrPanel.style.display = 'block';
+            }
+            validateForm();
+        }
+
+        function copyNumber() {
+            const num = targetNumber.textContent;
+            navigator.clipboard.writeText(num).then(() => {
+                const copyBtn = document.querySelector('.copy-btn');
+                const originalText = copyBtn.textContent;
+                copyBtn.textContent = 'Copied!';
+                copyBtn.style.background = 'var(--success)';
+                setTimeout(() => {
+                    copyBtn.textContent = originalText;
+                    copyBtn.style.background = 'var(--primary)';
+                }, 2000);
+            });
+        }
+
+        function validateForm() {
+            const amount = parseFloat(amountInput.value);
+            const method = paymentMethod.value;
+            const sender = senderNumber.value.trim();
+            const txid = transactionId.value.trim();
+
+            // Update Summary
+            document.getElementById('summaryAmount').textContent = (amount || 0) + ' TK';
+            document.getElementById('summaryTotal').textContent = (amount || 0) + ' TK';
+
+            // Simple validation
+            let isValid = true;
+
+            if (!amount || amount <= 0) isValid = false;
+            if (!method) isValid = false;
+            if (sender.length < 11 || sender.length > 15) isValid = false;
+            if (txid.length < 5 || txid.length > 25) isValid = false;
+
+            submitBtn.disabled = !isValid;
+        }
+
+        function openConfirmModal() {
+            document.getElementById('modalAmount').textContent = amountInput.value + ' TK';
+            document.getElementById('modalMethod').textContent = paymentMethod.value;
+            document.getElementById('modalSender').textContent = senderNumber.value;
+            document.getElementById('modalTxId').textContent = transactionId.value;
+            
+            document.getElementById('confirmModal').style.display = 'flex';
+        }
+
+        function closeModal(id) {
+            document.getElementById(id).style.display = 'none';
+        }
+
+        function processDeposit() {
+            const confirmBtn = document.querySelector('.btn-confirm');
+            confirmBtn.disabled = true;
+            confirmBtn.textContent = 'Processing...';
+
+            // Simulate API delay
+            setTimeout(() => {
+                closeModal('confirmModal');
+                document.getElementById('successModal').style.display = 'flex';
+            }, 1500);
+        }
+
+        // Ripple Effect for Submit Button
+        submitBtn.addEventListener('click', function(e) {
+            if (this.disabled) return;
+            
+            const rect = this.getBoundingClientRect();
+            const ripple = document.createElement('span');
+            ripple.className = 'ripple';
+            ripple.style.left = `${e.clientX - rect.left}px`;
+            ripple.style.top = `${e.clientY - rect.top}px`;
+            this.appendChild(ripple);
+            
+            setTimeout(() => ripple.remove(), 600);
+        });
+    </script>
+</body>
+</html>

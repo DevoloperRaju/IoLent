@@ -1,0 +1,647 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Account Banned - IoLent</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    
+    <style>
+        /* CSS Variables */
+        :root {
+            --primary-color: #00e676;
+            --secondary-color: #00c853;
+            --accent-color: #00e676;
+            --text-color: #ffffff;
+            --light-text: #ffffff;
+            --bg-color: #0B111B !important;
+            --card-bg: rgba(255, 255, 255, 0.05);
+            --border-radius: 12px;
+            --box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            --transition-speed: 0.3s;
+            --font-family-primary: 'Space Grotesk', sans-serif;
+            --font-family-secondary: 'Inter', sans-serif;
+        }
+
+        /* Dark theme variables */
+        :root[data-theme="dark"] {
+            --primary-color: #00e676;
+            --secondary-color: #00c853;
+            --accent-color: #00e676;
+            --text-color: #ffffff;
+            --light-text: #ffffff;
+            --bg-color: #0B111B !important;
+            --card-bg: rgba(255, 255, 255, 0.05);
+            --box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+        }
+
+        /* Reset and Base Styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: var(--font-family-secondary);
+            background: #0B111B !important;
+            color: var(--text-color);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+            overflow-y: auto;
+            padding: 20px;
+        }
+
+        /* Background Elements - Removed for clean Deep Obsidian theme */
+
+        /* Banned Container */
+        .banned-container {
+            background: var(--card-bg);
+            backdrop-filter: blur(20px);
+            padding: 40px;
+            border-radius: 20px;
+            box-shadow: var(--box-shadow);
+            width: 100%;
+            max-width: 500px;
+            z-index: 10;
+            animation: fadeInUp 0.8s ease-out;
+            position: relative;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            text-align: center;
+        }
+
+        /* Icon Section */
+        .icon-section {
+            margin-bottom: 30px;
+        }
+
+        .banned-icon {
+            width: 120px;
+            height: 120px;
+            margin: 0 auto 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+        }
+
+        .shield-icon {
+            font-size: 5rem;
+            color: #ff4757;
+            opacity: 0.8;
+            animation: pulse 2s infinite;
+        }
+
+        .banned-overlay {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) rotate(45deg);
+            width: 140px;
+            height: 6px;
+            background: #ff4757;
+            border-radius: 3px;
+            box-shadow: 0 0 15px #ff4757;
+        }
+
+        /* Title Section */
+        .title-section {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .banned-title {
+            font-family: var(--font-family-primary);
+            font-size: 2rem;
+            font-weight: 700;
+            color: #ff4757;
+            margin-bottom: 10px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            animation: slideInDown 0.8s ease-out 0.2s both;
+        }
+
+        .banned-subtitle {
+            font-family: var(--font-family-secondary);
+            font-size: 1rem;
+            color: rgba(255, 255, 255, 0.7);
+            animation: fadeIn 0.8s ease-out 0.4s both;
+            line-height: 1.5;
+        }
+
+        /* Status Message */
+        .status-message {
+            background: rgba(255, 179, 0, 0.1);
+            border: 1px solid rgba(255, 179, 0, 0.3);
+            border-radius: 10px;
+            padding: 15px;
+            margin: 20px 0;
+            color: #ffb300;
+            font-weight: 600;
+            animation: fadeInUp 0.8s ease-out 0.6s both;
+        }
+
+        /* Ban Reason */
+        .ban-reason {
+            background: rgba(255, 71, 87, 0.08);
+            border-left: 4px solid #ff4757;
+            padding: 16px 20px;
+            margin-bottom: 25px;
+            text-align: left;
+            border-radius: 0 10px 10px 0;
+            animation: fadeInUp 0.8s ease-out 0.7s both;
+        }
+
+        .reason-label {
+            font-family: var(--font-family-primary);
+            font-size: 0.85rem;
+            color: #ff4757;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .reason-text {
+            font-family: var(--font-family-secondary);
+            font-size: 0.95rem;
+            color: var(--text-color);
+            line-height: 1.5;
+            font-weight: 500;
+        }
+
+        /* Form Section */
+        .form-section {
+            margin-top: 30px;
+            text-align: left;
+        }
+
+        .form-title {
+            font-family: var(--font-family-primary);
+            font-size: 1.2rem;
+            color: var(--text-color);
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: var(--text-color);
+            font-size: 0.9rem;
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid rgba(255, 255, 255, 0.1);
+            border-radius: 8px;
+            font-family: var(--font-family-secondary);
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            background: rgba(255, 255, 255, 0.05);
+            color: #ffffff;
+            box-sizing: border-box;
+        }
+
+        .form-input:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(0, 230, 118, 0.2);
+        }
+
+        .form-textarea {
+            resize: vertical;
+            min-height: 100px;
+            font-family: var(--font-family-secondary);
+            font-size: 1rem;
+        }
+
+        /* Action Buttons */
+        .action-buttons {
+            display: flex;
+            gap: 15px;
+            margin-top: 30px;
+        }
+
+        .action-btn {
+            flex: 1;
+            padding: 15px;
+            border-radius: 10px;
+            font-family: var(--font-family-secondary);
+            font-weight: 600;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            border: 2px solid transparent;
+        }
+
+        .btn-submit {
+            background: var(--primary-color);
+            color: #0B111B;
+            box-shadow: 0 4px 15px rgba(0, 230, 118, 0.2);
+        }
+
+        .btn-submit:hover {
+            box-shadow: 0 6px 20px rgba(0, 230, 118, 0.4);
+            transform: translateY(-2px);
+        }
+
+        .btn-submit:active {
+            transform: translateY(0) scale(0.95);
+        }
+
+        .btn-cancel {
+            background: transparent;
+            color: rgba(255, 255, 255, 0.7);
+            border-color: rgba(255, 255, 255, 0.3);
+        }
+
+        .btn-cancel:hover {
+            background: rgba(255, 255, 255, 0.1);
+            color: #ffffff;
+            border-color: #ffffff;
+        }
+
+        /* Animations */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes slideInDown {
+            from {
+                opacity: 0;
+                transform: translateY(-50px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+            to {
+                opacity: 1;
+            }
+        }
+
+        @keyframes float {
+            0%, 100% {
+                transform: translateY(0px);
+            }
+            50% {
+                transform: translateY(-20px);
+            }
+        }
+
+        @keyframes pulse {
+            0% {
+                transform: scale(1);
+                opacity: 0.8;
+            }
+            50% {
+                transform: scale(1.1);
+                opacity: 1;
+            }
+            100% {
+                transform: scale(1);
+                opacity: 0.8;
+            }
+        }
+
+        /* Responsive Design */
+        @media (max-width: 480px) {
+            .banned-container {
+                padding: 25px;
+                max-width: 95%;
+            }
+            
+            .banned-title {
+                font-size: 1.6rem;
+            }
+            
+            .banned-icon {
+                width: 100px;
+                height: 100px;
+            }
+            
+            .shield-icon {
+                font-size: 4rem;
+            }
+            
+            .action-buttons {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Background Elements Removed -->
+
+    <!-- Banned Container -->
+    <div class="banned-container">
+        <!-- Icon Section -->
+        <div class="icon-section">
+            <div class="banned-icon">
+                <i class="fas fa-shield-alt shield-icon"></i>
+                <div class="banned-overlay"></div>
+            </div>
+        </div>
+
+        <!-- Title Section -->
+        <div class="title-section">
+            <h2 class="banned-title">Account Banned</h2>
+            <p class="banned-subtitle">Your account has been temporarily suspended. Please fill out the form below to request unbanning.</p>
+        </div>
+
+        <!-- Status Message -->
+        <div class="status-message">
+            <i class="fas fa-exclamation-triangle"></i> Your account access has been restricted
+        </div>
+
+        <!-- Ban Reason -->
+        <div class="ban-reason">
+            <div class="reason-label">
+                <i class="fas fa-info-circle"></i> Reason for Ban
+            </div>
+            <div class="reason-text">
+                Violation of Community Guidelines (Multiple reports of spamming and inappropriate behavior).
+            </div>
+        </div>
+
+        <!-- Form Section -->
+        <div class="form-section">
+            <h3 class="form-title">Request Unbanning</h3>
+            
+            <form id="unbanForm">
+                <div class="form-group">
+                    <label class="form-label" for="userId">User ID</label>
+                    <input type="text" id="userId" name="userId" class="form-input" placeholder="Enter your User ID" required>
+                    <div id="userIdError" class="error-message" style="color: #ff4757; font-size: 0.8rem; margin-top: 5px; display: none;"></div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label" for="userName">Full Name</label>
+                    <input type="text" id="userName" name="userName" class="form-input" placeholder="Enter your full name" required>
+                    <div id="userNameError" class="error-message" style="color: #ff4757; font-size: 0.8rem; margin-top: 5px; display: none;"></div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label" for="email">Email Address</label>
+                    <input type="email" id="email" name="email" class="form-input" placeholder="Enter your email address" required>
+                    <div id="emailError" class="error-message" style="color: #ff4757; font-size: 0.8rem; margin-top: 5px; display: none;"></div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label" for="description">Description</label>
+                    <textarea id="description" name="description" class="form-input form-textarea" placeholder="Please describe why you believe your account should be unbanned..." required></textarea>
+                </div>
+
+                <div class="action-buttons">
+                    <button type="submit" class="action-btn btn-submit">
+                        <i class="fas fa-paper-plane"></i> Submit Request
+                    </button>
+                    <button type="button" class="action-btn btn-cancel" id="cancelBtn">
+                        <i class="fas fa-times"></i> Cancel
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        // JavaScript for Banned Page
+
+        document.addEventListener('DOMContentLoaded', function() {
+            const unbanForm = document.getElementById('unbanForm');
+            const cancelBtn = document.getElementById('cancelBtn');
+
+            // Handle form submission
+            unbanForm.addEventListener('submit', function(e) {
+                e.preventDefault();
+                
+                // Get form data
+                const userId = document.getElementById('userId').value.trim();
+                const userName = document.getElementById('userName').value.trim();
+                const email = document.getElementById('email').value.trim();
+                const description = document.getElementById('description').value.trim();
+
+                // Validate form
+                if (!userId || !userName || !email || !description) {
+                    alert('Please fill in all fields.');
+                    return;
+                }
+
+                // Validate User ID before submission
+                if (!validateUserId()) {
+                    return;
+                }
+
+                // Validate Full Name before submission
+                if (!validateUserName()) {
+                    return;
+                }
+
+                // Validate Email before submission
+                if (!validateEmail()) {
+                    return;
+                }
+
+                // Here you would send the data to your server
+                // For now, we'll just show a success message
+                console.log('Unban request submitted:', {
+                    userId: userId,
+                    userName: userName,
+                    email: email,
+                    description: description,
+                    timestamp: new Date().toISOString()
+                });
+
+                // Show success message
+                alert('Your unban request has been submitted successfully! We will review your request and get back to you.');
+                
+                // Reset form
+                unbanForm.reset();
+                
+                // Add click animation to submit button
+                const submitBtn = e.target.querySelector('.btn-submit');
+                submitBtn.style.transform = 'scale(0.95)';
+                setTimeout(() => {
+                    submitBtn.style.transform = '';
+                }, 100);
+            });
+
+            // Handle cancel button
+            cancelBtn.addEventListener('click', function() {
+                // Add click animation
+                this.style.transform = 'scale(0.95)';
+                setTimeout(() => {
+                    this.style.transform = '';
+                }, 100);
+                
+                // Here you could redirect to a different page or show a confirmation
+                alert('You can try again later or contact support.');
+            });
+
+            // Parallax effect removed due to static Deep Obsidian theme
+
+            // Form input animations
+            const formInputs = document.querySelectorAll('.form-input');
+            formInputs.forEach(input => {
+                input.addEventListener('focus', function() {
+                    this.parentElement.style.transform = 'translateY(-2px)';
+                    this.parentElement.style.transition = 'transform 0.3s ease';
+                });
+                
+                input.addEventListener('blur', function() {
+                    this.parentElement.style.transform = 'translateY(0)';
+                });
+            });
+
+            // User ID validation
+            const userIdInput = document.getElementById('userId');
+            const userIdError = document.getElementById('userIdError');
+
+            function validateUserId() {
+                const value = userIdInput.value.trim();
+                
+                // Check if input is numeric
+                if (value === '') {
+                    userIdError.textContent = '';
+                    userIdError.style.display = 'none';
+                    return true;
+                }
+                
+                if (!/^\d+$/.test(value)) {
+                    userIdError.textContent = 'User ID must contain only numbers.';
+                    userIdError.style.display = 'block';
+                    return false;
+                }
+                
+                const numValue = parseInt(value);
+                
+                // Check minimum value
+                if (numValue < 10000) {
+                    userIdError.textContent = 'User ID must be at least 10000.';
+                    userIdError.style.display = 'block';
+                    return false;
+                }
+                
+                // Valid input
+                userIdError.style.display = 'none';
+                return true;
+            }
+
+            // Add input event listener for real-time validation
+            userIdInput.addEventListener('input', function(e) {
+                // Allow only numeric input
+                const value = e.target.value;
+                const numericValue = value.replace(/[^0-9]/g, '');
+                
+                if (value !== numericValue) {
+                    e.target.value = numericValue;
+                }
+                
+                validateUserId();
+            });
+            
+            userIdInput.addEventListener('blur', validateUserId);
+
+            // Full Name validation
+            const userNameInput = document.getElementById('userName');
+            const userNameError = document.getElementById('userNameError');
+
+            function validateUserName() {
+                const value = userNameInput.value.trim();
+                
+                // Check if input is empty
+                if (value === '') {
+                    userNameError.textContent = '';
+                    userNameError.style.display = 'none';
+                    return true;
+                }
+                
+                // Check if input contains only English letters and spaces
+                if (!/^[A-Za-z\s]+$/.test(value)) {
+                    userNameError.textContent = 'Please Enter Your Full Name.';
+                    userNameError.style.display = 'block';
+                    return false;
+                }
+                
+                // Valid input
+                userNameError.style.display = 'none';
+                return true;
+            }
+
+            // Add input event listener for real-time validation
+            userNameInput.addEventListener('input', function(e) {
+                // Allow only English letters and spaces
+                const value = e.target.value;
+                const englishValue = value.replace(/[^A-Za-z\s]/g, '');
+                
+                if (value !== englishValue) {
+                    e.target.value = englishValue;
+                }
+                
+                validateUserName();
+            });
+            
+            userNameInput.addEventListener('blur', validateUserName);
+
+            // Email validation (Gmail only)
+            const emailInput = document.getElementById('email');
+            const emailError = document.getElementById('emailError');
+
+            function validateEmail() {
+                const value = emailInput.value.trim();
+                
+                // Check if input is empty
+                if (value === '') {
+                    emailError.textContent = '';
+                    emailError.style.display = 'none';
+                    return true;
+                }
+                
+                // Check if email ends with @gmail.com
+                if (!/^[^\s@]+@gmail\.com$/.test(value)) {
+                    emailError.textContent = 'Please enter a valid Gmail address (example@gmail.com)';
+                    emailError.style.display = 'block';
+                    return false;
+                }
+                
+                // Valid input
+                emailError.style.display = 'none';
+                return true;
+            }
+
+            // Add input event listener for real-time validation
+            emailInput.addEventListener('input', validateEmail);
+            emailInput.addEventListener('blur', validateEmail);
+        });
+    </script>
+</body>
+</html>

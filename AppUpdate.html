@@ -1,0 +1,709 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>App Update - IoLent</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    
+    <style>
+        /* CSS Variables - Updated to match Mining.html theme */
+        :root, :root[data-theme="dark"] {
+            --primary-color: #00e676;
+            --secondary-color: #00e676;
+            --accent-color: #00e676;
+            --text-color: #ffffff;
+            --light-text: #ffffff;
+            --bg-color: #0B111B;
+            --card-bg: rgba(255, 255, 255, 0.05);
+            --border-radius: 12px;
+            --box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+            --transition-speed: 0.3s;
+            --font-family-primary: 'Space Grotesk', sans-serif;
+            --font-family-secondary: 'Inter', sans-serif;
+        }
+
+        /* Reset and Base Styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: var(--font-family-secondary);
+            background-color: var(--bg-color) !important;
+            background-image: none !important;
+            color: var(--text-color);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        /* Background Elements */
+        .background-elements {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            z-index: 1;
+            pointer-events: none;
+        }
+
+        .element {
+            position: absolute;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.1);
+            animation: float 6s ease-in-out infinite;
+        }
+
+        .element-1 {
+            width: 300px;
+            height: 300px;
+            top: -10%;
+            left: -10%;
+            animation-delay: 0s;
+        }
+
+        .element-2 {
+            width: 250px;
+            height: 250px;
+            top: 70%;
+            right: -10%;
+            animation-delay: 1s;
+        }
+
+        .element-3 {
+            width: 200px;
+            height: 200px;
+            bottom: -10%;
+            left: 20%;
+            animation-delay: 2s;
+        }
+
+        .element-4 {
+            width: 150px;
+            height: 150px;
+            top: 30%;
+            right: 10%;
+            animation-delay: 3s;
+        }
+
+        /* Container */
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            position: relative;
+            z-index: 10;
+        }
+
+        /* Header */
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .header h1 {
+            font-family: var(--font-family-primary);
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 10px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            animation: slideInDown 0.8s ease-out;
+        }
+
+        .header p {
+            color: rgba(255, 255, 255, 0.8);
+            font-size: 1rem;
+            animation: fadeIn 0.8s ease-out 0.2s both;
+        }
+
+        /* App Update Card */
+        .app-update-card {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(20px);
+            border-radius: 20px;
+            box-shadow: var(--box-shadow);
+            padding: 30px;
+            margin-bottom: 20px;
+            animation: fadeInUp 0.8s ease-out;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        /* App Info Section */
+        .app-info-section {
+            text-align: center;
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+        }
+
+        .app-icon {
+            width: 120px;
+            height: 120px;
+            border-radius: 20px;
+            background: var(--primary-color);
+            margin: 0 auto 15px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 10px 30px rgba(0, 230, 118, 0.2);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .app-icon:hover {
+            transform: scale(1.05);
+            box-shadow: 0 15px 40px rgba(0, 230, 118, 0.4);
+        }
+
+        .app-icon i {
+            font-size: 4rem;
+            color: #0B111B;
+            z-index: 2;
+        }
+
+        .app-icon::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 20px;
+        }
+
+        .app-name {
+            font-family: var(--font-family-primary);
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 5px;
+            color: var(--text-color);
+            text-shadow: 0 0 10px rgba(1, 20, 26, 0.6);
+        }
+
+        .app-version {
+            font-family: var(--font-family-secondary);
+            font-size: 0.9rem;
+            color: #666;
+            margin-bottom: 15px;
+        }
+
+        .update-badge {
+            display: inline-block;
+            background: var(--primary-color);
+            color: #0B111B;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            animation: pulse 2s infinite;
+        }
+
+        .release-date {
+            font-family: var(--font-family-secondary);
+            font-size: 0.85rem;
+            color: #888;
+            margin-top: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+        }
+
+        .release-date i {
+            color: var(--primary-color);
+        }
+
+        /* Update Details Section */
+        .update-details-section {
+            margin-bottom: 30px;
+        }
+
+        .section-title {
+            font-family: var(--font-family-primary);
+            font-size: 1.2rem;
+            color: var(--text-color);
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            text-shadow: 0 0 10px rgba(0, 209, 255, 0.6);
+        }
+
+        .section-title i {
+            color: var(--primary-color);
+        }
+
+        .update-list {
+            list-style: none;
+            padding: 0;
+        }
+
+        .update-list li {
+            background: rgba(255, 255, 255, 0.05);
+            margin-bottom: 10px;
+            padding: 15px;
+            border-radius: 10px;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .update-list li:hover {
+            background: rgba(255, 255, 255, 0.1);
+            transform: translateX(5px);
+        }
+
+        .update-icon {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            background: var(--primary-color);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: #0B111B;
+            font-size: 0.8rem;
+        }
+
+        .update-text {
+            font-family: var(--font-family-secondary);
+            font-size: 0.9rem;
+            color: #ccc;
+            line-height: 1.5;
+        }
+
+        /* Download Section */
+        .download-section {
+            margin-bottom: 30px;
+        }
+
+        .download-info {
+            background: rgba(255, 255, 255, 0.05);
+            padding: 20px;
+            border-radius: 15px;
+            margin-bottom: 20px;
+            text-align: center;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .download-size {
+            font-family: var(--font-family-primary);
+            font-size: 1.1rem;
+            color: var(--primary-color);
+            margin-bottom: 5px;
+        }
+
+        .download-text {
+            font-family: var(--font-family-secondary);
+            font-size: 0.9rem;
+            color: #666;
+        }
+
+        /* Action Buttons */
+        .action-buttons {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .action-btn {
+            padding: 15px;
+            border-radius: 10px;
+            font-family: var(--font-family-secondary);
+            font-weight: 600;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            border: 2px solid transparent;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        .btn-update {
+            background: var(--primary-color);
+            color: #0B111B;
+            box-shadow: 0 4px 15px rgba(0, 230, 118, 0.4);
+            animation: bounce 2s infinite;
+        }
+
+        .btn-update:hover {
+            box-shadow: 0 6px 20px rgba(0, 230, 118, 0.6);
+            transform: translateY(-2px);
+        }
+
+        .btn-skip {
+            background: transparent;
+            color: #ccc;
+            border-color: #666;
+        }
+
+        .btn-skip:hover {
+            background: rgba(255, 255, 255, 0.05);
+            color: #fff;
+            border-color: #fff;
+        }
+
+        .btn-later {
+            background: transparent;
+            color: #ff4757;
+            border-color: #ff4757;
+        }
+
+        .btn-later:hover {
+            background: rgba(255, 71, 87, 0.1);
+            color: #ff4757;
+            border-color: #ff4757;
+        }
+
+        /* Progress Bar */
+        .progress-container {
+            margin-bottom: 20px;
+            display: none;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 10px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 5px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: var(--primary-color);
+            width: 0%;
+            transition: width 0.3s ease;
+        }
+
+        .progress-text {
+            text-align: center;
+            font-family: var(--font-family-secondary);
+            font-size: 0.9rem;
+            color: #666;
+            margin-top: 10px;
+        }
+
+        /* Animations */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes slideInDown {
+            from {
+                opacity: 0;
+                transform: translateY(-50px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+            to {
+                opacity: 1;
+            }
+        }
+
+        @keyframes float {
+            0%, 100% {
+                transform: translateY(0px);
+            }
+            50% {
+                transform: translateY(-20px);
+            }
+        }
+
+        @keyframes pulse {
+            0% {
+                transform: scale(1);
+            }
+            50% {
+                transform: scale(1.05);
+            }
+            100% {
+                transform: scale(1);
+            }
+        }
+
+        @keyframes bounce {
+            0%, 20%, 50%, 80%, 100% {
+                transform: translateY(0);
+            }
+            40% {
+                transform: translateY(-10px);
+            }
+            60% {
+                transform: translateY(-5px);
+            }
+        }
+
+        /* Responsive Design */
+        @media (max-width: 480px) {
+            .container {
+                padding: 0 15px;
+            }
+            
+            .app-update-card {
+                padding: 20px;
+            }
+            
+            .header h1 {
+                font-size: 1.5rem;
+            }
+            
+            .app-icon {
+                width: 100px;
+                height: 100px;
+            }
+            
+            .app-icon i {
+                font-size: 3rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Background Elements -->
+    <div class="background-elements">
+        <div class="element element-1"></div>
+        <div class="element element-2"></div>
+        <div class="element element-3"></div>
+        <div class="element element-4"></div>
+    </div>
+
+    <!-- Container -->
+    <div class="container">
+        <!-- Header -->
+        <div class="header">
+            <h1>App Update</h1>
+            <p>Download the latest version for the best experience</p>
+        </div>
+
+        <!-- App Update Card -->
+        <div class="app-update-card">
+            <!-- App Info Section -->
+            <div class="app-info-section">
+                <div class="app-icon">
+                    <i class="fas fa-cloud-download-alt"></i>
+                </div>
+                <h2 class="app-name">IoLent</h2>
+                <p class="app-version">Current Version: 1.0.0</p>
+                <span class="update-badge">Available Update: 1.1.0</span>
+                <div class="release-date">
+                    <i class="far fa-calendar-alt"></i> Released: 12 June 2026
+                </div>
+            </div>
+
+            <!-- Update Details Section -->
+            <div class="update-details-section">
+                <h3 class="section-title">
+                    <i class="fas fa-list-check"></i> What's New
+                </h3>
+                <ul class="update-list">
+                    <li>
+                        <div class="update-icon">
+                            <i class="fas fa-bolt"></i>
+                        </div>
+                        <div class="update-text">
+                            <strong>Performance Improvements:</strong> Enhanced app speed and responsiveness
+                        </div>
+                    </li>
+                    <li>
+                        <div class="update-icon">
+                            <i class="fas fa-shield-alt"></i>
+                        </div>
+                        <div class="update-text">
+                            <strong>Security Updates:</strong> Latest security patches and improvements
+                        </div>
+                    </li>
+                    <li>
+                        <div class="update-icon">
+                            <i class="fas fa-paint-brush"></i>
+                        </div>
+                        <div class="update-text">
+                            <strong>UI Enhancements:</strong> Improved user interface and visual elements
+                        </div>
+                    </li>
+                    <li>
+                        <div class="update-icon">
+                            <i class="fas fa-bug"></i>
+                        </div>
+                        <div class="update-text">
+                            <strong>Bug Fixes:</strong> Resolved known issues and improved stability
+                        </div>
+                    </li>
+                    <li>
+                        <div class="update-icon">
+                            <i class="fas fa-star"></i>
+                        </div>
+                        <div class="update-text">
+                            <strong>New Features:</strong> Exciting new functionality and capabilities
+                        </div>
+                    </li>
+                </ul>
+            </div>
+
+            <!-- Download Section -->
+            <div class="download-section">
+                <div class="download-info">
+                    <div class="download-size">Download Size: 25.4 MB</div>
+                </div>
+
+                <!-- Progress Bar -->
+                <div class="progress-container" id="progressContainer">
+                    <div class="progress-bar">
+                        <div class="progress-fill" id="progressFill"></div>
+                    </div>
+                    <div class="progress-text" id="progressText">Downloading... 0%</div>
+                </div>
+            </div>
+
+            <!-- Action Buttons -->
+            <div class="action-buttons">
+                <button type="button" class="action-btn btn-update" id="updateBtn">
+                    <i class="fas fa-download"></i> Download & Update
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // JavaScript for App Update Page
+
+        document.addEventListener('DOMContentLoaded', function() {
+            const updateBtn = document.getElementById('updateBtn');
+            const skipBtn = document.getElementById('skipBtn');
+            const laterBtn = document.getElementById('laterBtn');
+            const progressContainer = document.getElementById('progressContainer');
+            const progressFill = document.getElementById('progressFill');
+            const progressText = document.getElementById('progressText');
+
+            // Update Button Handler
+            updateBtn.addEventListener('click', function() {
+                // Add click animation
+                this.style.transform = 'scale(0.95)';
+                setTimeout(() => {
+                    this.style.transform = '';
+                }, 100);
+
+                // Download functionality removed - will be connected to server later
+            });
+
+            // Skip Button Handler
+            skipBtn.addEventListener('click', function() {
+                // Add click animation
+                this.style.transform = 'scale(0.95)';
+                setTimeout(() => {
+                    this.style.transform = '';
+                }, 100);
+
+                // Show confirmation dialog
+                if (confirm('Are you sure you want to skip this update? You may miss important improvements and security fixes.')) {
+                    console.log('User skipped update');
+                    alert('Update skipped. You can always update later from Settings.');
+                }
+            });
+
+            // Later Button Handler
+            laterBtn.addEventListener('click', function() {
+                // Add click animation
+                this.style.transform = 'scale(0.95)';
+                setTimeout(() => {
+                    this.style.transform = '';
+                }, 100);
+
+                console.log('User chose to update later');
+                alert('You will be reminded about this update later.');
+            });
+
+            // Download Simulation Function
+            function startDownload() {
+                progressContainer.style.display = 'block';
+                updateBtn.disabled = true;
+                updateBtn.textContent = 'Downloading...';
+                updateBtn.style.background = '#ccc';
+                updateBtn.style.borderColor = '#ccc';
+                updateBtn.style.cursor = 'not-allowed';
+
+                let progress = 0;
+                const interval = setInterval(() => {
+                    progress += 2;
+                    progressFill.style.width = progress + '%';
+                    progressText.textContent = 'Downloading... ' + progress + '%';
+
+                    if (progress >= 100) {
+                        clearInterval(interval);
+                        progressText.textContent = 'Download Complete!';
+                        updateBtn.textContent = 'Install Update';
+                        updateBtn.style.background = 'var(--primary-color)';
+                        updateBtn.style.borderColor = 'transparent';
+                        updateBtn.style.cursor = 'pointer';
+                        updateBtn.disabled = false;
+
+                        // Change button to install
+                        updateBtn.onclick = function() {
+                            alert('Update installed successfully! Please restart the app.');
+                            location.reload();
+                        };
+                    }
+                }, 100);
+            }
+
+            // Parallax effect for background elements (Desktop only)
+            window.addEventListener('mousemove', function(e) {
+                // Disable on mobile devices/small screens
+                if (window.innerWidth <= 768) return;
+                
+                const elements = document.querySelectorAll('.element');
+                const x = e.clientX / window.innerWidth;
+                const y = e.clientY / window.innerHeight;
+                
+                elements.forEach((element, index) => {
+                    const speed = 0.5 + (index * 0.1);
+                    const xPos = (x - 0.5) * speed * 50;
+                    const yPos = (y - 0.5) * speed * 50;
+                    
+                    element.style.transform = `translate(${xPos}px, ${yPos}px)`;
+                });
+            });
+
+            // App icon click animation
+            const appIcon = document.querySelector('.app-icon');
+            appIcon.addEventListener('click', function() {
+                this.style.transform = 'scale(1.1) rotate(360deg)';
+                setTimeout(() => {
+                    this.style.transform = 'scale(1.05)';
+                }, 500);
+            });
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,473 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IoLent - Platform Notices</title>
+    <style>
+        :root {
+            --primary: #00e676;
+            --secondary: #00c853;
+            --accent: #00e676;
+            --bg-color: #0B111B;
+            --card-bg: rgba(255, 255, 255, 0.05);
+            --card-border: rgba(255, 255, 255, 0.1);
+            --text-main: #ffffff;
+            --text-muted: #9ba1a6;
+            
+            /* Status Indicators */
+            --important: #ff3d00;
+            --new: #00b0ff;
+            --update: #00e676;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            background-color: var(--bg-color) !important;
+            background-image: none !important;
+            color: var(--text-main);
+            min-height: 100vh;
+            padding: 20px 20px 80px 20px;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 500px;
+            margin: 0 auto;
+        }
+
+        /* Glassmorphism utility */
+        .glass-card {
+            background: var(--card-bg);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid var(--card-border);
+            border-radius: 20px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+            opacity: 0;
+            transform: translateY(20px);
+            animation: slideUp 0.6s forwards cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Header */
+        .header {
+            text-align: center;
+            margin-bottom: 24px;
+            margin-top: 10px;
+            animation: slideUp 0.6s forwards;
+        }
+
+        .icon-circle {
+            width: 64px;
+            height: 64px;
+            background: var(--primary);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 16px;
+            box-shadow: 0 0 25px rgba(0, 230, 118, 0.5);
+            animation: pulseGlow 3s infinite alternate;
+        }
+
+        @keyframes pulseGlow {
+            0% { box-shadow: 0 0 15px rgba(0, 230, 118, 0.3); transform: scale(1); }
+            100% { box-shadow: 0 0 30px rgba(0, 230, 118, 0.6); transform: scale(1.05); }
+        }
+
+        .icon-circle svg {
+            width: 32px;
+            height: 32px;
+            fill: none;
+            stroke: var(--bg-color);
+            stroke-width: 2;
+            stroke-linecap: round;
+            stroke-linejoin: round;
+        }
+
+        .header h1 {
+            font-size: 26px;
+            margin-bottom: 8px;
+            background: linear-gradient(to right, #fff, var(--accent));
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            font-weight: 800;
+        }
+
+        .header p {
+            color: var(--text-muted);
+            font-size: 14px;
+            line-height: 1.5;
+        }
+
+        .notification-indicator {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            background: rgba(0, 230, 118, 0.1);
+            border: 1px solid rgba(0, 230, 118, 0.3);
+            color: var(--accent);
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            margin-top: 12px;
+        }
+
+        /* Search Bar */
+        .search-container {
+            position: relative;
+            margin-bottom: 24px;
+            animation: slideUp 0.6s forwards 0.1s;
+            opacity: 0;
+        }
+
+        .search-container input {
+            width: 100%;
+            background: rgba(0,0,0,0.3);
+            border: 1px solid var(--card-border);
+            border-radius: 12px;
+            padding: 14px 14px 14px 44px;
+            color: #fff;
+            font-size: 15px;
+            outline: none;
+            transition: all 0.3s;
+        }
+
+        .search-container input:focus {
+            border-color: var(--accent);
+            box-shadow: 0 0 15px rgba(0, 230, 118, 0.2);
+            background: rgba(0,0,0,0.4);
+        }
+
+        .search-container svg {
+            position: absolute;
+            left: 14px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-muted);
+            width: 18px;
+            height: 18px;
+            transition: color 0.3s;
+        }
+
+        .search-container input:focus + svg {
+            color: var(--accent);
+        }
+
+        /* Highlight Card */
+        .highlight-card {
+            background: rgba(0, 230, 118, 0.05);
+            border: 1px solid rgba(0, 230, 118, 0.3);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3), 0 0 20px rgba(0, 230, 118, 0.1) inset;
+        }
+
+        .highlight-badge {
+            position: absolute;
+            top: 0; right: 24px;
+            background: var(--primary);
+            color: var(--bg-color);
+            font-size: 10px;
+            font-weight: 800;
+            padding: 4px 12px;
+            border-bottom-left-radius: 8px;
+            border-bottom-right-radius: 8px;
+            letter-spacing: 1px;
+            box-shadow: 0 2px 10px rgba(0, 230, 118, 0.5);
+            text-transform: uppercase;
+        }
+
+        /* Notice Card Content */
+        .notice-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 12px;
+            gap: 10px;
+        }
+
+        .notice-title {
+            font-size: 16px;
+            font-weight: 700;
+            line-height: 1.3;
+            color: #fff;
+        }
+
+        .notice-tag {
+            display: inline-block;
+            font-size: 11px;
+            font-weight: 600;
+            padding: 4px 8px;
+            border-radius: 6px;
+            white-space: nowrap;
+        }
+
+        /* Tag Colors */
+        .tag-update { background: rgba(0, 230, 118, 0.1); color: var(--update); border: 1px solid rgba(0, 230, 118, 0.3); }
+        .tag-important { background: rgba(255, 61, 0, 0.1); color: var(--important); border: 1px solid rgba(255, 61, 0, 0.3); }
+        .tag-new { background: rgba(0, 176, 255, 0.1); color: var(--new); border: 1px solid rgba(0, 176, 255, 0.3); }
+        .tag-reward { background: rgba(240, 147, 251, 0.1); color: #f093fb; border: 1px solid rgba(240, 147, 251, 0.3); }
+        .tag-maintenance { background: rgba(255, 215, 0, 0.1); color: #FFD700; border: 1px solid rgba(255, 215, 0, 0.3); }
+
+        .notice-meta {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: var(--text-muted);
+            font-size: 12px;
+            margin-bottom: 12px;
+        }
+
+        .notice-meta svg {
+            width: 14px;
+            height: 14px;
+        }
+
+        .notice-subject {
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--accent);
+            margin-bottom: 8px;
+        }
+
+        .notice-preview {
+            font-size: 14px;
+            color: var(--text-muted);
+            line-height: 1.5;
+            display: none; /* Hide preview now that full details are shown */
+        }
+        
+        .notice-details {
+            font-size: 14px;
+            color: var(--text-muted);
+            line-height: 1.6;
+            margin-top: 16px;
+            padding-top: 16px;
+            display: block; /* Shown by default now */
+            animation: fadeIn 0.4s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-5px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .notice-details p {
+            margin-bottom: 10px;
+        }
+
+        /* Read More Button */
+        .btn-expand {
+            background: transparent;
+            color: var(--accent);
+            border: 1px solid rgba(0, 230, 118, 0.3);
+            border-radius: 8px;
+            padding: 8px 16px;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            margin-top: 16px;
+            width: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            transition: all 0.3s;
+        }
+
+        .btn-expand:hover {
+            background: rgba(0, 230, 118, 0.1);
+            border-color: var(--accent);
+        }
+
+        .btn-expand svg {
+            transition: transform 0.3s;
+        }
+
+        /* Expanded State Classes */
+        .glass-card.expanded .notice-preview {
+            display: none;
+        }
+
+        .glass-card.expanded .notice-details {
+            display: block;
+        }
+        
+        .glass-card.expanded .btn-expand {
+            background: rgba(255,255,255,0.05);
+            color: var(--text-main);
+            border-color: transparent;
+        }
+
+        .glass-card.expanded .btn-expand svg {
+            transform: rotate(180deg);
+        }
+
+        /* Highlight Card Specific */
+        .highlight-card .btn-expand {
+            background: var(--primary);
+            color: var(--bg-color);
+            border: none;
+            box-shadow: 0 4px 15px rgba(0, 230, 118, 0.4);
+        }
+        
+        .highlight-card .btn-expand:hover {
+            box-shadow: 0 6px 20px rgba(0, 230, 118, 0.6);
+            transform: translateY(-2px);
+        }
+
+        .highlight-card.expanded .btn-expand {
+            background: rgba(255,255,255,0.1);
+            color: #fff;
+            box-shadow: none;
+            transform: none;
+        }
+
+        /* Admin Badge */
+        .admin-badge {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 11px;
+            color: var(--text-muted);
+            margin-top: 16px;
+        }
+
+        .admin-badge svg {
+            color: var(--accent);
+        }
+
+        /* Not found state */
+        .no-results {
+            text-align: center;
+            padding: 40px 20px;
+            color: var(--text-muted);
+            display: none;
+        }
+        
+        .no-results svg {
+            width: 48px;
+            height: 48px;
+            margin-bottom: 16px;
+            opacity: 0.5;
+        }
+
+        /* Section Title */
+        .section-title {
+            font-size: 16px;
+            font-weight: 700;
+            margin: 30px 0 16px 0;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            animation: slideUp 0.6s forwards 0.2s;
+            opacity: 0;
+        }
+        
+        .section-title span {
+            color: var(--accent);
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <!-- Header -->
+        <div class="header">
+            <div class="icon-circle">
+                <svg viewBox="0 0 24 24">
+                    <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path>
+                    <path d="M13.73 21a2 2 0 0 1-3.46 0"></path>
+                </svg>
+            </div>
+            <h1>Platform Notices</h1>
+            <p>Stay updated with the latest announcements from IoLent.</p>
+        <!-- New Notices indicator removed per request -->
+        </div>
+
+        <!-- Search Bar Removed per request -->
+
+        <!-- Latest Highlight Notice -->
+        <div class="glass-card highlight-card notice-item" style="animation-delay: 0.2s;">
+            <div class="highlight-badge">Latest Update</div>
+            
+            <div class="notice-header">
+                <div class="notice-title">Platform Maintenance Update</div>
+                <div class="notice-tag tag-important">Important</div>
+            </div>
+            
+            <div class="notice-meta">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
+                12 March 2026
+            </div>
+            
+            <div class="notice-subject">Subject: Server Optimization</div>
+            
+            <div class="notice-preview">
+                Our system will undergo scheduled maintenance to improve mining performance and backend stability. During this time, the platform might experience brief interruptions...
+            </div>
+            
+            <div class="notice-details">
+                <p>Dear IoLent Community,</p>
+                <p>In our continuous effort to provide the best mining experience, our system will undergo scheduled maintenance on <strong>March 14, 2026, from 02:00 AM to 04:00 AM (UTC)</strong>.</p>
+                <p><strong>What to expect:</strong></p>
+                <ul style="margin-left: 20px; margin-bottom: 10px; color: #fff;">
+                    <li>Brief interruption in login services.</li>
+                    <li>Robot mining outputs will not be affected and will resume syncing post-maintenance.</li>
+                    <li>Withdrawal processing will be temporarily paused.</li>
+                </ul>
+                <p>We apologize for any inconvenience caused and appreciate your understanding as we work to improve the IoLent infrastructure.</p>
+                
+                <div class="admin-badge">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>
+                    Official Notice from IoLent Team
+                </div>
+            </div>
+            
+        </div>
+
+        <!-- Notice list and title removed per request -->
+
+    </div>
+
+    <script>
+        // Expand/Collapse Logic
+        function toggleNotice(btnElement) {
+            const card = btnElement.closest('.glass-card');
+            const isExpanded = card.classList.contains('expanded');
+            const btnText = btnElement.querySelector('span');
+
+            if (isExpanded) {
+                card.classList.remove('expanded');
+                btnText.innerText = 'Read Full Notice';
+            } else {
+                card.classList.add('expanded');
+                btnText.innerText = 'Collapse';
+            }
+        }
+
+        // Search Logic removed per request
+    </script>
+</body>
+</html>

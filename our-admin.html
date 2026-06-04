@@ -1,0 +1,328 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IoLent - My Agent</title>
+    <style>
+        :root {
+            --primary: #00e676;
+            --secondary: #00c853;
+            --accent: #00e676;
+            --bg: #0B111B;
+            --card: rgba(255,255,255,0.05);
+            --border: rgba(255,255,255,0.1);
+            --text: #ffffff;
+            --muted: #9ba1a6;
+
+            --gold:   #FFD700;
+            --blue:   #00b0ff;
+            --purple: #ce93d8;
+            --green:  #00e676;
+            --orange: #ff9800;
+        }
+
+        * { margin:0; padding:0; box-sizing:border-box; font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif; -webkit-tap-highlight-color:transparent; }
+
+        body {
+            background: #0B111B !important;
+            color: var(--text);
+            min-height: 100vh;
+            padding: 20px 16px 80px;
+            display: flex;
+            justify-content: center;
+            -webkit-overflow-scrolling: touch;
+            overflow-scrolling: touch;
+        }
+
+        .container { width:100%; max-width:480px; margin:0 auto; }
+
+        /* Header */
+        .header {
+            text-align: center;
+            margin-bottom: 28px;
+            margin-top: 10px;
+            animation: fadeUp .6s forwards;
+        }
+        @keyframes fadeUp {
+            from { opacity:0; transform:translateY(-18px); }
+            to   { opacity:1; transform:translateY(0); }
+        }
+
+        .header-icon {
+            width:64px; height:64px;
+            background: rgba(0, 230, 118, 0.1);
+            border: 1px solid var(--primary);
+            border-radius:50%;
+            display:flex; align-items:center; justify-content:center;
+            margin: 0 auto 14px;
+            font-size:26px;
+            box-shadow: 0 0 24px rgba(0, 230, 118, 0.2);
+            animation: glow 2.5s infinite alternate;
+            color: var(--primary);
+        }
+        @keyframes glow {
+            0%   { box-shadow: 0 0 14px rgba(0, 230, 118, 0.2); transform:scale(1); }
+            100% { box-shadow: 0 0 28px rgba(0, 230, 118, 0.4); transform:scale(1.04); }
+        }
+
+        .header h1 {
+            font-size:24px; font-weight:800;
+            color: #fff;
+            margin-bottom:6px;
+        }
+        .header p { color: var(--muted); font-size:13px; }
+
+        /* Level Section Label */
+        .level-label {
+            display:flex; align-items:center; gap:8px;
+            font-size:11px; font-weight:700; letter-spacing:1px;
+            text-transform:uppercase;
+            color: var(--muted);
+            margin: 20px 0 10px;
+        }
+        .level-label::after {
+            content:''; flex:1;
+            height:1px; background: var(--border);
+        }
+
+        /* Admin Card */
+        .admin-card {
+            background: var(--card);
+            backdrop-filter: blur(14px);
+            -webkit-backdrop-filter: blur(14px);
+            border: 1px solid var(--border);
+            border-radius:20px;
+            padding:20px;
+            display:flex;
+            gap:16px;
+            align-items:flex-start;
+            transition: transform .25s, box-shadow .25s;
+            animation: cardIn .45s forwards;
+            opacity:0;
+        }
+        @keyframes cardIn {
+            from { opacity:0; transform:translateY(16px); }
+            to   { opacity:1; transform:translateY(0); }
+        }
+        .admin-card:hover { transform:translateY(-3px); box-shadow:0 14px 36px rgba(0,0,0,.4); }
+
+        /* Performance optimizations for mobile */
+        .admin-card {
+            will-change: transform;
+            transform: translateZ(0);
+        }
+
+        /* Photo Avatar */
+        .admin-photo {
+            width:64px; height:64px; border-radius:50%; object-fit:cover;
+            flex-shrink:0;
+            border: 2px solid var(--border);
+            background:#1e2340;
+            display:flex; align-items:center; justify-content:center;
+            font-size:26px;
+            overflow:hidden;
+        }
+        .admin-photo img {
+            width:100%; height:100%; object-fit:cover;
+            border-radius:50%;
+        }
+
+        /* Info */
+        .admin-info { flex:1; }
+
+        .admin-badge {
+            display:inline-block;
+            font-size:10px; font-weight:800;
+            letter-spacing:.8px; text-transform:uppercase;
+            padding:3px 10px; border-radius:6px;
+            margin-bottom:8px;
+        }
+
+        /* Badge colours */
+        .badge-gold   { background:rgba(255,215,0,.15);  color:var(--gold);   border:1px solid rgba(255,215,0,.35);  }
+        .badge-blue   { background:rgba(0,176,255,.12);  color:var(--blue);   border:1px solid rgba(0,176,255,.35);  }
+        .badge-purple { background:rgba(206,147,216,.12);color:var(--purple); border:1px solid rgba(206,147,216,.35);}
+        .badge-green  { background:rgba(0,230,118,.12);  color:var(--green);  border:1px solid rgba(0,230,118,.35);  }
+        .badge-orange { background:rgba(255,152,0,.12);  color:var(--orange); border:1px solid rgba(255,152,0,.35);  }
+
+        .admin-name  { font-size:16px; font-weight:700; color:#fff; margin-bottom:4px; }
+        .admin-uid   { font-size:12px; color:var(--accent); font-weight:600; margin-bottom:4px; }
+        .admin-addr  { font-size:12px; color:var(--muted); }
+
+        .verified-chip {
+            display:inline-flex; align-items:center; gap:4px;
+            background:rgba(0,230,118,.1); border:1px solid rgba(0,230,118,.25);
+            color:#00e676; font-size:10px; font-weight:700;
+            padding:2px 8px; border-radius:20px;
+            margin-top:8px;
+        }
+
+        .no-agent-chip {
+            display:inline-flex; align-items:center; gap:4px;
+            background:rgba(255,152,0,.1); border:1px solid rgba(255,152,0,.25);
+            color:#ff9800; font-size:10px; font-weight:700;
+            padding:2px 8px; border-radius:20px;
+            margin-top:8px;
+        }
+
+        .apply-btn {
+            display:inline-block;
+            background:linear-gradient(135deg, #00e676, #00c853);
+            color:#000; font-size:12px; font-weight:700;
+            padding:8px 16px; border-radius:8px;
+            text-decoration:none; border:none; cursor:pointer;
+            margin-top:10px;
+            transition: transform .2s, box-shadow .2s;
+        }
+        .apply-btn:hover {
+            transform:scale(1.03);
+            box-shadow:0 4px 16px rgba(0,230,118,.3);
+        }
+        .apply-btn:active {
+            transform:scale(0.97);
+        }
+
+    </style>
+</head>
+<body>
+<div class="container">
+
+    <!-- Header -->
+    <div class="header">
+        <div class="header-icon">🛡️</div>
+        <h1>My Agent</h1>
+        <p>Official IoLent platform Agent</p>
+    </div>
+
+    <!-- Cards injected by JS -->
+    <div id="admin-list"></div>
+
+</div>
+
+
+<script>
+    const admins = [
+        {
+            id:1, name:'Md. Rahman', uid:'IOL-10001',
+            level:'Main Agent', badge:'gold', levelLabel:'1️⃣ Main Agent',
+            division:'Dhaka', district:'Dhaka', upazila:'—', union:'—',
+            address:'Dhaka, Bangladesh',
+            photo: 'https://i.pravatar.cc/150?img=12',
+            status:'Active'
+        },
+        {
+            id:2, name:'Hasan Mahmud', uid:'IOL-10045',
+            level:'Division Agent', badge:'blue', levelLabel:'2️⃣ Division Agent',
+            division:'Chittagong', district:'—', upazila:'—', union:'—',
+            address:'Chittagong Division, Bangladesh',
+            photo: 'https://i.pravatar.cc/150?img=33',
+            status:'Active'
+        },
+        {
+            id:3, name:'Saiful Islam', uid:'IOL-10221',
+            level:'District Agent', badge:'purple', levelLabel:'3️⃣ District Agent',
+            division:'Chittagong', district:"Cox's Bazar", upazila:'—', union:'—',
+            address:"Cox's Bazar District, Bangladesh",
+            photo: 'https://i.pravatar.cc/150?img=57',
+            status:'Active'
+        },
+        {
+            id:4, name:'Rashed Khan', uid:'IOL-10892',
+            level:'Upazila Agent', badge:'green', levelLabel:'4️⃣ Upazila Agent',
+            division:'Chittagong', district:"Cox's Bazar", upazila:'Ukhiya', union:'—',
+            address:'Ukhiya Upazila, Bangladesh',
+            photo: 'https://i.pravatar.cc/150?img=47',
+            status:'Active'
+        },
+        {
+            id:5, name:'Al Amin', uid:'IOL-11077',
+            level:'Union Agent', badge:'orange', levelLabel:'5️⃣ Union Agent',
+            division:'Chittagong', district:"Cox's Bazar", upazila:'Ukhiya', union:'Rajapalong',
+            address:'Rajapalong Union, Bangladesh',
+            photo: 'https://i.pravatar.cc/150?img=68',
+            status:'No Agent'
+        }
+    ];
+
+    const badgeEmoji = { gold:'🟡', blue:'🔵', purple:'🟣', green:'🟢', orange:'🟠' };
+    const fallbackEmoji = { gold:'👑', blue:'🛡', purple:'💎', green:'🌿', orange:'🔆' };
+
+    function photoHtml(a, size=64, fSize=26) {
+        if(a.photo) {
+            return `<img src="${a.photo}" alt="${a.name}" onerror="this.style.display='none';this.nextSibling.style.display='flex'">
+                    <span style="display:none;font-size:${fSize}px;">${fallbackEmoji[a.badge]}</span>`;
+        }
+        return `<span style="font-size:${fSize}px;">${fallbackEmoji[a.badge]}</span>`;
+    }
+
+    function buildCards() {
+        const list = document.getElementById('admin-list');
+        
+        // Group admins by level
+        const levels = {};
+        admins.forEach(a => {
+            if (!levels[a.level]) {
+                levels[a.level] = [];
+            }
+            levels[a.level].push(a);
+        });
+
+        // For each level, show all entries (Active first, then No Agent)
+        let cardIndex = 0;
+        Object.keys(levels).forEach(level => {
+            const levelAdmins = levels[level];
+            
+            // Separate active and no-agent entries
+            const activeAgents = levelAdmins.filter(a => a.status === 'Active');
+            const noAgentEntries = levelAdmins.filter(a => a.status === 'No Agent');
+            
+            // Show all entries for this level
+            const allEntries = [...activeAgents, ...noAgentEntries];
+            
+            if (allEntries.length === 0) return;
+            
+            // Add level label once
+            const sep = document.createElement('div');
+            sep.className = 'level-label';
+            sep.innerHTML = `${allEntries[0].levelLabel}`;
+            list.appendChild(sep);
+            
+            // Create card for each entry
+            allEntries.forEach(agentToShow => {
+                const isNoAgent = agentToShow.status === 'No Agent';
+                
+                const card = document.createElement('div');
+                card.className = 'admin-card';
+                card.style.animationDelay = (cardIndex * 0.08) + 's';
+                if (isNoAgent) {
+                    card.style.borderStyle = 'dashed';
+                }
+                
+                card.innerHTML = `
+                    <div class="admin-photo">${photoHtml(agentToShow)}</div>
+                    <div class="admin-info">
+                        <div class="admin-badge badge-${agentToShow.badge}">${badgeEmoji[agentToShow.badge]} ${agentToShow.level.toUpperCase()}</div>
+                        <div class="admin-name">${agentToShow.name}</div>
+                        <div class="admin-uid">${agentToShow.uid}</div>
+                        <div class="admin-addr">📍 ${agentToShow.address}</div>
+                        ${isNoAgent 
+                            ? `<div class="no-agent-chip">⚠ No Agent</div>
+                               <button class="apply-btn" onclick="applyForAgent('${agentToShow.address}')">Apply for Agent</button>`
+                            : `<div class="verified-chip">✔ Verified</div>`
+                        }
+                    </div>`;
+                list.appendChild(card);
+                cardIndex++;
+            });
+        });
+    }
+
+    function applyForAgent(location) {
+        alert('You are applying to become an agent for: ' + location + '\n\nApplication feature coming soon!');
+    }
+
+    buildCards();
+</script>
+</body>
+</html>

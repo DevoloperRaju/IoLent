@@ -1,0 +1,797 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IoLent - Referral Program</title>
+    <style>
+        :root {
+            --primary: #00e676;
+            --secondary: #00e676;
+            --accent: #00e676;
+            --bg-dark: #0B111B;
+            --card-bg: rgba(255, 255, 255, 0.05);
+            --card-border: rgba(255, 255, 255, 0.1);
+            --text-main: #ffffff;
+            --text-muted: #9ba1a6;
+            --success: #00e676;
+            --warning: #00e676;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            background-color: var(--bg-dark) !important;
+            background-image: none !important;
+            color: var(--text-main);
+            min-height: 100vh;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 480px;
+            margin: 0 auto;
+            padding-bottom: 40px;
+        }
+
+        /* Glassmorphism utility */
+        .glass-card {
+            background: var(--card-bg);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid var(--card-border);
+            border-radius: 20px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+            transition: transform 0.3s, box-shadow 0.3s;
+            opacity: 0;
+            transform: translateY(20px);
+            animation: slideUp 0.6s forwards cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        .glass-card:hover {
+            box-shadow: 0 8px 32px rgba(0, 230, 118, 0.1);
+        }
+
+        /* Staggered Animations */
+        .glass-card:nth-child(1) { animation-delay: 0.1s; }
+        .glass-card:nth-child(2) { animation-delay: 0.2s; }
+        .glass-card:nth-child(3) { animation-delay: 0.3s; }
+        .glass-card:nth-child(4) { animation-delay: 0.4s; }
+        .glass-card:nth-child(5) { animation-delay: 0.5s; }
+        .glass-card:nth-child(6) { animation-delay: 0.6s; }
+
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Header */
+        .header {
+            text-align: center;
+            margin-bottom: 24px;
+            margin-top: 10px;
+            animation: slideUp 0.6s forwards;
+        }
+
+        .icon-circle {
+            width: 64px;
+            height: 64px;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 16px;
+            box-shadow: 0 0 25px rgba(0, 230, 118, 0.5);
+        }
+
+        .icon-circle svg {
+            width: 32px;
+            height: 32px;
+            fill: none;
+            stroke: white;
+            stroke-width: 2;
+            stroke-linecap: round;
+            stroke-linejoin: round;
+        }
+
+        .header h1 {
+            font-size: 26px;
+            margin-bottom: 8px;
+            background: var(--primary);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            font-weight: 800;
+        }
+
+        .header p {
+            color: var(--text-muted);
+            font-size: 14px;
+            line-height: 1.5;
+        }
+
+        /* Copy & Invite Container */
+        .copy-card {
+            background: linear-gradient(135deg, rgba(0, 230, 118, 0.1), rgba(0, 230, 118, 0.05));
+            border: 1px solid rgba(0, 230, 118, 0.2);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .copy-card::before {
+            content: '';
+            position: absolute;
+            top: -50%; left: -50%;
+            width: 200%; height: 200%;
+            background: radial-gradient(circle, rgba(255,255,255,0.05) 0%, transparent 60%);
+            pointer-events: none;
+        }
+
+        .input-label {
+            font-size: 13px;
+            color: var(--text-muted);
+            margin-bottom: 8px;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .copy-box {
+            display: flex;
+            align-items: center;
+            background: rgba(0, 0, 0, 0.3);
+            border: 1px solid var(--card-border);
+            border-radius: 12px;
+            padding: 6px;
+            margin-bottom: 16px;
+            transition: all 0.3s;
+        }
+
+        .copy-box:hover {
+            border-color: rgba(0, 230, 118, 0.4);
+            box-shadow: 0 0 10px rgba(0, 230, 118, 0.1);
+        }
+
+        .copy-code {
+            flex: 1;
+            padding: 10px 12px;
+            font-family: monospace;
+            font-size: 16px;
+            font-weight: bold;
+            color: var(--accent);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .btn-action {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+            border: none;
+            padding: 10px 16px;
+            border-radius: 8px;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .btn-action:hover {
+            background: var(--primary);
+            box-shadow: 0 0 15px rgba(0, 230, 118, 0.5);
+        }
+        
+        .btn-action.success {
+            background: var(--success);
+            color: #000;
+            box-shadow: 0 0 15px rgba(0, 230, 118, 0.5);
+        }
+
+        /* Total Statistics */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+        }
+
+        .stat-box {
+            background: rgba(0, 0, 0, 0.2);
+            border: 1px solid var(--card-border);
+            border-radius: 16px;
+            padding: 16px;
+            text-align: center;
+            position: relative;
+        }
+
+        .stat-label {
+            color: var(--text-muted);
+            font-size: 12px;
+            margin-bottom: 6px;
+        }
+
+        .stat-value {
+            font-size: 22px;
+            font-weight: 800;
+            color: var(--text-main);
+            text-shadow: 0 0 10px rgba(255, 255, 255, 0.2);
+        }
+
+        .stat-box.primary .stat-value {
+            color: var(--accent);
+            text-shadow: 0 0 10px rgba(0, 230, 118, 0.4);
+        }
+
+        /* Generation Stats */
+        .card-title {
+            font-size: 16px;
+            font-weight: 600;
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            border-bottom: 1px dashed var(--card-border);
+            padding-bottom: 12px;
+        }
+
+        .card-title svg {
+            color: var(--accent);
+        }
+
+        .gen-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 0;
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+        }
+
+        .gen-row:last-child {
+            border-bottom: none;
+            padding-bottom: 0;
+        }
+
+        .gen-left {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .gen-badge {
+            width: 28px;
+            height: 28px;
+            background: var(--primary);
+            color: #0B111B;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            font-weight: bold;
+        }
+
+        .gen-label {
+            font-size: 14px;
+        }
+
+        .gen-value {
+            font-size: 14px;
+            font-weight: bold;
+            color: var(--accent);
+            background: rgba(0, 230, 118, 0.1);
+            padding: 4px 10px;
+            border-radius: 12px;
+        }
+
+        /* Tree Preview */
+        .tree-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 10px 0;
+        }
+
+        .tree-node {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--accent);
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 14px;
+            font-weight: 600;
+            position: relative;
+            z-index: 2;
+            box-shadow: 0 0 10px rgba(0, 230, 118, 0.2);
+        }
+
+        .tree-node.you {
+            background: var(--primary);
+            color: #0B111B;
+            border-color: transparent;
+            box-shadow: 0 0 15px rgba(0, 230, 118, 0.4);
+        }
+
+        .tree-line {
+            width: 2px;
+            height: 20px;
+            background: var(--card-border);
+            position: relative;
+        }
+        
+        .tree-line::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: -4px;
+            border-left: 5px solid transparent;
+            border-right: 5px solid transparent;
+            border-top: 5px solid var(--card-border);
+        }
+
+        /* Info Card */
+        .info-card {
+            background: rgba(0, 230, 118, 0.05);
+            border-left: 3px solid var(--accent);
+            padding: 14px;
+            border-radius: 0 12px 12px 0;
+            margin-bottom: 20px;
+            font-size: 13px;
+        }
+
+        .info-title {
+            font-weight: bold;
+            color: var(--accent);
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .info-text {
+            color: var(--text-muted);
+            line-height: 1.5;
+            margin-top: 8px;
+        }
+
+        .bonus-list {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 10px;
+            background: rgba(0,0,0,0.2);
+            padding: 10px;
+            border-radius: 8px;
+        }
+        
+        .bonus-item {
+            text-align: center;
+        }
+        .bonus-lvl { font-size: 11px; color: var(--text-muted); }
+        .bonus-val { font-size: 14px; font-weight: bold; color: var(--success); }
+
+        /* Performance Indicators & Tips */
+        .indicator-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: rgba(255, 255, 255, 0.05);
+            padding: 12px 16px;
+            border-radius: 12px;
+            margin-bottom: 10px;
+        }
+        
+        .indicator-label {
+            font-size: 13px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .indicator-value {
+            font-weight: bold;
+            font-size: 14px;
+        }
+
+        .tips-list {
+            list-style: none;
+        }
+
+        .tips-list li {
+            position: relative;
+            padding-left: 20px;
+            margin-bottom: 10px;
+            font-size: 13px;
+            color: var(--text-muted);
+        }
+
+        .tips-list li::before {
+            content: '•';
+            position: absolute;
+            left: 0;
+            color: var(--accent);
+            font-size: 18px;
+            line-height: 1;
+            top: -2px;
+        }
+
+        /* Large Action Button */
+        .main-btn {
+            width: 100%;
+            background: var(--primary);
+            color: #0B111B;
+            border: none;
+            padding: 16px;
+            border-radius: 16px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            box-shadow: 0 4px 15px rgba(0, 230, 118, 0.4);
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            position: relative;
+            overflow: hidden;
+            margin-top: 20px;
+        }
+
+        .main-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0, 230, 118, 0.6);
+        }
+
+        .main-btn:active {
+            transform: translateY(1px);
+        }
+
+        /* Top Referrals */
+        .top-user {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 14px;
+            background: rgba(0,0,0,0.2);
+            border-radius: 10px;
+            margin-bottom: 8px;
+        }
+        
+        .user-id {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 14px;
+        }
+        
+        .user-rank {
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 11px;
+            font-weight: bold;
+        }
+        
+        .rank-1 { background: linear-gradient(135deg, #ffd700, #ff8c00); color: #000; }
+        .rank-2 { background: linear-gradient(135deg, #e0e0e0, #9e9e9e); color: #000; }
+        .rank-3 { background: linear-gradient(135deg, #cd7f32, #8b4513); color: #fff; }
+
+        /* Toast */
+        .toast {
+            position: fixed;
+            bottom: -50px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(0, 230, 118, 0.2);
+            border: 1px solid var(--accent);
+            color: white;
+            padding: 10px 20px;
+            border-radius: 20px;
+            font-size: 14px;
+            font-weight: 500;
+            backdrop-filter: blur(10px);
+            opacity: 0;
+            transition: all 0.3s;
+            z-index: 1000;
+            box-shadow: 0 0 20px rgba(0, 230, 118, 0.2);
+        }
+
+        .toast.show {
+            bottom: 30px;
+            opacity: 1;
+        }
+
+        /* Tooltip Container */
+        .tooltip-icon {
+            color: var(--text-muted);
+            cursor: pointer;
+            display: inline-flex;
+            margin-left: 6px;
+        }
+
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <!-- Header -->
+        <div class="header">
+            <div class="icon-circle">
+                <svg viewBox="0 0 24 24">
+                    <path d="M18 8A3 3 0 1 0 18 2a3 3 0 0 0 0 6z"></path>
+                    <path d="M6 15A3 3 0 1 0 6 9a3 3 0 0 0 0 6z"></path>
+                    <path d="M18 22A3 3 0 1 0 18 16a3 3 0 0 0 0 6z"></path>
+                    <circle cx="12" cy="12" r="1" fill="currentColor"></circle>
+                    <line x1="8.59" y1="13.51" x2="15.42" y2="17.49"></line>
+                    <line x1="15.41" y1="6.51" x2="8.59" y2="10.49"></line>
+                </svg>
+            </div>
+            <h1>Referral Program</h1>
+            <p>Invite friends and grow your IoLent network.</p>
+        </div>
+
+        <!-- Copy Referral Code -->
+        <div class="glass-card copy-card">
+            <div class="input-label">
+                <span>Referral Code</span>
+                <span style="color: var(--accent);">Your unique ID</span>
+            </div>
+            <div class="copy-box" style="margin-bottom: 0;">
+                <div class="copy-code" id="ref-code">10000</div>
+                <button class="btn-action" onclick="copyText('IOLENT-45821', this)">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
+                    Copy
+                </button>
+            </div>
+        </div>
+
+        <!-- Total Stats -->
+        <div class="glass-card">
+            <div class="stats-grid" style="grid-template-columns: 1fr 1fr;">
+                <div class="stat-box primary">
+                    <div class="stat-label">Total Referrals</div>
+                    <div class="stat-value counter" data-target="128">0</div>
+                </div>
+                <div class="stat-box">
+                    <div class="stat-label">Total Points Earned</div>
+                    <div class="stat-value counter" data-target="850">0</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Bonus Information -->
+        <div class="info-card">
+            <div class="info-title">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>
+                Referral Bonus System
+            </div>
+            <div class="bonus-list" style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px;">
+                <div class="bonus-item">
+                    <div class="bonus-lvl">Level 1</div>
+                    <div class="bonus-val">30%</div>
+                </div>
+                <div class="bonus-item">
+                    <div class="bonus-lvl">Level 2</div>
+                    <div class="bonus-val">20%</div>
+                </div>
+                <div class="bonus-item">
+                    <div class="bonus-lvl">Level 3</div>
+                    <div class="bonus-val">15%</div>
+                </div>
+                <div class="bonus-item">
+                    <div class="bonus-lvl">Level 4</div>
+                    <div class="bonus-val">15%</div>
+                </div>
+                <div class="bonus-item">
+                    <div class="bonus-lvl">Level 5</div>
+                    <div class="bonus-val">10%</div>
+                </div>
+                <div class="bonus-item">
+                    <div class="bonus-lvl">Level 6</div>
+                    <div class="bonus-val">10%</div>
+                </div>
+            </div>
+            <div class="info-text">You earn bonuses from your entire referral network's mining activity.</div>
+        </div>
+
+        <!-- Generation Stats & Tree -->
+        <div class="glass-card">
+            <div class="card-title">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
+                Referral Generations
+            </div>
+
+            <div class="gen-row">
+                <div class="gen-left">
+                    <div class="gen-badge">L1</div>
+                    <div class="gen-label">Level 1 Referrals</div>
+                </div>
+                <div class="gen-value">12 users</div>
+            </div>
+            <div class="gen-row">
+                <div class="gen-left">
+                    <div class="gen-badge" style="opacity: 0.8;">L2</div>
+                    <div class="gen-label">Level 2 Referrals</div>
+                </div>
+                <div class="gen-value" style="color: var(--text-main); background: rgba(255,255,255,0.1);">7 users</div>
+            </div>
+            <div class="gen-row">
+                <div class="gen-left">
+                    <div class="gen-badge" style="opacity: 0.6;">L3</div>
+                    <div class="gen-label">Level 3 Referrals</div>
+                </div>
+                <div class="gen-value" style="color: var(--text-muted); background: rgba(255,255,255,0.05);">3 users</div>
+            </div>
+
+            <div class="gen-row">
+                <div class="gen-left">
+                    <div class="gen-badge" style="opacity: 0.5;">L4</div>
+                    <div class="gen-label">Level 4 Referrals</div>
+                </div>
+                <div class="gen-value" style="color: var(--text-muted); background: rgba(255,255,255,0.05);">0 users</div>
+            </div>
+            <div class="gen-row">
+                <div class="gen-left">
+                    <div class="gen-badge" style="opacity: 0.4;">L5</div>
+                    <div class="gen-label">Level 5 Referrals</div>
+                </div>
+                <div class="gen-value" style="color: var(--text-muted); background: rgba(255,255,255,0.05);">0 users</div>
+            </div>
+            <div class="gen-row">
+                <div class="gen-left">
+                    <div class="gen-badge" style="opacity: 0.3;">L6</div>
+                    <div class="gen-label">Level 6 Referrals</div>
+                </div>
+                <div class="gen-value" style="color: var(--text-muted); background: rgba(255,255,255,0.05);">0 users</div>
+            </div>
+            
+            <!-- Total Generation Referrals -->
+            <div class="gen-row" style="margin-top: 12px; padding-top: 12px; border-top: 1px solid rgba(255,255,255,0.1); background: rgba(0, 230, 118, 0.05); border-radius: 8px;">
+                <div class="gen-left">
+                    <div class="gen-badge" style="background: var(--primary); color: #0B111B; font-weight: bold;">T</div>
+                    <div class="gen-label" style="font-weight: bold; color: var(--text-main);">Total Generation Referrals</div>
+                </div>
+                <div class="gen-value" style="color: var(--accent); background: rgba(0, 230, 118, 0.2); font-weight: bold; font-size: 16px;">22 users</div>
+            </div>
+        </div>
+
+
+
+        <!-- Tips List -->
+        <div class="glass-card" style="padding: 15px; margin-bottom: 10px;">
+            <div class="indicator-label" style="color: var(--accent); font-weight: bold; margin-bottom: 5px;">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>
+                Tip 1
+            </div>
+            <div style="font-size: 13px; color: var(--text-muted); line-height: 1.5;">Invite active users to maximize bonus income</div>
+        </div>
+        
+        <div class="glass-card" style="padding: 15px; margin-bottom: 10px;">
+            <div class="indicator-label" style="color: var(--accent); font-weight: bold; margin-bottom: 5px;">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>
+                Tip 2
+            </div>
+            <div style="font-size: 13px; color: var(--text-muted); line-height: 1.5;">Help your referrals buy their first robots</div>
+        </div>
+
+        <div class="glass-card" style="padding: 15px; margin-bottom: 20px;">
+            <div class="indicator-label" style="color: var(--accent); font-weight: bold; margin-bottom: 5px;">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>
+                Tip 3
+            </div>
+            <div style="font-size: 13px; color: var(--text-muted); line-height: 1.5;">Grow your Level 1 network for higher direct income</div>
+        </div>
+
+    </div>
+
+    <!-- Toast Component -->
+    <div id="toast" class="toast">Copied to clipboard!</div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // Animate number counters
+            const counters = document.querySelectorAll('.counter');
+            
+            counters.forEach(counter => {
+                const target = +counter.getAttribute('data-target');
+                const isCurrency = counter.hasAttribute('data-currency');
+                const duration = 1500;
+                const steps = 60;
+                const stepTime = duration / steps;
+                let current = 0;
+                
+                const timer = setInterval(() => {
+                    current += target / steps;
+                    if (current >= target) {
+                        current = target;
+                        clearInterval(timer);
+                    }
+                    
+                    let displayValue = Math.floor(current);
+                    
+                    // Add grouping commas
+                    displayValue = Number(displayValue).toLocaleString('en-US');
+                    
+                    counter.innerText = displayValue;
+                }, stepTime);
+            });
+        });
+
+        // Copy functionality with animation
+        function copyText(text, btnElement) {
+            const toast = document.getElementById('toast');
+            
+            if (navigator.clipboard && window.isSecureContext) {
+                navigator.clipboard.writeText(text);
+                showSuccess(btnElement);
+            } else {
+                // Fallback
+                let textArea = document.createElement("textarea");
+                textArea.value = text;
+                textArea.style.position = "fixed";
+                textArea.style.left = "-999999px";
+                document.body.appendChild(textArea);
+                textArea.select();
+                try {
+                    document.execCommand('copy');
+                    showSuccess(btnElement);
+                } catch (err) {}
+                textArea.remove();
+            }
+
+            function showSuccess(btn) {
+                const originalHTML = btn.innerHTML;
+                
+                // Change UI of button temporarily
+                btn.classList.add('success');
+                btn.innerHTML = `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"></polyline></svg> Copied!`;
+                
+                // Show floating Toast
+                toast.innerText = "Copied to clipboard!";
+                toast.classList.add('show');
+                
+                // Reset after 2s
+                setTimeout(() => {
+                    btn.classList.remove('success');
+                    btn.innerHTML = originalHTML;
+                    toast.classList.remove('show');
+                }, 2000);
+            }
+        }
+
+        // Web Share API fallback
+        function shareLink() {
+            const url = 'https://iolent.app/register?ref=45821';
+            const text = 'Join my network on IoLent platform!';
+            
+            if (navigator.share) {
+                navigator.share({
+                    title: 'IoLent Referral',
+                    text: text,
+                    url: url
+                })
+                .catch(console.error);
+            } else {
+                copyText(url, document.querySelector('.main-btn'));
+                const toast = document.getElementById('toast');
+                toast.innerText = "Link copied! Share it with friends.";
+            }
+        }
+    </script>
+</body>
+</html>

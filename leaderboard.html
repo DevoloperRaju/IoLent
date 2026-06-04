@@ -1,0 +1,916 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IoLent - Leaderboard</title>
+    <style>
+        :root {
+            --primary: #00e676;
+            --secondary: #00e676;
+            --accent: #00e676;
+            --bg-dark: #0B111B;
+            --card-bg: rgba(255, 255, 255, 0.05);
+            --card-border: rgba(255, 255, 255, 0.1);
+            --text-main: #ffffff;
+            --text-muted: #9ba1a6;
+            --success: #00e676;
+            --warning: #00e676;
+            --gold: #FFD700;
+            --silver: #E0E0E0;
+            --bronze: #cd7f32;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            background-color: var(--bg-dark) !important;
+            background-image: none !important;
+            color: var(--text-main);
+            min-height: 100vh;
+            padding: 20px 20px 80px 20px;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            -webkit-overflow-scrolling: touch;
+            overflow-scrolling: touch;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 480px;
+            margin: 0 auto;
+        }
+
+        /* Glassmorphism utility */
+        .glass-card {
+            background: var(--card-bg);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid var(--card-border);
+            border-radius: 20px;
+            padding: 20px;
+            margin-bottom: 24px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+            transition: transform 0.3s, box-shadow 0.3s;
+            opacity: 0;
+            transform: translateY(20px);
+            animation: slideUp 0.6s forwards cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        .glass-card:hover {
+            box-shadow: 0 8px 32px rgba(0, 230, 118, 0.1);
+        }
+
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Header */
+        .header {
+            text-align: center;
+            margin-bottom: 24px;
+            margin-top: 10px;
+            animation: slideUp 0.6s forwards;
+        }
+
+        .icon-circle {
+            width: 64px;
+            height: 64px;
+            background: var(--primary);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 16px;
+            box-shadow: 0 0 25px rgba(0, 230, 118, 0.5);
+            position: relative;
+        }
+        
+        .icon-circle::after {
+            content: '';
+            position: absolute;
+            top: -10px; left: -10px; right: -10px; bottom: -10px;
+            border-radius: 50%;
+            border: 1px solid rgba(0, 230, 118, 0.3);
+            animation: pulseRing 2s infinite;
+        }
+        
+        @keyframes pulseRing {
+            0% { transform: scale(0.9); opacity: 1; }
+            100% { transform: scale(1.3); opacity: 0; }
+        }
+
+        .icon-circle svg {
+            width: 32px;
+            height: 32px;
+            fill: none;
+            stroke: white;
+            stroke-width: 2;
+            stroke-linecap: round;
+            stroke-linejoin: round;
+        }
+
+        .header h1 {
+            font-size: 26px;
+            margin-bottom: 8px;
+            background: var(--primary);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            font-weight: 800;
+        }
+
+        .header p {
+            color: var(--text-muted);
+            font-size: 14px;
+            line-height: 1.5;
+        }
+
+        /* Navigation Tabs */
+        .tabs-container {
+            display: flex;
+            overflow-x: auto;
+            gap: 12px;
+            padding-bottom: 12px;
+            margin-bottom: 20px;
+            scrollbar-width: none; /* Firefox */
+        }
+        
+        .tabs-container::-webkit-scrollbar {
+            display: none; /* Chrome/Safari */
+        }
+
+        .tab-btn {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--card-border);
+            color: var(--text-muted);
+            padding: 10px 18px;
+            border-radius: 20px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            white-space: nowrap;
+            transition: all 0.3s;
+        }
+
+        .tab-btn.active {
+            background: var(--primary);
+            color: var(--bg-dark);
+            border-color: transparent;
+            box-shadow: 0 4px 15px rgba(0, 230, 118, 0.4);
+        }
+
+        /* Leaderboard Grid Layout */
+        .lb-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 16px;
+            margin-bottom: 20px;
+        }
+
+        .lb-row {
+            display: flex;
+            align-items: center;
+            padding: 12px 14px;
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 16px;
+            margin-bottom: 12px;
+            border: 1px solid transparent;
+            transition: all 0.3s;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .lb-row:last-child {
+            margin-bottom: 0;
+        }
+
+        .lb-row:hover {
+            background: rgba(255, 255, 255, 0.05);
+            border-color: rgba(0, 242, 254, 0.2);
+            transform: translateX(4px);
+        }
+
+        /* Performance optimizations for mobile */
+        .lb-row {
+            will-change: transform;
+            transform: translateZ(0);
+        }
+
+        .lb-profile img {
+            will-change: transform;
+        }
+
+        /* Rank Badges */
+        .rank-badge {
+            width: 32px;
+            height: 32px;
+            border-radius: 10px;
+            background: rgba(255,255,255,0.1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 800;
+            font-size: 14px;
+            margin-right: 14px;
+            flex-shrink: 0;
+        }
+
+        .rank-1 .rank-badge {
+            background: var(--gold);
+            color: #000;
+            box-shadow: 0 0 15px rgba(255, 215, 0, 0.4);
+        }
+        
+        .rank-2 .rank-badge {
+            background: var(--silver);
+            color: #000;
+            box-shadow: 0 0 15px rgba(224, 224, 224, 0.3);
+        }
+
+        .rank-3 .rank-badge {
+            background: var(--bronze);
+            color: #fff;
+            box-shadow: 0 0 15px rgba(205, 127, 50, 0.3);
+        }
+
+        .rank-1 {
+            background: rgba(255, 215, 0, 0.1);
+            border: 1px solid rgba(255, 215, 0, 0.2);
+        }
+
+        /* User Profile */
+        .lb-profile {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: var(--card-border);
+            margin-right: 14px;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+            flex-shrink: 0;
+            position: relative;
+        }
+
+        .lb-profile img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.3s;
+        }
+
+        .lb-row:hover .lb-profile img {
+            transform: scale(1.1);
+        }
+
+        /* User Info */
+        .lb-user-info {
+            flex: 1;
+            min-width: 0; /* for text truncation */
+        }
+
+        .lb-name {
+            font-weight: 600;
+            font-size: 15px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            margin-bottom: 2px;
+        }
+
+        .lb-id {
+            font-size: 12px;
+            color: var(--text-muted);
+            font-family: monospace;
+        }
+
+        /* Performance Value */
+        .lb-value {
+            text-align: right;
+            font-weight: 800;
+            font-size: 16px;
+            color: var(--accent);
+            white-space: nowrap;
+        }
+
+        .rank-1 .lb-value {
+            color: #FDB931;
+            text-shadow: 0 0 10px rgba(255, 215, 0, 0.3);
+        }
+
+        /* Mini Crown for Rank 1 */
+        .crown {
+            position: absolute;
+            top: -12px;
+            right: -8px;
+            font-size: 18px;
+            filter: drop-shadow(0 0 4px rgba(255, 215, 0, 0.8));
+            transform: rotate(15deg);
+        }
+
+        /* Pyramid Layout for 6 Users */
+        .pyramid-layout {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 12px;
+        }
+
+        .pyramid-top {
+            display: flex;
+            justify-content: center;
+        }
+
+        .pyramid-middle {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+        }
+
+        .pyramid-bottom {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+        }
+
+        .pyramid-card {
+            background: rgba(0, 0, 0, 0.2);
+            border: 1px solid var(--card-border);
+            border-radius: 16px;
+            padding: 16px;
+            transition: all 0.3s;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .pyramid-card:hover {
+            background: rgba(255, 255, 255, 0.05);
+            border-color: rgba(0, 230, 118, 0.2);
+            transform: translateY(-2px);
+        }
+
+        .pyramid-rank {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 800;
+            font-size: 12px;
+            color: var(--text-main);
+        }
+
+        .pyramid-rank-1 {
+            background: var(--gold);
+            color: #000;
+            box-shadow: 0 0 15px rgba(255, 215, 0, 0.4);
+        }
+
+        .pyramid-rank-2 {
+            background: var(--silver);
+            color: #000;
+            box-shadow: 0 0 15px rgba(224, 224, 224, 0.3);
+        }
+
+        .pyramid-rank-3 {
+            background: var(--bronze);
+            color: #fff;
+            box-shadow: 0 0 15px rgba(205, 127, 50, 0.3);
+        }
+
+        .pyramid-profile {
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            background: var(--card-border);
+            margin: 0 auto 10px;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            position: relative;
+        }
+
+        .pyramid-profile img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .pyramid-name {
+            font-weight: 700;
+            font-size: 14px;
+            text-align: center;
+            margin-bottom: 4px;
+            color: var(--text-main);
+        }
+
+        .pyramid-id {
+            font-size: 11px;
+            color: var(--text-muted);
+            text-align: center;
+            font-family: monospace;
+            margin-bottom: 8px;
+        }
+
+        .pyramid-value {
+            font-weight: 800;
+            font-size: 14px;
+            text-align: center;
+            color: var(--accent);
+        }
+
+        .pyramid-crown {
+            position: absolute;
+            top: -8px;
+            right: -6px;
+            font-size: 16px;
+            filter: drop-shadow(0 0 4px rgba(255, 215, 0, 0.8));
+            transform: rotate(15deg);
+        }
+
+        /* Your Rank Status */
+        .my-rank-card {
+            background: rgba(0, 230, 118, 0.1);
+            border: 1px solid rgba(0, 230, 118, 0.3);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 18px;
+        }
+
+        .my-rank-info .label {
+            font-size: 13px;
+            color: var(--text-muted);
+            margin-bottom: 4px;
+        }
+
+        .my-rank-info .rank-num {
+            font-size: 24px;
+            font-weight: bold;
+            color: var(--accent);
+            text-shadow: 0 0 10px rgba(0, 230, 118, 0.4);
+        }
+
+        .rank-progress {
+            text-align: right;
+            font-size: 13px;
+            color: var(--text-muted);
+        }
+
+        .rank-progress .distance {
+            color: var(--success);
+            font-weight: bold;
+            display: block;
+            margin-bottom: 6px;
+        }
+
+        .progress-bar {
+            width: 100px;
+            height: 6px;
+            background: rgba(255,255,255,0.1);
+            border-radius: 3px;
+            overflow: hidden;
+            display: inline-block;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: var(--accent);
+            width: 70%;
+            border-radius: 3px;
+            box-shadow: 0 0 10px var(--accent);
+        }
+
+        /* Leaderboard Category Title */
+        .category-title {
+            font-size: 18px;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 20px;
+            border-bottom: 1px dashed var(--card-border);
+            padding-bottom: 12px;
+        }
+
+        .category-title svg {
+            color: var(--accent);
+        }
+
+        /* Leaderboard Row */
+        .lb-row {
+            display: flex;
+            align-items: center;
+            padding: 12px 14px;
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 16px;
+            margin-bottom: 12px;
+            border: 1px solid transparent;
+            transition: all 0.3s;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .lb-row:last-child {
+            margin-bottom: 0;
+        }
+
+        .lb-row:hover {
+            background: rgba(255, 255, 255, 0.05);
+            border-color: rgba(0, 242, 254, 0.2);
+            transform: translateX(4px);
+        }
+
+        /* Performance optimizations for mobile */
+        .lb-row {
+            will-change: transform;
+            transform: translateZ(0);
+        }
+
+        .lb-profile img {
+            will-change: transform;
+        }
+
+        /* Rank Badges */
+        .rank-badge {
+            width: 32px;
+            height: 32px;
+            border-radius: 10px;
+            background: rgba(255,255,255,0.1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 800;
+            font-size: 14px;
+            margin-right: 14px;
+            flex-shrink: 0;
+        }
+
+        .rank-1 .rank-badge {
+            background: var(--gold);
+            color: #000;
+            box-shadow: 0 0 15px rgba(255, 215, 0, 0.4);
+        }
+        
+        .rank-2 .rank-badge {
+            background: var(--silver);
+            color: #000;
+            box-shadow: 0 0 15px rgba(224, 224, 224, 0.3);
+        }
+
+        .rank-3 .rank-badge {
+            background: var(--bronze);
+            color: #fff;
+            box-shadow: 0 0 15px rgba(205, 127, 50, 0.3);
+        }
+
+        .rank-1 {
+            background: rgba(255, 215, 0, 0.1);
+            border: 1px solid rgba(255, 215, 0, 0.2);
+        }
+
+        /* User Profile */
+        .lb-profile {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: var(--card-border);
+            margin-right: 14px;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+            flex-shrink: 0;
+            position: relative;
+        }
+
+        .lb-profile img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.3s;
+        }
+
+        .lb-row:hover .lb-profile img {
+            transform: scale(1.1);
+        }
+
+        /* User Info */
+        .lb-user-info {
+            flex: 1;
+            min-width: 0; /* for text truncation */
+        }
+
+        .lb-name {
+            font-weight: 600;
+            font-size: 15px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            margin-bottom: 2px;
+        }
+
+        .lb-id {
+            font-size: 12px;
+            color: var(--text-muted);
+            font-family: monospace;
+        }
+
+        /* Performance Value */
+        .lb-value {
+            text-align: right;
+            font-weight: 800;
+            font-size: 16px;
+            color: var(--accent);
+            white-space: nowrap;
+        }
+
+        .rank-1 .lb-value {
+            color: #FDB931;
+            text-shadow: 0 0 10px rgba(255, 215, 0, 0.3);
+        }
+
+        /* Mini Crown for Rank 1 */
+        .crown {
+            position: absolute;
+            top: -12px;
+            right: -8px;
+            font-size: 18px;
+            filter: drop-shadow(0 0 4px rgba(255, 215, 0, 0.8));
+            transform: rotate(15deg);
+        }
+
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <!-- Header -->
+        <div class="header">
+            <div class="icon-circle">
+                <svg viewBox="0 0 24 24">
+                    <path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"></path>
+                    <path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"></path>
+                    <path d="M4 22h16"></path>
+                    <path d="M10 14.66V17c0 .55-.47.98-.97 1.21C7.85 18.75 7 20.24 7 22"></path>
+                    <path d="M14 14.66V17c0 .55.47.98.97 1.21C16.15 18.75 17 20.24 17 22"></path>
+                    <path d="M18 2H6v7a6 6 0 0 0 12 0V2Z"></path>
+                </svg>
+            </div>
+            <h1>Leaderboard</h1>
+            <p>Top performing users in the IoLent network.</p>
+        </div>
+
+        <!-- Navigation Tabs -->
+        <div class="tabs-container">
+            <button class="tab-btn active" onclick="switchTab('robots')">Active Robots</button>
+            <button class="tab-btn" onclick="switchTab('referrals')">Total Referrals</button>
+            <button class="tab-btn" onclick="switchTab('ref-income')">Referral Income</button>
+            <button class="tab-btn" onclick="switchTab('mining')">Mining Collected</button>
+            <button class="tab-btn" onclick="switchTab('withdrawals')">Total Withdrawals</button>
+            <button class="tab-btn" onclick="switchTab('deposits')">Total Deposits</button>
+            <button class="tab-btn" onclick="switchTab('transfers')">Point Transfers</button>
+            <button class="tab-btn" onclick="switchTab('conversions')">Point Conversions</button>
+        </div>
+
+        <!-- Leaderboard Content -->
+        <div id="leaderboard-sections">
+            <!-- 1. Total Active Robots -->
+            <div class="glass-card section-robots" id="section-robots">
+                <div class="category-title">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="10" rx="2"></rect><circle cx="12" cy="5" r="2"></circle><path d="M12 7v4"></path><line x1="8" y1="16" x2="8" y2="16"></line><line x1="16" y1="16" x2="16" y2="16"></line></svg>
+                    Top Total Active Robots
+                </div>
+                <div class="pyramid-layout" id="pyramid-robots"></div>
+            </div>
+
+            <!-- 2. Total Referrals -->
+            <div class="glass-card section-referrals" id="section-referrals" style="display: none;">
+                <div class="category-title">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
+                    Top Total Referrals
+                </div>
+                <div class="pyramid-layout" id="pyramid-referrals"></div>
+            </div>
+
+            <!-- 3. Total Referral Income -->
+            <div class="glass-card section-income" id="section-ref-income" style="display: none;">
+                <div class="category-title">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="1" x2="12" y2="23"></line><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path></svg>
+                    Top Referral Income (POINT)
+                </div>
+                <div class="pyramid-layout" id="pyramid-ref-income"></div>
+            </div>
+
+            <!-- 4. Total Mining Collected -->
+            <div class="glass-card section-income" id="section-mining" style="display: none;">
+                <div class="category-title">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 2 7 12 12 22 7 12 2"></polygon><polyline points="2 17 12 22 22 17"></polyline><polyline points="2 12 12 17 22 12"></polyline></svg>
+                    Top Mining Collected (TK)
+                </div>
+                <div class="pyramid-layout" id="pyramid-mining"></div>
+            </div>
+
+            <!-- 5. Total Withdrawals -->
+            <div class="glass-card section-finance" id="section-withdrawals" style="display: none;">
+                <div class="category-title">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+                    Top Total Withdrawals ($)
+                </div>
+                <div class="pyramid-layout" id="pyramid-withdrawals"></div>
+            </div>
+
+            <!-- 6. Total Deposits -->
+            <div class="glass-card section-finance" id="section-deposits" style="display: none;">
+                <div class="category-title">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="17 8 12 3 7 8"></polyline><line x1="12" y1="3" x2="12" y2="15"></line></svg>
+                    Top Total Deposits ($)
+                </div>
+                <div class="pyramid-layout" id="pyramid-deposits"></div>
+            </div>
+
+            <!-- 7. Total Point Transfers -->
+            <div class="glass-card section-finance" id="section-transfers" style="display: none;">
+                <div class="category-title">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="16 3 21 3 21 8"></polyline><line x1="4" y1="20" x2="21" y2="3"></line><polyline points="21 16 21 21 16 21"></polyline><line x1="15" y1="15" x2="21" y2="21"></line><line x1="4" y1="4" x2="9" y2="9"></line></svg>
+                    Top Point Transfers
+                </div>
+                <div class="pyramid-layout" id="pyramid-transfers"></div>
+            </div>
+
+            <!-- 8. Total Point Conversion -->
+            <div class="glass-card section-finance" id="section-conversions" style="display: none;">
+                <div class="category-title">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="23 4 23 10 17 10"></polyline><polyline points="1 20 1 14 7 14"></polyline><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"></path></svg>
+                    Top Point Conversions (TK)
+                </div>
+                <div class="pyramid-layout" id="pyramid-conversions"></div>
+            </div>
+            
+        </div>
+
+    </div>
+
+    <script>
+        // Demo Data Generation
+        const names = ["Rahim Ahmed", "Sarah Khan", "Tariq Ali", "Aisha Rahman", "Kamal Hossain", "Nadia Islam", "Hasan Mahmud", "Zainab Begum", "Omar Faruq", "Fatima Chowdhury"];
+        
+        function getRandomName() {
+            return names[Math.floor(Math.random() * names.length)];
+        }
+        
+        function getRandomId() {
+            return '#' + Math.floor(10000 + Math.random() * 90000);
+        }
+
+        // Configuration for each list
+        const listsConfig = [
+            { id: 'list-robots', suffix: ' Robots', min: 10, max: 45, isFloat: false },
+            { id: 'list-referrals', suffix: ' Users', min: 250, max: 1200, isFloat: false },
+            { id: 'list-ref-income', suffix: ' TK', min: 5000, max: 25000, isFloat: true },
+            { id: 'list-mining', suffix: ' TK', min: 10000, max: 80000, isFloat: true },
+            { id: 'list-withdrawals', prefix: '$', suffix: '', min: 1000, max: 15000, isFloat: true },
+            { id: 'list-deposits', prefix: '$', suffix: '', min: 2000, max: 20000, isFloat: true },
+            { id: 'list-transfers', suffix: ' Pts', min: 50000, max: 300000, isFloat: false },
+            { id: 'list-conversions', suffix: ' TK', min: 8000, max: 45000, isFloat: true }
+        ];
+
+        function generatePyramidHtml(config) {
+            let html = '';
+            let lastVal = config.max;
+            
+            // Demo users data (5 users)
+            const demoUsers = [
+                { name: "Rahim Ahmed", id: "#12345", val: config.max - 5 },
+                { name: "Sarah Khan", id: "#23456", val: config.max - 12 },
+                { name: "Tariq Ali", id: "#34567", val: config.max - 25 },
+                { name: "Aisha Rahman", id: "#45678", val: config.max - 40 },
+                { name: "Kamal Hossain", id: "#56789", val: config.max - 60 }
+            ];
+            
+            // Generate 5 users in pyramid layout (1-2-2)
+            for (let i = 0; i < 5; i++) {
+                const user = demoUsers[i];
+                let val = user.val;
+                
+                let displayVal = config.isFloat ? 
+                    Number(val).toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2}) : 
+                    Math.floor(val).toLocaleString('en-US');
+
+                // Badges and Classes based on Rank
+                let rankClass = '';
+                let rankBadge = i + 1;
+                let crownHtml = '';
+                
+                if (i === 0) {
+                    rankClass = 'pyramid-rank-1';
+                    rankBadge = '🏆'; // optionally '🥇'
+                    crownHtml = '<div class="pyramid-crown">👑</div>';
+                } else if (i === 1) {
+                    rankClass = 'pyramid-rank-2';
+                    rankBadge = '🥈';
+                } else if (i === 2) {
+                    rankClass = 'pyramid-rank-3';
+                    rankBadge = '🥉';
+                }
+
+                let finalLabel = `${config.prefix || ''}${displayVal}${config.suffix || ''}`;
+
+                html += `
+                <div class="pyramid-card">
+                    <div class="pyramid-rank ${rankClass}">${rankBadge}</div>
+                    <div class="pyramid-profile">
+                        ${crownHtml}
+                        <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=${user.name}&backgroundColor=667eea" alt="avatar">
+                    </div>
+                    <div class="pyramid-name">${user.name}</div>
+                    <div class="pyramid-id">${user.id}</div>
+                    <div class="pyramid-value">${finalLabel}</div>
+                </div>
+                `;
+            }
+            
+            return html;
+        }
+
+        function generatePyramidLayout(config) {
+            const pyramidHtml = generatePyramidHtml(config);
+            
+            return `
+            <div class="pyramid-top">
+                ${pyramidHtml.split('</div>').slice(0, 1).join('</div>') + '</div>'}
+            </div>
+            <div class="pyramid-middle">
+                ${pyramidHtml.split('</div>').slice(1, 3).join('</div>') + '</div>'}
+            </div>
+            <div class="pyramid-bottom">
+                ${pyramidHtml.split('</div>').slice(3, 5).join('</div>') + '</div>'}
+            </div>
+            `;
+        }
+
+        function switchTab(category) {
+            // Update tab buttons
+            const tabs = document.querySelectorAll('.tab-btn');
+            tabs.forEach(tab => tab.classList.remove('active'));
+            event.target.classList.add('active');
+
+            // Update sections
+            const sections = document.querySelectorAll('.glass-card[id^="section-"]');
+            sections.forEach(section => {
+                if (section.id === `section-${category}`) {
+                    section.style.display = 'block';
+                    section.style.animation = 'slideUp 0.6s forwards';
+                } else {
+                    section.style.display = 'none';
+                }
+            });
+        }
+
+        // Render all lists
+        document.addEventListener('DOMContentLoaded', () => {
+            // Generate pyramid layouts for all categories
+            const categories = [
+                { id: 'pyramid-robots', config: { suffix: ' Robots', min: 10, max: 45, isFloat: false } },
+                { id: 'pyramid-referrals', config: { suffix: ' Users', min: 250, max: 1200, isFloat: false } },
+                { id: 'pyramid-ref-income', config: { suffix: ' TK', min: 5000, max: 25000, isFloat: true } },
+                { id: 'pyramid-mining', config: { suffix: ' TK', min: 10000, max: 80000, isFloat: true } },
+                { id: 'pyramid-withdrawals', config: { prefix: '$', suffix: '', min: 1000, max: 15000, isFloat: true } },
+                { id: 'pyramid-deposits', config: { prefix: '$', suffix: '', min: 2000, max: 20000, isFloat: true } },
+                { id: 'pyramid-transfers', config: { suffix: ' Pts', min: 50000, max: 300000, isFloat: false } },
+                { id: 'pyramid-conversions', config: { suffix: ' TK', min: 8000, max: 45000, isFloat: true } }
+            ];
+
+            categories.forEach(category => {
+                const container = document.getElementById(category.id);
+                if (container) {
+                    container.innerHTML = generatePyramidLayout(category.config);
+                }
+            });
+            
+            // Initial animation staggered delay
+            const cards = document.querySelectorAll('.glass-card');
+            cards.forEach((card, index) => {
+                card.style.animationDelay = `${index * 0.1}s`;
+            });
+        });
+    </script>
+</body>
+</html>

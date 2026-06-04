@@ -1,0 +1,803 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IoLent - Daily Bonus</title>
+    <style>
+        :root {
+            --primary: #00e676;
+            --secondary: #00c853;
+            --accent: #00e676;
+            --bg-dark: #0B111B;
+            --card-bg: rgba(255, 255, 255, 0.05);
+            --card-border: rgba(255, 255, 255, 0.1);
+            --text-main: #ffffff;
+            --text-muted: #9ba1a6;
+            --success: #00e676;
+            --error: #ff3d00;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            background-color: var(--bg-dark) !important;
+            background-image: none !important;
+            color: var(--text-main);
+            min-height: 100vh;
+            padding: 20px 20px 80px 20px;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 480px;
+            margin: 0 auto;
+            position: relative;
+            z-index: 2;
+        }
+
+        /* Glassmorphism utility */
+        .glass-card {
+            background: var(--card-bg);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid var(--card-border);
+            border-radius: 20px;
+            padding: 20px;
+            margin-bottom: 24px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+            opacity: 0;
+            transform: translateY(20px);
+            animation: slideUp 0.6s forwards cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            transition: all 0.3s ease;
+        }
+
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Header */
+        .header {
+            text-align: center;
+            margin-bottom: 24px;
+            margin-top: 10px;
+            animation: slideUp 0.6s forwards;
+        }
+
+        .icon-circle {
+            width: 64px;
+            height: 64px;
+            background: var(--primary);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 16px;
+            box-shadow: 0 0 25px rgba(0, 230, 118, 0.5);
+            animation: pulseGlow 2s infinite alternate;
+        }
+
+        @keyframes pulseGlow {
+            0% { box-shadow: 0 0 15px rgba(0, 230, 118, 0.3); transform: scale(1); }
+            100% { box-shadow: 0 0 30px rgba(0, 230, 118, 0.6); transform: scale(1.05); }
+        }
+
+        .icon-circle svg {
+            width: 32px;
+            height: 32px;
+            fill: none;
+            stroke: white;
+            stroke-width: 2;
+            stroke-linecap: round;
+            stroke-linejoin: round;
+        }
+
+        .header h1 {
+            font-size: 26px;
+            margin-bottom: 8px;
+            background: var(--primary);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            font-weight: 800;
+        }
+
+        .header p {
+            color: var(--text-muted);
+            font-size: 14px;
+            line-height: 1.5;
+        }
+
+        /* Daily Status Card */
+        .status-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            margin-bottom: 16px;
+        }
+
+        .stat-box {
+            background: rgba(0, 0, 0, 0.2);
+            border: 1px solid var(--card-border);
+            border-radius: 16px;
+            padding: 16px;
+            text-align: center;
+        }
+
+        .stat-label {
+            color: var(--text-muted);
+            font-size: 12px;
+            margin-bottom: 6px;
+        }
+
+        .stat-value {
+            font-size: 16px;
+            font-weight: 800;
+            color: var(--text-main);
+        }
+
+        .primary-value {
+            color: var(--accent);
+            text-shadow: 0 0 10px rgba(0, 230, 118, 0.4);
+            font-size: 20px;
+        }
+
+        .streak-card {
+            background: rgba(0, 230, 118, 0.1);
+            border: 1px solid rgba(0, 230, 118, 0.3);
+            border-radius: 16px;
+            padding: 12px 16px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .streak-info {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .streak-icon {
+            color: #FFD700;
+            filter: drop-shadow(0 0 5px rgba(255, 215, 0, 0.5));
+        }
+
+        .streak-text {
+            font-weight: bold;
+            font-size: 14px;
+        }
+
+        .streak-msg {
+            font-size: 11px;
+            color: var(--text-muted);
+        }
+
+        /* Question Section */
+        .question-header {
+            font-size: 14px;
+            color: var(--text-muted);
+            margin-bottom: 8px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-weight: 600;
+        }
+
+        .question-text {
+            font-size: 20px;
+            font-weight: 700;
+            line-height: 1.4;
+            margin-bottom: 24px;
+            color: #fff;
+        }
+
+        /* Options */
+        .options-container {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            margin-bottom: 24px;
+        }
+
+        .option-lbl {
+            position: relative;
+            display: flex;
+            align-items: center;
+            padding: 16px;
+            background: rgba(0, 0, 0, 0.3);
+            border: 2px solid var(--card-border);
+            border-radius: 16px;
+            cursor: pointer;
+            transition: all 0.3s;
+            overflow: hidden;
+        }
+
+        .option-lbl:hover:not(.disabled) {
+            background: rgba(255, 255, 255, 0.05);
+            transform: translateX(4px);
+            border-color: rgba(255, 255, 255, 0.2);
+        }
+
+        .option-lbl input {
+            position: absolute;
+            opacity: 0;
+            cursor: pointer;
+        }
+
+        .opt-char {
+            width: 28px;
+            height: 28px;
+            border-radius: 8px;
+            background: rgba(255, 255, 255, 0.1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 14px;
+            margin-right: 14px;
+            color: var(--text-muted);
+            transition: all 0.3s;
+        }
+
+        .opt-text {
+            font-size: 15px;
+            font-weight: 500;
+            flex: 1;
+        }
+
+        .opt-icon {
+            opacity: 0;
+            transform: scale(0);
+            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        /* Selected State */
+        .option-lbl input:checked ~ .opt-char {
+            background: var(--accent);
+            color: #000;
+            box-shadow: 0 0 10px var(--accent);
+        }
+
+        .option-lbl.selected {
+            border-color: var(--accent);
+            background: rgba(0, 230, 118, 0.05);
+            box-shadow: 0 0 15px rgba(0, 230, 118, 0.1);
+        }
+
+        /* Result States */
+        .option-lbl.correct {
+            border-color: var(--success);
+            background: rgba(0, 230, 118, 0.1);
+            color: #fff;
+        }
+        .option-lbl.correct .opt-char {
+            background: var(--success);
+            color: #000;
+            box-shadow: 0 0 10px var(--success);
+        }
+        .option-lbl.correct .opt-icon {
+            opacity: 1;
+            transform: scale(1);
+            color: var(--success);
+        }
+
+        .option-lbl.wrong {
+            border-color: var(--error);
+            background: rgba(255, 61, 0, 0.1);
+            color: #fff;
+        }
+        .option-lbl.wrong .opt-char {
+            background: var(--error);
+            color: #000;
+            box-shadow: 0 0 10px var(--error);
+        }
+        .option-lbl.wrong .opt-icon {
+            opacity: 1;
+            transform: scale(1);
+            color: var(--error);
+        }
+
+        .option-lbl.disabled {
+            cursor: not-allowed;
+            opacity: 0.6;
+        }
+        .option-lbl.disabled.correct, .option-lbl.disabled.wrong {
+            opacity: 1; /* keep results bright */
+        }
+
+        /* Submit Button */
+        .btn-submit {
+            width: 100%;
+            background: var(--primary);
+            color: var(--bg-dark);
+            border: none;
+            padding: 16px;
+            border-radius: 16px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            box-shadow: 0 8px 20px rgba(0, 230, 118, 0.4);
+            transition: all 0.3s;
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        .btn-submit:disabled {
+            background: rgba(255,255,255,0.1);
+            color: var(--text-muted);
+            box-shadow: none;
+            cursor: not-allowed;
+        }
+
+        .btn-submit:not(:disabled):hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(0, 230, 118, 0.6);
+        }
+
+        .btn-submit:not(:disabled):active {
+            transform: translateY(1px);
+        }
+
+        /* Ripple Check */
+        .btn-submit::after {
+            content: '';
+            position: absolute;
+            top: 50%; left: 50%;
+            width: 5px; height: 5px;
+            background: rgba(255, 255, 255, 0.5);
+            opacity: 0;
+            border-radius: 100%;
+            transform: scale(1, 1) translate(-50%);
+            transform-origin: 50% 50%;
+        }
+
+        .btn-submit.ripple::after {
+            animation: rippleBtn 0.6s ease-out;
+        }
+
+        @keyframes rippleBtn {
+            0% { transform: scale(0, 0); opacity: 0.5; }
+            100% { transform: scale(40, 40); opacity: 0; }
+        }
+
+        /* Claim Button (Shown after win) */
+        .btn-claim {
+            width: 100%;
+            background: var(--success);
+            color: var(--bg-dark);
+            border: none;
+            padding: 16px;
+            border-radius: 16px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            box-shadow: 0 8px 20px rgba(0, 230, 118, 0.4);
+            display: none; /* hidden initially */
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            transition: all 0.3s;
+            animation: slideUp 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+        
+        .btn-claim:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(0, 230, 118, 0.6);
+        }
+
+        /* Result Message Area */
+        .result-msg {
+            text-align: center;
+            padding: 16px;
+            border-radius: 16px;
+            margin-top: 20px;
+            display: none;
+            animation: slideUp 0.5s ease;
+        }
+
+        .result-msg.success {
+            background: rgba(0, 230, 118, 0.1);
+            border: 1px solid rgba(0, 230, 118, 0.3);
+        }
+
+        .result-msg.success .rm-title { color: var(--success); }
+
+        .result-msg.fail {
+            background: rgba(255, 61, 0, 0.1);
+            border: 1px solid rgba(255, 61, 0, 0.3);
+        }
+
+        .result-msg.fail .rm-title { color: var(--error); }
+
+        .rm-title {
+            font-size: 18px;
+            font-weight: bold;
+            margin-bottom: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .rm-desc {
+            font-size: 13px;
+            color: var(--text-muted);
+        }
+
+        .rm-reward {
+            font-size: 20px;
+            font-weight: 800;
+            color: var(--accent);
+            margin-top: 10px;
+            text-shadow: 0 0 10px rgba(0, 230, 118, 0.4);
+        }
+
+        /* Countdown Area */
+        .countdown-area {
+            text-align: center;
+            margin-top: 24px;
+            display: none;
+        }
+
+        .cd-title {
+            font-size: 13px;
+            color: var(--text-muted);
+            margin-bottom: 8px;
+        }
+
+        .cd-timer {
+            font-size: 24px;
+            font-weight: bold;
+            color: #fff;
+            letter-spacing: 2px;
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+        }
+        
+        .cd-box {
+            background: rgba(0,0,0,0.3);
+            padding: 6px 12px;
+            border-radius: 8px;
+            border: 1px solid var(--card-border);
+        }
+
+        /* Rules Info Card */
+        .info-card {
+            background: rgba(0, 230, 118, 0.1);
+            border: 1px dashed rgba(0, 230, 118, 0.3);
+            border-radius: 16px;
+            padding: 16px;
+            display: flex;
+            gap: 12px;
+            align-items: flex-start;
+        }
+
+        .info-card svg {
+            color: var(--primary);
+            flex-shrink: 0;
+            margin-top: 2px;
+        }
+
+        .info-card p {
+            font-size: 12px;
+            color: var(--text-muted);
+            line-height: 1.5;
+            margin-bottom: 4px;
+        }
+
+        /* Confetti Container */
+        #confetti-container {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            pointer-events: none;
+            z-index: 9999;
+            overflow: hidden;
+        }
+
+        .confetti {
+            position: absolute;
+            width: 10px; height: 10px;
+            background: var(--accent);
+            animation: fall 3s linear forwards;
+        }
+
+        @keyframes fall {
+            0% { transform: translateY(-100px) rotate(0deg); opacity: 1; }
+            100% { transform: translateY(100vh) rotate(720deg); opacity: 0; }
+        }
+
+    </style>
+</head>
+<body>
+
+    <div id="confetti-container"></div>
+
+    <div class="container">
+        <!-- Header -->
+        <div class="header">
+            <div class="icon-circle">
+                <svg viewBox="0 0 24 24">
+                    <polyline points="20 12 20 22 4 22 4 12"></polyline>
+                    <rect x="2" y="7" width="20" height="5"></rect>
+                    <line x1="12" y1="22" x2="12" y2="7"></line>
+                    <path d="M12 7H7.5a2.5 2.5 0 0 1 0-5C11 2 12 7 12 7z"></path>
+                    <path d="M12 7h4.5a2.5 2.5 0 0 0 0-5C13 2 12 7 12 7z"></path>
+                </svg>
+            </div>
+            <h1>Daily Bonus Quiz</h1>
+            <p>Answer today's question correctly and earn a bonus.</p>
+        </div>
+
+        <!-- Status Card removed per request -->
+
+        <!-- Question Card -->
+        <div class="glass-card" id="quiz-card" style="animation-delay: 0.1s;">
+            <div class="question-header">Question of the Day</div>
+            <div class="question-text">When was IoLent platform officially founded?</div>
+
+            <div class="options-container">
+                <label class="option-lbl" onclick="selectOption(this)">
+                    <input type="radio" name="quiz" value="1">
+                    <div class="opt-char">1</div>
+                    <div class="opt-text">10 / 10 / 1010</div>
+                    <svg class="opt-icon check" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                    <svg class="opt-icon cross" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" style="position:absolute; right:16px; display:none;"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+                </label>
+
+                <label class="option-lbl" onclick="selectOption(this)">
+                    <input type="radio" name="quiz" value="2">
+                    <div class="opt-char">2</div>
+                    <div class="opt-text">30 / 12 / 2020</div>
+                    <svg class="opt-icon check" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                    <svg class="opt-icon cross" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" style="position:absolute; right:16px; display:none;"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+                </label>
+
+                <label class="option-lbl" onclick="selectOption(this)">
+                    <input type="radio" name="quiz" value="3">
+                    <div class="opt-char">3</div>
+                    <div class="opt-text">16 / 08 / 2025</div>
+                    <svg class="opt-icon check" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                    <svg class="opt-icon cross" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" style="position:absolute; right:16px; display:none;"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+                </label>
+
+                <label class="option-lbl" onclick="selectOption(this)">
+                    <input type="radio" name="quiz" value="4">
+                    <div class="opt-char">4</div>
+                    <div class="opt-text">12 / 12 / 2022</div>
+                    <svg class="opt-icon check" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                    <svg class="opt-icon cross" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" style="position:absolute; right:16px; display:none;"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+                </label>
+            </div>
+
+            <button id="submit-btn" class="btn-submit" disabled onclick="submitAnswer()">
+                Submit Answer
+            </button>
+            
+            <button id="claim-btn" class="btn-claim" onclick="claimBonus()">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 12 20 22 4 22 4 12"></polyline><rect x="2" y="7" width="20" height="5"></rect><line x1="12" y1="22" x2="12" y2="7"></line></svg>
+                Claim Bonus
+            </button>
+
+            <!-- Success Message -->
+            <div id="msg-success" class="result-msg success">
+                <div class="rm-title">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                    Correct Answer!
+                </div>
+                <div class="rm-desc">You nailed it. Claim your reward below!</div>
+            </div>
+
+            <!-- Fail Message -->
+            <div id="msg-fail" class="result-msg fail">
+                <div class="rm-title">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+                    Incorrect Answer
+                </div>
+                <div class="rm-desc" id="fail-desc">Better luck tomorrow. The correct answer was option 3.</div>
+            </div>
+
+            <!-- Countdown Timer -->
+            <div id="countdown-sect" class="countdown-area">
+                <div class="cd-title">Next bonus available in:</div>
+                <div class="cd-timer">
+                    <div class="cd-box"><span id="cd-h">23</span>h</div>
+                    <div class="cd-box"><span id="cd-m">15</span>m</div>
+                    <div class="cd-box"><span id="cd-s">45</span>s</div>
+                </div>
+                <div style="font-size: 11px; color: var(--text-muted); margin-top: 12px;">Come back tomorrow for another bonus!</div>
+            </div>
+
+        </div>
+
+        <!-- Info Card -->
+        <div class="info-card" style="animation: slideUp 0.6s forwards 0.3s; opacity:0;">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>
+            <div>
+                <p>You have 1 attempt per day. The quiz resets every 24 hours.</p>
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+        const correctAnswerValue = "3"; // Correct option is 3
+        let isAnswered = false;
+        let countdownInterval;
+
+        function selectOption(labelElement) {
+            if (isAnswered) return;
+
+            // Remove selected class from all
+            const labels = document.querySelectorAll('.option-lbl');
+            labels.forEach(lbl => lbl.classList.remove('selected'));
+
+            // Add selected to clicked
+            labelElement.classList.add('selected');
+
+            // Enable submit button
+            const btn = document.getElementById('submit-btn');
+            btn.removeAttribute('disabled');
+        }
+
+        function submitAnswer() {
+            if (isAnswered) return;
+            
+            const selectedRadio = document.querySelector('input[name="quiz"]:checked');
+            if(!selectedRadio) return; // Should not happen due to disabled btn
+
+            const btn = document.getElementById('submit-btn');
+            btn.classList.add('ripple');
+            
+            setTimeout(() => validateAnswer(selectedRadio), 300);
+        }
+
+        function validateAnswer(selectedRadio) {
+            isAnswered = true;
+
+            const selectedValue = selectedRadio.value;
+            const labels = document.querySelectorAll('.option-lbl');
+
+            // Hide Submit button
+            document.getElementById('submit-btn').style.display = 'none';
+
+            // Disable all options
+            labels.forEach(lbl => {
+                lbl.classList.add('disabled');
+                lbl.onclick = null; // remove click listener
+                
+                const curVal = lbl.querySelector('input').value;
+                const checkIcon = lbl.querySelector('.check');
+                const crossIcon = lbl.querySelector('.cross');
+
+                if(curVal === correctAnswerValue) {
+                    lbl.classList.add('correct');
+                    checkIcon.style.display = 'block';
+                    crossIcon.style.display = 'none';
+                }
+
+                if(curVal === selectedValue && selectedValue !== correctAnswerValue) {
+                    lbl.classList.add('wrong');
+                    checkIcon.style.display = 'none';
+                    crossIcon.style.display = 'block';
+                }
+            });
+
+            if(selectedValue === correctAnswerValue) {
+                // Correct Answer
+                document.getElementById('msg-success').style.display = 'block';
+                document.getElementById('claim-btn').style.display = 'flex';
+                shootConfetti();
+            } else {
+                // Wrong Answer
+                const failMsg = document.getElementById('msg-fail');
+                failMsg.style.display = 'block';
+                
+                // Show countdown for tomorrow immediately
+                setTimeout(() => {
+                    startCountdown();
+                }, 1000);
+            }
+        }
+
+        function claimBonus() {
+            const btn = document.getElementById('claim-btn');
+            const successMsg = document.getElementById('msg-success');
+            
+            // Transform button to Claimed
+            btn.style.background = "rgba(255,255,255,0.1)";
+            btn.style.color = "var(--text-muted)";
+            btn.style.boxShadow = "none";
+            btn.innerHTML = `
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                Bonus Claimed
+            `;
+            btn.disabled = true;
+            
+            successMsg.querySelector('.rm-desc').innerText = "Points added to your balance.";
+            
+            // Show countdown
+            setTimeout(() => {
+                startCountdown();
+            }, 1000);
+        }
+
+        function startCountdown() {
+            document.getElementById('countdown-sect').style.display = 'block';
+            
+            // Demo Time: 23h 15m 45s
+            let h = 23;
+            let m = 15;
+            let s = 45;
+
+            const elH = document.getElementById('cd-h');
+            const elM = document.getElementById('cd-m');
+            const elS = document.getElementById('cd-s');
+
+            if(countdownInterval) clearInterval(countdownInterval);
+
+            countdownInterval = setInterval(() => {
+                s--;
+                if(s < 0) { s = 59; m--; }
+                if(m < 0) { m = 59; h--; }
+                if(h < 0) { clearInterval(countdownInterval); return; }
+
+                elH.innerText = h.toString().padStart(2, '0');
+                elM.innerText = m.toString().padStart(2, '0');
+                elS.innerText = s.toString().padStart(2, '0');
+            }, 1000);
+            
+            // Scroll to bottom to view timer smoothly
+            window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
+        }
+
+        // --- Confetti Animation Logic ---
+        function shootConfetti() {
+            const container = document.getElementById('confetti-container');
+            const colors = ['#00e676'];
+            
+            for(let i=0; i<60; i++) {
+                const conf = document.createElement('div');
+                conf.classList.add('confetti');
+                
+                // Randomize properties
+                const x = Math.random() * window.innerWidth;
+                const size = Math.random() * 8 + 4;
+                const delay = Math.random() * 2;
+                const color = colors[Math.floor(Math.random() * colors.length)];
+                
+                conf.style.left = `${x}px`;
+                conf.style.width = `${size}px`;
+                conf.style.height = `${size * 1.5}px`; // rectangular
+                conf.style.backgroundColor = color;
+                conf.style.animationDelay = `${delay}s`;
+                
+                // Add some rotation variety
+                if(Math.random() > 0.5) conf.style.borderRadius = "50%"; 
+
+                container.appendChild(conf);
+                
+                // Clean up DOM after animation completes (3s + max delay 2s)
+                setTimeout(() => {
+                    conf.remove();
+                }, 5500);
+            }
+        }
+    </script>
+</body>
+</html>

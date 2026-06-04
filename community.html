@@ -1,0 +1,499 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IoLent Community</title>
+    <style>
+        :root {
+            --primary: #00e676;
+            --secondary: #00c853;
+            --accent: #00e676;
+            --tg-bg: #0B111B !important;
+            --tg-surface: rgba(255, 255, 255, 0.03);
+            --tg-bubble: rgba(255, 255, 255, 0.05);
+            --tg-border: rgba(255, 255, 255, 0.1);
+            --text-main: #ffffff;
+            --text-muted: #9ba1a6;
+            --text-time: #9ba1a6;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; -webkit-tap-highlight-color: transparent; }
+
+        body {
+            background: #0B111B !important;
+            color: var(--text-main);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* ── CHANNEL HEADER ─────────────────────────── */
+        .channel-header {
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            background: var(--tg-surface);
+            border-bottom: 1px solid var(--tg-border);
+            padding: 12px 16px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .ch-avatar {
+            width: 42px; height: 42px;
+            border-radius: 50%;
+            background: url('https://i.ibb.co.com/QjvffmCv/ic-launcher.png') center/cover no-repeat;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 18px;
+            flex-shrink: 0;
+            box-shadow: none;
+        }
+
+        .ch-info { flex: 1; }
+        .ch-name { font-size: 15px; font-weight: 700; color: #fff; }
+        .ch-status { font-size: 12px; color: var(--text-muted); margin-top: 1px; display: flex; align-items: center; gap: 6px; }
+
+        .ch-verified {
+            color: var(--accent);
+            font-size: 11px;
+        }
+
+        /* ── FEED ───────────────────────────────────── */
+        .feed {
+            flex: 1;
+            padding: 12px 10px 80px;
+            max-width: 600px;
+            width: 100%;
+            margin: 0 auto;
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+        }
+
+        /* Date separator */
+        .date-sep {
+            text-align: center;
+            margin: 14px 0 6px;
+            position: relative;
+        }
+        .date-sep span {
+            font-size: 11px;
+            color: var(--text-muted);
+            background: var(--tg-bg);
+            padding: 2px 10px;
+            border-radius: 10px;
+            border: 1px solid var(--tg-border);
+        }
+
+        /* Post bubble */
+        .post-bubble {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            margin-bottom: 4px;
+            animation: bubbleIn 0.35s ease forwards;
+            opacity: 0;
+        }
+
+        @keyframes bubbleIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to   { opacity: 1; transform: translateY(0); }
+        }
+
+        .bubble-inner {
+            background: var(--tg-bubble);
+            border: 1px solid var(--tg-border);
+            border-radius: 4px 18px 18px 18px;
+            padding: 10px 14px 8px;
+            max-width: 100%;
+            width: 100%;
+            position: relative;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .bubble-inner:active { background: rgba(255,255,255,0.07); }
+
+        /* Sender row */
+        .sender-row {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 8px;
+        }
+
+        .sender-avatar {
+            width: 30px; height: 30px;
+            border-radius: 50%;
+            background: url('https://i.ibb.co.com/QjvffmCv/ic-launcher.png') center/cover no-repeat;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 13px;
+            flex-shrink: 0;
+        }
+
+        .sender-name {
+            font-size: 13px;
+            font-weight: 700;
+            color: var(--accent);
+        }
+
+        /* Emoji banner */
+        .post-emoji-banner {
+            width: 100%;
+            background: rgba(0, 230, 118, 0.1);
+            border: 1px solid rgba(0, 230, 118, 0.2);
+            border-radius: 10px;
+            height: 90px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 40px;
+            margin-bottom: 10px;
+        }
+
+        .post-title-text {
+            font-size: 15px;
+            font-weight: 700;
+            color: #fff;
+            line-height: 1.3;
+            margin-bottom: 6px;
+        }
+
+        .post-body-text {
+            font-size: 13.5px;
+            color: var(--text-main);
+            line-height: 1.55;
+            display: -webkit-box;
+            -webkit-line-clamp: 4;
+            -webkit-box-orient: vertical;
+            line-clamp: 4;
+            overflow: hidden;
+        }
+
+        .read-more-link {
+            font-size: 13px;
+            color: var(--accent);
+            font-weight: 600;
+            display: inline-block;
+            margin-top: 6px;
+            cursor: pointer;
+            background: none;
+            border: none;
+            padding: 0;
+        }
+
+        /* Bottom bar */
+        .bubble-meta {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-top: 10px;
+            padding-top: 8px;
+            border-top: 1px solid rgba(255,255,255,0.05);
+        }
+
+        .bubble-reactions {
+            display: flex;
+            gap: 10px;
+        }
+
+        .bubble-time {
+            font-size: 11px;
+            color: var(--text-time);
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            white-space: nowrap;
+        }
+
+        /* Load More */
+        .load-more-wrap {
+            text-align: center;
+            padding: 10px 0 20px;
+        }
+        .btn-load {
+            background: rgba(255,255,255,0.05);
+            border: 1px solid var(--tg-border);
+            color: var(--text-muted);
+            padding: 10px 24px;
+            border-radius: 20px;
+            font-size: 13px;
+            cursor: pointer;
+            transition: all 0.25s;
+        }
+        .btn-load:hover { background: rgba(255,255,255,0.1); color: #fff; }
+
+        /* ── FULL POST MODAL (Sheet) ─────────────────── */
+        .modal-overlay {
+            position: fixed; inset: 0;
+            background: rgba(0,0,0,0.7);
+            backdrop-filter: blur(5px);
+            z-index: 999;
+            display: none;
+            align-items: flex-end;
+            justify-content: center;
+        }
+        .modal-overlay.open { display: flex; }
+
+        .modal-sheet {
+            background: #0B111B;
+            border: 1px solid var(--tg-border);
+            border-radius: 20px 20px 0 0;
+            width: 100%; max-width: 600px;
+            max-height: 88vh;
+            overflow-y: auto;
+            padding: 0 0 40px;
+            animation: sheetUp 0.35s cubic-bezier(0.175,0.885,0.32,1.1) forwards;
+        }
+        @keyframes sheetUp {
+            from { transform: translateY(100%); }
+            to   { transform: translateY(0); }
+        }
+
+        .modal-top {
+            position: sticky; top: 0; z-index: 10;
+            background: #0B111B;
+            display: flex; align-items: center; justify-content: space-between;
+            padding: 16px 18px 12px;
+            border-bottom: 1px solid var(--tg-border);
+        }
+        .modal-channel {
+            display: flex; align-items: center; gap: 10px;
+        }
+        .modal-ch-avatar {
+            width: 36px; height: 36px; border-radius: 50%;
+            background: rgba(0, 230, 118, 0.1);
+            border: 1px solid var(--accent);
+            display: flex; align-items: center; justify-content: center;
+            font-size: 15px;
+        }
+        .modal-ch-name { font-size: 14px; font-weight: 700; color: var(--accent); }
+        .modal-post-id { font-size: 11px; color: var(--text-muted); }
+        .modal-close-btn {
+            background: rgba(255,255,255,0.07); border: none;
+            width: 32px; height: 32px; border-radius: 50%;
+            font-size: 17px; cursor: pointer;
+            color: var(--text-muted); display: flex; align-items: center; justify-content: center;
+            transition: all 0.2s;
+        }
+        .modal-close-btn:hover { background: rgba(255,255,255,0.15); color: #fff; }
+
+        .modal-body { padding: 18px; }
+
+        .modal-emoji-banner {
+            width: 100%; height: 140px; border-radius: 14px;
+            background: rgba(0, 230, 118, 0.1);
+            border: 1px solid var(--accent);
+            display: flex; align-items: center; justify-content: center;
+            font-size: 60px; margin-bottom: 18px;
+        }
+
+        .modal-post-title {
+            font-size: 18px; font-weight: 800; color: #fff;
+            line-height: 1.3; margin-bottom: 10px;
+        }
+
+        .modal-post-date {
+            font-size: 12px; color: var(--text-muted);
+            margin-bottom: 14px;
+        }
+
+        .modal-post-desc {
+            font-size: 14px; color: var(--text-main);
+            line-height: 1.65;
+        }
+
+        .modal-actions {
+            display: flex; gap: 8px;
+            margin-top: 20px;
+        }
+        .modal-act {
+            flex: 1;
+            background: rgba(255,255,255,0.05);
+            border: 1px solid var(--tg-border);
+            color: var(--text-main);
+            padding: 10px 4px;
+            border-radius: 12px;
+            font-size: 12px; font-weight: 600;
+            cursor: pointer;
+            display: flex; align-items: center; justify-content: center;
+            gap: 5px; transition: all 0.2s;
+        }
+        .modal-act:hover { background: rgba(255,255,255,0.12); }
+    </style>
+</head>
+<body>
+
+    <!-- Channel Header -->
+    <div class="channel-header">
+        <div class="ch-avatar"></div>
+        <div class="ch-info">
+            <div class="ch-name">IoLent Official <span class="ch-verified">✔</span></div>
+            <div class="ch-status">🟢 Active Now</div>
+        </div>
+    </div>
+
+    <!-- Feed -->
+    <div class="feed" id="feed"></div>
+
+    <!-- Load More -->
+    <div class="load-more-wrap" id="load-more-wrap" style="display:none;">
+        <button class="btn-load" onclick="loadMore()">⬇ Load older posts</button>
+    </div>
+
+    <!-- Full Post Modal -->
+    <div class="modal-overlay" id="modal-overlay" onclick="closeIfOutside(event)">
+        <div class="modal-sheet">
+            <div class="modal-top">
+                <div class="modal-channel">
+                    <div class="modal-ch-avatar">📡</div>
+                    <div>
+                        <div class="modal-ch-name">IoLent Official</div>
+                        <div class="modal-post-id" id="modal-pid"></div>
+                    </div>
+                </div>
+                <button class="modal-close-btn" onclick="closeModal()">✕</button>
+            </div>
+            <div class="modal-body">
+                <div class="modal-emoji-banner" id="modal-emoji"></div>
+                <div class="modal-post-title" id="modal-title"></div>
+                <div class="modal-post-date" id="modal-date"></div>
+                <div class="modal-post-desc" id="modal-desc"></div>
+                <div class="modal-actions">
+                    <button class="modal-act">📤 Share</button>
+                    <button class="modal-act">🔗 Copy</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+<script>
+    const posts = [
+        { id:120, pinned:false, emoji:'📡', title:'Platform Maintenance Update',     desc:'Our system will undergo scheduled maintenance on March 14, 2026 from 02:00 AM to 04:00 AM UTC. During this time you may experience brief service interruptions. All active robots and balances will remain safe. We apologize for any inconvenience and thank you for your patience.', date:'13 Mar 2026', time:'10:00 AM', likes:312, views:5840 },
+        { id:119, pinned:false, emoji:'🎉', title:'Welcome to IoLent Community',      desc:'We are excited to welcome all new users to the IoLent platform. This is your go-to place for the latest news, updates, and announcements. Together, we are building the future of digital mining!', date:'28 Feb 2026', time:'09:00 AM', likes:289, views:4200 },
+        { id:118, pinned:false, emoji:'⛏️',title:'Mining System Update',              desc:'Our mining algorithm has been upgraded for better efficiency. All existing robots have been migrated to the V2 engine, which provides a more consistent yield and faster hash processing. No user action required.', date:'25 Feb 2026', time:'11:30 AM', likes:245, views:3900 },
+        { id:117, pinned:false, emoji:'👥', title:'Referral Program Announcement',    desc:'Invite your friends and earn exciting rewards with our updated referral system. Each successful referral now earns you bonus points and a percentage of your referrals\' first deposit. The more you share, the more you earn!', date:'22 Feb 2026', time:'2:00 PM', likes:198, views:3100 },
+        { id:116, pinned:false, emoji:'🔒', title:'Security Upgrade',                 desc:'We have implemented new advanced security measures to protect all user accounts and transactions. This includes enhanced 2FA options and improved withdrawal verification. Your safety is our top priority.', date:'18 Feb 2026', time:'8:45 AM', likes:176, views:2870 },
+        { id:115, pinned:false, emoji:'💸', title:'Withdrawal System Improved',       desc:'Withdrawal speed has been significantly optimized. Most requests will now be processed within 2 hours compared to the previous 24-hour window. Minimum withdrawal amounts remain unchanged.', date:'14 Feb 2026', time:'4:15 PM', likes:210, views:3450 },
+        { id:114, pinned:false, emoji:'💰', title:'Deposit System Upgrade',           desc:'Deposits are now processed faster thanks to our upgraded payment gateway integration. You will receive balance confirmations within minutes of a successful deposit. We have also added new payment method support.', date:'10 Feb 2026', time:'12:00 PM', likes:185, views:2990 },
+        { id:113, pinned:false, emoji:'🏆', title:'Community Milestone!',             desc:'IoLent has officially reached over 10,000 registered users! This is a massive milestone and we could not have done it without you. As a thank you, all active users will receive a special loyalty bonus this week.', date:'05 Feb 2026', time:'6:30 PM', likes:387, views:6100 },
+        { id:112, pinned:false, emoji:'🤖', title:'New Robot Launch',                 desc:'A powerful new mining robot is now available in the store — the Quantum Miner X. It offers 3x the mining performance of our standard robots. Early buyers will receive a 10% discount. Slots are limited!', date:'01 Feb 2026', time:'10:00 AM', likes:301, views:5200 },
+        { id:111, pinned:false, emoji:'🎁', title:'Reward System Activated',          desc:'Users can now earn bonus points by completing platform tasks. Visit the Rewards section in the app to see all available tasks. Points can be used for special perks and converted within the platform.', date:'28 Jan 2026', time:'9:00 AM', likes:224, views:3700 },
+        { id:110, pinned:false, emoji:'📝', title:'Daily Bonus System Live',          desc:'Answer a new daily quiz question every 24 hours to earn bonus points. Questions are refreshed at midnight UTC. Correct answers grant you instant points to your balance. Keep your streak going for bonus multipliers!', date:'24 Jan 2026', time:'12:00 PM', likes:193, views:3050 },
+        { id:109, pinned:false, emoji:'📊', title:'Leaderboard Feature Released',     desc:'Top performing users will now appear on the community Leaderboard. Rankings are based on referrals, mining output, and total transactions. Compete with others and earn exclusive badges for top positions!', date:'19 Jan 2026', time:'3:30 PM', likes:167, views:2800 },
+        { id:108, pinned:false, emoji:'📱', title:'Mobile Optimization',              desc:'The IoLent app now loads significantly faster on mobile devices. We have optimized image loading, reduced page weights, and improved scrolling performance across all pages. Update the app to experience the improvements.', date:'14 Jan 2026', time:'10:45 AM', likes:141, views:2300 },
+        { id:107, pinned:false, emoji:'🔗', title:'Referral Income Update',           desc:'The referral earnings system has been improved. You now earn from multiple levels of referrals. Direct referrals earn you 10%, and second-level earn you 3%. Your referral dashboard has been updated to reflect this.', date:'09 Jan 2026', time:'2:00 PM', likes:178, views:2650 },
+        { id:106, pinned:false, emoji:'🔁', title:'Point Conversion System',          desc:'Users can now convert points to balance more easily through the new conversion dashboard. The conversion rate has been updated and a minimum threshold now applies. Visit the Points section to convert.', date:'04 Jan 2026', time:'11:15 AM', likes:154, views:2400 },
+        { id:105, pinned:false, emoji:'🖥️',title:'Server Upgrade Completed',         desc:'Our backend servers have been upgraded with additional capacity and faster SSD storage. This means more stable mining performance, quicker API responses, and improved platform reliability for all users worldwide.', date:'28 Dec 2025', time:'5:00 AM', likes:129, views:2100 },
+        { id:104, pinned:false, emoji:'⚡', title:'App Performance Improvement',      desc:'App loading speed has improved by up to 40% on low-end devices. We have addressed UI lag issues and improved our rendering pipeline. Please update your app from the store to enjoy these improvements.', date:'20 Dec 2025', time:'1:30 PM', likes:112, views:1980 },
+        { id:103, pinned:false, emoji:'🌟', title:'Special Bonus Campaign',           desc:'A limited-time bonus campaign has started! Complete any 3 platform tasks before March 31 to earn a special campaign badge and a 20 point bonus. Log in daily and track your progress in the Rewards section.', date:'10 Dec 2025', time:'9:00 AM', likes:256, views:4100 },
+        { id:102, pinned:false, emoji:'🤝', title:'Community Engagement Event',       desc:'Participate in our upcoming community event! We will be hosting a live Q&A session with the IoLent core team. Be ready with your questions. The top questions will be featured and rewarded with bonus points.', date:'01 Dec 2025', time:'8:00 PM', likes:203, views:3300 },
+        { id:101, pinned:false, emoji:'🙏', title:'Thank You from IoLent!',           desc:'We are deeply grateful for the support and trust from our amazing community. Your patience, feedback, and enthusiasm drive everything we build. Here\'s to continued growth and success together — the best is yet to come!', date:'16 Aug 2025', time:'10:30 AM', likes:421, views:7200 },
+    ];
+
+    const PER_PAGE = 10;
+    let shown = 0;
+    const liked = {};
+    let currentPost = null;
+
+    function fmt(n){ return n>=1000?(n/1000).toFixed(1)+'K':n; }
+
+    function groupByDate(arr){
+        const groups = {};
+        arr.forEach(p => {
+            if(!groups[p.date]) groups[p.date]=[];
+            groups[p.date].push(p);
+        });
+        return groups;
+    }
+
+    function loadMore(){
+        const feed = document.getElementById('feed');
+        const slice = posts.slice(shown, shown + PER_PAGE);
+        const groups = groupByDate(slice);
+
+        Object.keys(groups).forEach(date => {
+            // Date separator
+            const sep = document.createElement('div');
+            sep.className = 'date-sep';
+            sep.innerHTML = `<span>${date}</span>`;
+            feed.appendChild(sep);
+
+            groups[date].forEach((post, i) => {
+                const el = document.createElement('div');
+                el.className = 'post-bubble';
+                el.style.animationDelay = (i * 0.05) + 's';
+
+                const isLiked = liked[post.id] || false;
+                const preview = post.desc.length > 180 ? post.desc.slice(0, 180) + '…' : post.desc;
+
+                el.innerHTML = `
+                    <div class="bubble-inner">
+                        <div class="sender-row">
+                            <div class="sender-avatar"></div>
+                            <span class="sender-name">IoLent Official</span>
+                        </div>
+                        <div class="post-emoji-banner">${post.emoji}</div>
+                        <div class="post-title-text">${post.title}</div>
+                        <div class="post-body-text">${preview}</div>
+                        ${post.desc.length > 180 ? `<button class="read-more-link" onclick="openModal(${post.id})">Read more »</button>` : ''}
+                        <div class="bubble-meta">
+                            <div class="bubble-time">${post.time}</div>
+                        </div>
+                    </div>`;
+                feed.appendChild(el);
+            });
+        });
+
+        shown += slice.length;
+        const wrap = document.getElementById('load-more-wrap');
+        wrap.style.display = shown < posts.length ? 'block' : 'none';
+    }
+
+    function toggleLike(id, btn){
+        const post = posts.find(p=>p.id===id);
+        if(!post) return;
+        liked[id] = !liked[id];
+        btn.classList.toggle('liked', liked[id]);
+        document.getElementById('lc-'+id).innerText = fmt(post.likes+(liked[id]?1:0));
+    }
+
+    function openModal(id){
+        const post = posts.find(p=>p.id===id);
+        if(!post) return;
+        currentPost = post;
+        document.getElementById('modal-emoji').innerText = post.emoji;
+        document.getElementById('modal-pid').innerText = 'Post #' + post.id;
+        document.getElementById('modal-title').innerText = post.title;
+        document.getElementById('modal-date').innerText = post.date + ' · ' + post.time;
+        document.getElementById('modal-desc').innerText = post.desc;
+        const isLiked = liked[post.id]||false;
+        document.getElementById('modal-like-count').innerText = fmt(post.likes+(isLiked?1:0))+' Likes';
+        document.getElementById('modal-overlay').classList.add('open');
+        document.body.style.overflow='hidden';
+    }
+
+    function modalLike(){
+        if(!currentPost) return;
+        const btn = document.getElementById('like-'+currentPost.id);
+        if(btn) toggleLike(currentPost.id, btn);
+        const isLiked = liked[currentPost.id];
+        document.getElementById('modal-like-count').innerText = fmt(currentPost.likes+(isLiked?1:0))+' Likes';
+    }
+
+    function closeModal(){
+        document.getElementById('modal-overlay').classList.remove('open');
+        document.body.style.overflow='';
+        currentPost=null;
+    }
+
+    function closeIfOutside(e){
+        if(e.target===document.getElementById('modal-overlay')) closeModal();
+    }
+
+    loadMore();
+</script>
+</body>
+</html>

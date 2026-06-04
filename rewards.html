@@ -1,0 +1,761 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IoLent - Rewards Center</title>
+    <style>
+        :root {
+            --primary: #00e676;
+            --secondary: #00c853;
+            --accent: #00e676;
+            --bg-gradient: #0B111B;
+            --card-bg: rgba(255, 255, 255, 0.05);
+            --card-border: rgba(255, 255, 255, 0.1);
+            --text-main: #ffffff;
+            --text-muted: #9ba1a6;
+            --success: #00e676;
+            --warning: #ffb300;
+            
+            /* Status Colors */
+            --locked: #757575;
+            --in-progress: #00e676;
+            --ready: #00e676;
+            --claimed: #9ba1a6;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            background: #0B111B !important;
+            color: var(--text-main);
+            min-height: 100vh;
+            padding: 20px 20px 80px 20px;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 480px;
+            margin: 0 auto;
+        }
+
+        /* Glassmorphism utility */
+        .glass-card {
+            background: var(--card-bg);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid var(--card-border);
+            border-radius: 20px;
+            padding: 20px;
+            margin-bottom: 24px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+            opacity: 0;
+            transform: translateY(20px);
+            animation: slideUp 0.6s forwards cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            transition: all 0.3s ease;
+        }
+
+        .glass-card:hover {
+            box-shadow: 0 8px 32px rgba(0, 230, 118, 0.1);
+            border-color: rgba(0, 230, 118, 0.2);
+        }
+
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Header */
+        .header {
+            text-align: center;
+            margin-bottom: 24px;
+            margin-top: 10px;
+            animation: slideUp 0.6s forwards;
+        }
+
+        .icon-circle {
+            width: 64px;
+            height: 64px;
+            background: rgba(0, 230, 118, 0.1);
+            border: 1px solid var(--primary);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 16px;
+            box-shadow: 0 0 25px rgba(0, 230, 118, 0.2);
+            animation: floatIcon 3s ease-in-out infinite;
+        }
+
+        @keyframes floatIcon {
+            0% { transform: translateY(0px); }
+            50% { transform: translateY(-8px); }
+            100% { transform: translateY(0px); }
+        }
+
+        .icon-circle svg {
+            width: 32px;
+            height: 32px;
+            fill: none;
+            stroke: var(--primary);
+            stroke-width: 2;
+            stroke-linecap: round;
+            stroke-linejoin: round;
+        }
+
+        .header h1 {
+            font-size: 26px;
+            margin-bottom: 8px;
+            color: #fff;
+            font-weight: 800;
+        }
+
+        .header p {
+            color: var(--text-muted);
+            font-size: 14px;
+            line-height: 1.5;
+        }
+
+        /* Overview Stats */
+        .overview-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            margin-bottom: 16px;
+        }
+
+        .stat-box {
+            background: rgba(0, 0, 0, 0.2);
+            border: 1px solid var(--card-border);
+            border-radius: 16px;
+            padding: 16px;
+            text-align: center;
+        }
+
+        .stat-label {
+            color: var(--text-muted);
+            font-size: 12px;
+            margin-bottom: 6px;
+        }
+
+        .stat-value {
+            font-size: 22px;
+            font-weight: 800;
+            color: var(--text-main);
+        }
+        
+        .stat-box.primary .stat-value {
+            color: var(--accent);
+            text-shadow: 0 0 10px rgba(240, 147, 251, 0.4);
+        }
+
+        .level-card {
+            background: linear-gradient(135deg, rgba(240, 147, 251, 0.1), rgba(102, 126, 234, 0.1));
+            border: 1px solid rgba(240, 147, 251, 0.3);
+            border-radius: 16px;
+            padding: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .level-info .label {
+            font-size: 12px;
+            color: var(--text-muted);
+            margin-bottom: 4px;
+        }
+
+        .level-info .value {
+            font-size: 18px;
+            font-weight: bold;
+            color: #C0C0C0; /* Silver */
+            text-shadow: 0 0 10px rgba(192, 192, 192, 0.4);
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .level-progress {
+            text-align: right;
+            font-size: 12px;
+            color: var(--text-muted);
+        }
+
+        .level-progress .next {
+            display: block;
+            margin-bottom: 6px;
+            color: var(--accent);
+        }
+
+        /* Section Titles */
+        .section-title {
+            font-size: 18px;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 16px;
+            padding-bottom: 12px;
+            border-bottom: 1px dashed var(--card-border);
+        }
+        
+        .section-title svg {
+            color: var(--accent);
+        }
+
+        /* Reward Task Card */
+        .task-list {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .task-card {
+            background: rgba(0, 0, 0, 0.3);
+            border: 1px solid var(--card-border);
+            border-radius: 16px;
+            padding: 16px;
+            position: relative;
+            overflow: hidden;
+            transition: all 0.3s;
+        }
+
+        /* Task Status Colors */
+        .task-card.status-locked { border-left: 4px solid var(--locked); }
+        .task-card.status-progress { border-left: 4px solid var(--in-progress); }
+        .task-card.status-ready { 
+            border-left: 4px solid var(--ready);
+            background: linear-gradient(to right, rgba(0, 230, 118, 0.1), transparent);
+            box-shadow: 0 0 15px rgba(0, 230, 118, 0.1);
+        }
+        .task-card.status-claimed { border-left: 4px solid var(--claimed); opacity: 0.7; }
+
+        .task-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 12px;
+        }
+
+        .task-info h3 {
+            font-size: 16px;
+            font-weight: 600;
+            margin-bottom: 4px;
+            color: var(--text-main);
+        }
+
+        .task-info p {
+            font-size: 13px;
+            color: var(--text-muted);
+            line-height: 1.4;
+        }
+
+        .reward-badge {
+            background: rgba(0, 230, 118, 0.1);
+            color: var(--accent);
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 13px;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            border: 1px solid rgba(0, 230, 118, 0.3);
+            white-space: nowrap;
+        }
+
+        /* Progress Bar */
+        .progress-wrapper {
+            margin: 12px 0;
+        }
+
+        .progress-stats {
+            display: flex;
+            justify-content: space-between;
+            font-size: 12px;
+            font-weight: 600;
+            margin-bottom: 6px;
+        }
+        
+        .task-card.status-locked .progress-stats { color: var(--locked); }
+        .task-card.status-progress .progress-stats { color: var(--in-progress); }
+        .task-card.status-ready .progress-stats { color: var(--ready); }
+        .task-card.status-claimed .progress-stats { color: var(--claimed); }
+
+        .progress-bar-bg {
+            width: 100%;
+            height: 8px;
+            background: rgba(255,255,255,0.1);
+            border-radius: 4px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            border-radius: 4px;
+            transition: width 1s ease-out;
+        }
+
+        .task-card.status-locked .progress-fill { background: var(--locked); }
+        .task-card.status-progress .progress-fill { background: var(--in-progress); box-shadow: 0 0 10px var(--in-progress); }
+        .task-card.status-ready .progress-fill { background: var(--ready); box-shadow: 0 0 10px var(--ready); }
+        .task-card.status-claimed .progress-fill { background: var(--claimed); }
+
+        /* Actions */
+        .task-action {
+            display: flex;
+            justify-content: flex-end;
+            margin-top: 10px;
+        }
+
+        .btn-claim {
+            background: var(--ready);
+            color: #000;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 12px;
+            font-size: 14px;
+            font-weight: bold;
+            cursor: pointer;
+            box-shadow: 0 4px 15px rgba(0, 230, 118, 0.4);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.3s;
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* Ripple effect */
+        .btn-claim::after {
+            content: '';
+            position: absolute;
+            top: 50%; left: 50%;
+            width: 5px; height: 5px;
+            background: rgba(255, 255, 255, 0.5);
+            opacity: 0;
+            border-radius: 100%;
+            transform: scale(1, 1) translate(-50%);
+            transform-origin: 50% 50%;
+        }
+
+        @keyframes ripple {
+            0% { transform: scale(0, 0); opacity: 0.5; }
+            100% { transform: scale(30, 30); opacity: 0; }
+        }
+
+        .btn-claim.animate::after {
+            animation: ripple 0.6s ease-out;
+        }
+
+        .btn-claim:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0, 230, 118, 0.6);
+        }
+
+        .btn-claim:active {
+            transform: translateY(1px);
+        }
+
+        .btn-claimed {
+            background: rgba(255,255,255,0.1);
+            color: var(--text-muted);
+            border: 1px solid var(--card-border);
+            padding: 10px 20px;
+            border-radius: 12px;
+            font-size: 14px;
+            font-weight: bold;
+            cursor: not-allowed;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        /* Calendar Streak Indicator */
+        .streak-dots {
+            display: flex;
+            gap: 8px;
+            margin: 12px 0;
+        }
+        
+        .s-dot {
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 10px;
+            font-weight: bold;
+            color: var(--text-muted);
+        }
+        
+        .s-dot.active {
+            background: var(--in-progress);
+            color: white;
+            box-shadow: 0 0 10px var(--in-progress);
+        }
+        
+        .s-dot.check {
+            background: var(--ready);
+            color: black;
+            box-shadow: 0 0 10px var(--ready);
+        }
+
+        /* Mini History List */
+        .history-list {
+            margin-top: 15px;
+        }
+        
+        .history-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px;
+            background: rgba(0,0,0,0.2);
+            border-radius: 10px;
+            margin-bottom: 8px;
+            font-size: 13px;
+        }
+        
+        .history-item:last-child {
+            margin-bottom: 0;
+        }
+
+        /* Toast Component */
+        .toast {
+            position: fixed;
+            bottom: -80px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(0, 230, 118, 0.15);
+            border: 1px solid var(--ready);
+            color: white;
+            padding: 14px 24px;
+            border-radius: 20px;
+            font-size: 15px;
+            font-weight: 600;
+            backdrop-filter: blur(10px);
+            opacity: 0;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            z-index: 1000;
+            box-shadow: 0 10px 30px rgba(0, 230, 118, 0.3);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .toast.show {
+            bottom: 30px;
+            opacity: 1;
+        }
+
+        .toast-icon {
+            width: 32px;
+            height: 32px;
+            background: var(--ready);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: black;
+            animation: bounce 0.5s ease-out;
+        }
+        
+        @keyframes bounce {
+            0%, 20%, 50%, 80%, 100% {transform: translateY(0);}
+            40% {transform: translateY(-10px);}
+            60% {transform: translateY(-5px);}
+        }
+
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <!-- Header -->
+        <div class="header">
+            <div class="icon-circle">
+                <svg viewBox="0 0 24 24">
+                    <polyline points="20 12 20 22 4 22 4 12"></polyline>
+                    <rect x="2" y="7" width="20" height="5"></rect>
+                    <line x1="12" y1="22" x2="12" y2="7"></line>
+                    <path d="M12 7H7.5a2.5 2.5 0 0 1 0-5C11 2 12 7 12 7z"></path>
+                    <path d="M12 7h4.5a2.5 2.5 0 0 0 0-5C13 2 12 7 12 7z"></path>
+                </svg>
+            </div>
+            <h1>Rewards Center</h1>
+            <p>Complete tasks and earn special rewards.</p>
+        </div>
+
+        <!-- Gamification Level omitted per request -->
+        <!-- Daily Activities title omitted per request -->
+        
+        <div class="task-list" style="margin-bottom: 30px;">
+            <!-- Login Streak Task (In Progress) -->
+            <div class="task-card status-progress glass-card" style="margin-bottom: 0; animation-delay: 0.2s;">
+                <div class="task-header">
+                    <div class="task-info">
+                        <h3>7-Day Login Streak</h3>
+                        <p>Maintain your setup daily for a week.</p>
+                    </div>
+                </div>
+                
+                <div class="streak-dots">
+                    <div class="s-dot check"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"></polyline></svg></div>
+                    <div class="s-dot check"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"></polyline></svg></div>
+                    <div class="s-dot check"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"></polyline></svg></div>
+                    <div class="s-dot check"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"></polyline></svg></div>
+                    <div class="s-dot active">5</div>
+                    <div class="s-dot">6</div>
+                    <div class="s-dot">7</div>
+                </div>
+                
+                <div class="progress-stats">
+                    <span>5 / 7 Days</span>
+                    <span>In Progress</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Platform Goals title omitted per request -->
+        
+        <div class="task-list" style="margin-bottom: 30px;">
+            <!-- Robot Purchase (Ready) -->
+            <div class="task-card status-ready glass-card" style="margin-bottom: 0; animation-delay: 0.3s;">
+                <div class="task-header">
+                    <div class="task-info">
+                        <h3>Buy 5 Robots</h3>
+                        <p>Purchase any 5 mining setup robots.</p>
+                    </div>
+                </div>
+                
+                <div class="progress-wrapper">
+                    <div class="progress-stats">
+                        <span class="progress-text">5 / 5 Robots</span>
+                        <span class="progress-percent">Completed!</span>
+                    </div>
+                    <div class="progress-bar-bg">
+                        <div class="progress-fill" style="width: 100%;"></div>
+                    </div>
+                </div>
+                
+                <div class="task-action" id="action-robot">
+                    <button class="btn-claim" onclick="claimReward('action-robot', 'Robots')">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 12 20 22 4 22 4 12"></polyline><rect x="2" y="7" width="20" height="5"></rect><line x1="12" y1="22" x2="12" y2="7"></line></svg>
+                        Claim Reward
+                    </button>
+                </div>
+            </div>
+
+            <!-- Referral Goal (In Progress) -->
+            <div class="task-card status-progress glass-card" style="margin-bottom: 0; animation-delay: 0.4s;">
+                <div class="task-header">
+                    <div class="task-info">
+                        <h3>Invite 5 Friends</h3>
+                        <p>Grow your referral network.</p>
+                    </div>
+                </div>
+                
+                <div class="progress-wrapper">
+                    <div class="progress-stats">
+                        <span class="progress-text">2 / 5 Referrals</span>
+                        <span class="progress-percent">40%</span>
+                    </div>
+                    <div class="progress-bar-bg">
+                        <div class="progress-fill" style="width: 40%;"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Transaction Activities title omitted per request -->
+        
+        <div class="task-list" style="margin-bottom: 30px;">
+            <!-- Transfers (Ready) -->
+            <div class="task-card status-ready glass-card" style="margin-bottom: 0; animation-delay: 0.5s;">
+                <div class="task-header">
+                    <div class="task-info">
+                        <h3>5 Point Transfers</h3>
+                        <p>Transfer points to other users.</p>
+                    </div>
+                </div>
+                
+                <div class="progress-wrapper">
+                    <div class="progress-stats">
+                        <span class="progress-text">5 / 5 Transfers</span>
+                        <span class="progress-percent">Completed!</span>
+                    </div>
+                    <div class="progress-bar-bg">
+                        <div class="progress-fill" style="width: 100%;"></div>
+                    </div>
+                </div>
+                
+                <div class="task-action" id="action-transfer">
+                    <button class="btn-claim" onclick="claimReward('action-transfer', 'Transfers')">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 12 20 22 4 22 4 12"></polyline><rect x="2" y="7" width="20" height="5"></rect><line x1="12" y1="22" x2="12" y2="7"></line></svg>
+                        Claim Reward
+                    </button>
+                </div>
+            </div>
+
+            <!-- Withdrawals (Locked/Start) -->
+            <div class="task-card status-locked glass-card" style="margin-bottom: 0; animation-delay: 0.6s;">
+                <div class="task-header">
+                    <div class="task-info">
+                        <h3>5 Withdrawals</h3>
+                        <p>Successfully withdraw your earnings.</p>
+                    </div>
+                </div>
+                
+                <div class="progress-wrapper">
+                    <div class="progress-stats" style="color: var(--text-muted);">
+                        <span class="progress-text">0 / 5 Withdrawals</span>
+                        <span class="progress-percent">0%</span>
+                    </div>
+                    <div class="progress-bar-bg">
+                        <div class="progress-fill" style="width: 0%;"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Special Milestones title omitted per request -->
+
+        <div class="task-list">
+            <!-- First Deposit (Claimed) -->
+            <div class="task-card status-claimed glass-card" style="margin-bottom: 0; animation-delay: 0.7s;">
+                <div class="task-header">
+                    <div class="task-info">
+                        <h3>First Deposit</h3>
+                    </div>
+                </div>
+                
+                <div class="progress-wrapper">
+                    <div class="progress-stats" style="color: var(--text-muted);">
+                        <span class="progress-text">0 / 5 Deposits</span>
+                        <span class="progress-percent">0%</span>
+                    </div>
+                    <div class="progress-bar-bg">
+                        <div class="progress-fill" style="width: 0%;"></div>
+                    </div>
+                </div>
+
+                <div class="task-action" id="action-deposit">
+                    <!-- Claim Button Hidden Default -->
+                </div>
+            </div>
+        </div>
+
+        <!-- History Section Omitted per request -->
+
+    </div>
+
+    <!-- Toast Component -->
+    <div id="toast" class="toast">
+        <div class="toast-icon">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 12 20 22 4 22 4 12"></polyline><rect x="2" y="7" width="20" height="5"></rect><line x1="12" y1="22" x2="12" y2="7"></line></svg>
+        </div>
+        <div class="toast-msg">Reward Claimed Successfully!</div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // Animate number counters
+            const counters = document.querySelectorAll('.counter');
+            
+            counters.forEach(counter => {
+                const target = +counter.getAttribute('data-target');
+                const suffix = counter.getAttribute('data-suffix') || '';
+                const duration = 1500;
+                const steps = 60;
+                const stepTime = duration / steps;
+                let current = 0;
+                
+                const timer = setInterval(() => {
+                    current += target / steps;
+                    if (current >= target) {
+                        current = target;
+                        clearInterval(timer);
+                    }
+                    
+                    let displayValue = Math.floor(current).toLocaleString('en-US');
+                    counter.innerText = displayValue + suffix;
+                }, stepTime);
+            });
+        });
+
+        // Claim Reward Functionality
+        function claimReward(actionId, rewardType) {
+            const btnContainer = document.getElementById(actionId);
+            const btn = btnContainer.querySelector('.btn-claim');
+            const card = btnContainer.closest('.task-card');
+            const toast = document.getElementById('toast');
+            
+            // Add ripple animation class
+            btn.classList.add('animate');
+            
+            // Wait for visual effect before updating UI
+            setTimeout(() => {
+                // Remove the claim button
+                btnContainer.innerHTML = '';
+                
+                // Update card visual status to reset progress
+                card.classList.remove('status-ready');
+                card.classList.add('status-locked');
+                
+                // Reset progress text and bar
+                const progText = card.querySelector('.progress-text');
+                const progPercent = card.querySelector('.progress-percent');
+                const progFill = card.querySelector('.progress-fill');
+                
+                if(progText) progText.innerText = `0 / 5 ${rewardType}`;
+                if(progPercent) progPercent.innerText = "0%";
+                if(progFill) progFill.style.width = "0%";
+                
+                // Show Floating Toast message
+                toast.querySelector('.toast-msg').innerHTML = `Reward Claimed Successfully!`;
+                toast.classList.add('show');
+                
+                // Demo logic for randomly adding points automatically behind the scenes
+                console.log("Points added to user's wallet automatically from the server side.");
+
+                // Hide Toast after 3 sec
+                setTimeout(() => {
+                    toast.classList.remove('show');
+                }, 3000);
+                
+            }, 300);
+        }
+
+        // Demo function to add points to overview
+        function updateTotalPts(earnedAmount) {
+            if(isNaN(earnedAmount)) return;
+            const ptsElement = document.querySelector('.overview-grid .primary .stat-value');
+            let currentStr = ptsElement.innerText.replace(/,/g, '').replace(' Pts', '');
+            let currentPts = parseInt(currentStr) || 1450;
+            let newPts = currentPts + earnedAmount;
+            
+            // Simple animate
+            ptsElement.style.color = "#00e676";
+            ptsElement.style.transform = "scale(1.2)";
+            ptsElement.innerText = newPts.toLocaleString('en-US') + ' Pts';
+            
+            setTimeout(() => {
+                ptsElement.style.color = "";
+                ptsElement.style.transform = "scale(1)";
+            }, 500);
+        }
+    </script>
+</body>
+</html>

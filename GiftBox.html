@@ -1,0 +1,603 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Mystery Box</title>
+  
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            obsidian: '#0B111B',
+            lime: '#00e676',
+            glass: 'rgba(255, 255, 255, 0.05)',
+          }
+        }
+      }
+    }
+  </script>
+  
+  <style>
+    body {
+      background-color: #0B111B;
+      color: white;
+      font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+      overflow-x: hidden;
+      touch-action: pan-y;
+      -webkit-tap-highlight-color: transparent;
+      margin: 0;
+      padding: 0;
+    }
+    
+    .box-card {
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      transition: transform 0.2s ease, opacity 0.3s ease;
+      min-height: 44px; /* Touch-friendly requirement */
+    }
+    
+    .box-card:active:not(.disabled) {
+      transform: scale(0.95);
+    }
+    
+    .box-card.disabled {
+      opacity: 0.4;
+      cursor: not-allowed;
+      filter: grayscale(100%);
+    }
+
+    .pulse-glow {
+      box-shadow: 0 0 15px rgba(0, 230, 118, 0.3);
+    }
+
+    /* Modals & Loading */
+    .modal-enter {
+      animation: modalFadeIn 0.3s ease forwards;
+    }
+    
+    @keyframes modalFadeIn {
+      from { opacity: 0; transform: scale(0.95); }
+      to { opacity: 1; transform: scale(1); }
+    }
+    
+    @keyframes loadBar {
+      0% { width: 0%; }
+      100% { width: 100%; }
+    }
+    
+    .animate-load-bar {
+      animation: loadBar 5s linear forwards;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    /* Error Dialog */
+    .error-dialog-overlay {
+      position: fixed; inset: 0; z-index: 70;
+      background: rgba(0,0,0,0.75);
+      display: flex; align-items: center; justify-content: center;
+      padding: 1rem;
+      animation: modalFadeIn 0.25s ease forwards;
+    }
+    .error-dialog-box {
+      background: #121b2b;
+      border: 1px solid rgba(255,80,80,0.35);
+      border-radius: 1.25rem;
+      padding: 1.75rem 1.5rem;
+      width: 100%; max-width: 22rem;
+      text-align: center;
+      box-shadow: 0 0 40px rgba(255,80,80,0.12);
+    }
+    .error-dialog-icon { font-size: 2.8rem; margin-bottom: 0.75rem; }
+    .error-dialog-title {
+      font-size: 1.15rem; font-weight: 700;
+      color: #ff6b6b; margin-bottom: 0.5rem;
+    }
+    .error-dialog-msg {
+      font-size: 0.9rem; color: #9ca3af; margin-bottom: 1.5rem; line-height: 1.6;
+    }
+    .error-dialog-btn {
+      width: 100%; padding: 0.85rem;
+      background: linear-gradient(135deg, #ff6b6b, #c0392b);
+      color: white; font-weight: 700; font-size: 1rem;
+      border: none; border-radius: 0.85rem; cursor: pointer;
+      transition: opacity 0.2s;
+    }
+    .error-dialog-btn:active { opacity: 0.8; }
+    
+    /* Fix Tailwind CDN delay showing hidden elements */
+    .hidden { display: none !important; }
+  </style>
+</head>
+<body class="min-h-screen flex flex-col p-4">
+
+  <!-- 1️⃣ Header -->
+  <header class="sticky top-0 z-40 bg-obsidian/90 backdrop-blur-md pb-4 pt-2 border-b border-white/10 mb-6">
+    <div class="flex justify-center items-center max-w-md mx-auto w-full">
+      <div class="flex flex-col items-center">
+        <h1 class="text-xl font-extrabold tracking-tight flex items-center gap-2">
+          <span class="w-2 h-2 rounded-full bg-lime animate-pulse pulse-glow"></span>
+          🎁 Mystery <span class="text-lime">Box</span>
+        </h1>
+        <span class="text-[10px] text-gray-400 uppercase tracking-widest mt-1">Daily Reward</span>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Content -->
+  <main class="flex-grow max-w-md mx-auto w-full flex flex-col gap-6">
+    
+    <!-- Status Text -->
+    <div class="text-center">
+      <h2 id="status-title" class="text-lg font-semibold text-gray-200">Select your daily gift!</h2>
+      <p id="status-desc" class="text-sm text-gray-400 mt-1">Pick one of the 9 boxes to claim your reward.</p>
+    </div>
+
+    <!-- 2️⃣ Gift Box Grid (3x3) -->
+    <div class="grid grid-cols-3 gap-3" id="box-grid">
+      <!-- Generated via JS to keep DOM clean -->
+    </div>
+
+    <!-- 3️⃣ Progress Bar Section (BOTTOM CARD) -->
+    <div id="progress-section" class="hidden box-card rounded-xl p-5 flex flex-col items-center mt-auto">
+      <div class="text-lime text-2xl mb-2 animate-pulse">⏳</div>
+      <h3 class="font-semibold text-lg mb-1 text-gray-200">Next Claim Available In</h3>
+      <div id="countdown-timer" class="text-3xl font-mono font-bold tracking-wider mb-4 text-white">00:00:00</div>
+      
+      <div class="w-full bg-black/40 rounded-full h-3 overflow-hidden border border-white/10">
+        <div id="progress-bar" class="bg-lime h-full rounded-full transition-all duration-1000 ease-linear" style="width: 0%"></div>
+      </div>
+    </div>
+
+  </main>
+
+  <!-- Ads Modal (Full Screen) -->
+  <div id="ads-modal" class="fixed inset-0 z-50 hidden bg-black/95 flex flex-col items-center justify-center">
+    <!-- Top Right: Spinner (while waiting) or Close Button (after response) -->
+    <div class="absolute top-6 right-6">
+      <!-- Loading Spinner: visible until response arrives -->
+      <div id="ads-loading-spinner" class="w-10 h-10 flex items-center justify-center">
+        <div style="width:36px;height:36px;border:3px solid rgba(255,255,255,0.15);border-top-color:#00e676;border-radius:50%;animation:spin 0.8s linear infinite;"></div>
+      </div>
+      <!-- Close Button: hidden until response arrives -->
+      <button id="close-ads" class="hidden w-10 h-10 text-white bg-white/10 hover:bg-white/20 rounded-full flex items-center justify-center backdrop-blur-sm transition-colors border border-white/20">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+      </button>
+    </div>
+    <div class="w-full h-full flex items-center justify-center p-4">
+      <img src="https://i.ibb.co.com/QjvffmCv/ic-launcher.png" alt="Advertisement" class="max-w-full max-h-full object-contain drop-shadow-[0_0_15px_rgba(0,230,118,0.2)] rounded-lg">
+    </div>
+  </div>
+
+  <!-- Reward Modal -->
+  <div id="reward-modal" class="fixed inset-0 z-50 hidden bg-obsidian/95 flex items-center justify-center p-4">
+    <div class="bg-[#121b2b] border border-lime/30 rounded-2xl p-6 w-full max-w-sm text-center shadow-[0_0_40px_rgba(0,230,118,0.1)] modal-enter">
+      <div class="text-5xl mb-4" style="animation: float 3s ease-in-out infinite;">🎉</div>
+      <h2 class="text-2xl font-bold text-lime mb-4">Reward Claimed!</h2>
+      
+      <div class="bg-black/30 rounded-lg p-4 mb-6 space-y-2 text-left border border-white/5">
+        <div class="flex justify-between items-center text-sm">
+          <span class="text-gray-400">Previous:</span>
+          <span id="reward-prev" class="font-mono text-gray-200">0.00 TK</span>
+        </div>
+        <div class="flex justify-between items-center text-sm border-b border-white/10 pb-2">
+          <span class="text-lime font-semibold">Earned:</span>
+          <span id="reward-earned" class="font-mono font-bold text-lime">+0.00 TK</span>
+        </div>
+        <div class="flex justify-between items-center pt-2">
+          <span class="text-gray-300 font-medium">Now:</span>
+          <span id="reward-now" class="font-mono font-bold text-white text-lg">0.00 TK</span>
+        </div>
+      </div>
+
+      <p class="text-sm text-gray-400 mb-6 flex items-center justify-center gap-1">
+        👉 <span>Please wait for tomorrow</span>
+      </p>
+
+      <button id="reward-ok-btn" class="w-full bg-lime text-obsidian font-bold py-3.5 rounded-xl active:scale-[0.98] transition-transform text-lg shadow-[0_4px_15px_rgba(0,230,118,0.2)]">
+        OK
+      </button>
+    </div>
+  </div>
+
+  <!-- Loading Screen (5 Seconds) -->
+  <div id="loading-screen" class="fixed inset-0 z-[60] hidden bg-obsidian/98 flex flex-col items-center justify-center p-6 text-center">
+    <div class="relative w-16 h-16 mb-6">
+      <div class="absolute inset-0 border-4 border-lime/20 rounded-full"></div>
+      <div class="absolute inset-0 border-4 border-lime rounded-full border-t-transparent animate-spin"></div>
+    </div>
+    <h3 class="text-xl font-bold text-white mb-2">Claiming Reward...</h3>
+    <p class="text-gray-400 text-sm mb-6">Please do not close the app</p>
+    
+    <div class="w-full max-w-xs bg-black/40 rounded-full h-2 overflow-hidden border border-white/5">
+      <div id="loading-bar-fill" class="bg-lime h-full"></div>
+    </div>
+  </div>
+
+  <script>
+    // 📡 ANDROID ↔ WEBVIEW DATA FLOW
+    // --- State Variables ---
+    let userData = {
+      taka: "0.00",
+      last_gift_collect: "0",
+      last_gift_earn: null
+    };
+    let rewardAmount = 0;
+    let timerInterval = null;
+    let claimedBoxNumber = 0;  // Tracks which box was clicked
+    let claimSuccessData = null; // Stores success response for OK button
+
+    // --- DOM Elements ---
+    const boxGrid = document.getElementById('box-grid');
+    const statusTitleEl = document.getElementById('status-title');
+    const statusDescEl = document.getElementById('status-desc');
+    
+    const progressSection = document.getElementById('progress-section');
+    const countdownTimerEl = document.getElementById('countdown-timer');
+    const progressBarEl = document.getElementById('progress-bar');
+    
+    const adsModal = document.getElementById('ads-modal');
+    const adsSpinner = document.getElementById('ads-loading-spinner');
+    const closeAdsBtn = document.getElementById('close-ads');
+    
+    const rewardModal = document.getElementById('reward-modal');
+    const rewardPrevEl = document.getElementById('reward-prev');
+    const rewardEarnedEl = document.getElementById('reward-earned');
+    const rewardNowEl = document.getElementById('reward-now');
+    const rewardOkBtn = document.getElementById('reward-ok-btn');
+    
+    const loadingScreen = document.getElementById('loading-screen');
+    const loadingBarFill = document.getElementById('loading-bar-fill');
+
+    // 🔹 Step 1: Request Data from Android
+    document.addEventListener("DOMContentLoaded", function() {
+      // Pre-render boxes while waiting for data
+      renderBoxes();
+      
+      let value = "ok";
+      if (typeof Android !== "undefined" && typeof Android.sendMe === "function") {
+        Android.sendMe(value);
+      } else {
+        // Fallback for testing in browser if Android interface is missing
+        console.warn("Android interface not found. Using local test data.");
+        setTimeout(() => {
+          handleCacheData(JSON.stringify({
+            data: {
+              taka: "100.50",
+              last_gift_collect: "0" // Set to 0 to test claiming
+            }
+          }));
+        }, 300);
+      }
+    });
+
+    // 🔹 Step 2: Receive Data from Android
+    function handleCacheData(data) {
+      if (!data) return;
+
+      if (typeof data === "string") {
+        try {
+          data = JSON.parse(data);
+        } catch(e) {
+          console.error("JSON parse error", e);
+          return;
+        }
+      }
+
+      if (data && data.data) {
+        userData = data.data;
+        processUserData();
+      }
+    }
+
+    function processUserData() {
+      // 🧠 CLAIM LOGIC - Check Claim Status
+      if (hasClaimedToday(userData.last_gift_collect)) {
+        setClaimedState();
+      } else {
+        setAvailableState();
+      }
+      updateBoxHighlights();
+    }
+
+    function updateBoxHighlights() {
+      let lastBoxIndex = -1;
+      if (userData.last_gift_earn && typeof userData.last_gift_earn === 'string') {
+        let match = userData.last_gift_earn.match(/^([0-9]+)b/);
+        if (match) {
+          lastBoxIndex = parseInt(match[1]) - 1;
+        }
+      }
+
+      const boxes = document.querySelectorAll('#box-grid .box-card');
+      boxes.forEach((box, index) => {
+        // Reset highlights
+        box.classList.remove('ring-2', 'ring-lime', 'ring-offset-2', 'ring-offset-obsidian', 'pulse-glow');
+        const overlay = box.querySelector('.highlight-overlay');
+        if (overlay) overlay.remove();
+
+        // Highlight if matches
+        if (index === lastBoxIndex) {
+          box.classList.add('ring-2', 'ring-lime', 'ring-offset-2', 'ring-offset-obsidian', 'pulse-glow');
+          const div = document.createElement('div');
+          div.className = 'highlight-overlay absolute inset-0 bg-lime/20 rounded-xl pointer-events-none';
+          box.appendChild(div);
+        }
+      });
+    }
+
+    function hasClaimedToday(timestamp) {
+      if (!timestamp || timestamp === "0" || timestamp === "") return false;
+
+      let last = new Date(parseInt(timestamp));
+      let now = new Date();
+
+      return (
+        last.getFullYear() === now.getFullYear() &&
+        last.getMonth() === now.getMonth() &&
+        last.getDate() === now.getDate()
+      );
+    }
+
+    function renderBoxes() {
+      boxGrid.innerHTML = ''; // Sanitize content
+      for (let i = 0; i < 9; i++) {
+        const box = document.createElement('div');
+        // Tailwind classes: Aspect ratio square, flex center, basic styling
+        box.className = 'box-card rounded-xl aspect-square flex items-center justify-center cursor-pointer select-none relative';
+        box.innerHTML = '<span class="text-4xl drop-shadow-md">🎁</span>';
+        box.onclick = () => handleBoxClick(box);
+        boxGrid.appendChild(box);
+      }
+    }
+
+    function setAvailableState() {
+      statusTitleEl.textContent = "Select your daily gift!";
+      statusDescEl.textContent = "Pick one of the 9 boxes to claim your reward.";
+      progressSection.classList.add('hidden');
+      
+      const boxes = document.querySelectorAll('#box-grid .box-card');
+      boxes.forEach(box => {
+        box.classList.remove('disabled');
+      });
+      
+      if (timerInterval) clearInterval(timerInterval);
+    }
+
+    function setClaimedState() {
+      statusTitleEl.textContent = "Come back tomorrow!";
+      statusDescEl.textContent = "You have already claimed today's gift.";
+      progressSection.classList.remove('hidden');
+      
+      const boxes = document.querySelectorAll('#box-grid .box-card');
+      boxes.forEach(box => {
+        box.classList.add('disabled');
+      });
+
+      startCountdown();
+    }
+
+    // 🎁 BOX CLICK FLOW
+    function handleBoxClick(boxElement) {
+      if (hasClaimedToday(userData.last_gift_collect)) return;
+      if (boxElement.classList.contains('disabled')) return;
+
+      // Lock interaction to prevent multiple clicks
+      const boxes = document.querySelectorAll('#box-grid .box-card');
+      boxes.forEach(b => b.classList.add('disabled'));
+
+      // Determine box number (1-9) based on DOM position
+      const allBoxes = Array.from(document.querySelectorAll('#box-grid .box-card'));
+      claimedBoxNumber = allBoxes.indexOf(boxElement) + 1;
+
+      // Reset ads button state: show spinner, hide close button
+      adsSpinner.classList.remove('hidden');
+      closeAdsBtn.classList.add('hidden');
+
+      // 📲 Call Android BEFORE showing ads
+      let value = String(claimedBoxNumber);
+      if (typeof Android !== "undefined" && typeof Android.GiftBox === "function") {
+        Android.GiftBox(value);
+      } else {
+        console.warn("Android.GiftBox not found. Simulating response...");
+        setTimeout(() => {
+          handleResponse(JSON.stringify({
+            status: "success",
+            today_income: "00.00",
+            last_gift_collect: String(Date.now())
+          }));
+        }, 3000);
+      }
+
+      // Show Ads image
+      adsModal.classList.remove('hidden');
+    }
+
+    // Ads Modal Close logic (only reachable after response arrives)
+    closeAdsBtn.onclick = () => {
+      adsModal.classList.add('hidden');
+    };
+
+    // ─────────────────────────────────────────────
+    // 📥 handleResponse — called by Android via evaluateJavascript
+    // ─────────────────────────────────────────────
+    function handleResponse(rawResponse) {
+      // Response received — hide loading screen, reveal close button
+      loadingScreen.classList.add('hidden');
+      adsSpinner.classList.add('hidden');
+      closeAdsBtn.classList.remove('hidden');
+
+      let res;
+      try {
+        res = JSON.parse(rawResponse);
+      } catch (e) {
+        showErrorDialog('Parse Error', 'Could not read server response. Please try again.');
+        resetBoxes();
+        return;
+      }
+
+      if (res.status === 'success') {
+        // ✅ Claim successful
+        claimSuccessData = {
+          today_income: res.today_income,
+          last_gift_collect: res.last_gift_collect
+        };
+
+        const earned = parseFloat(res.today_income) || 0;
+        const currentBalance = parseFloat(userData.taka) || 0;
+        const newBalance = currentBalance + earned;
+
+        // Update reward modal values
+        rewardPrevEl.textContent = currentBalance.toFixed(4) + " TK";
+        rewardEarnedEl.textContent = "+" + earned.toFixed(4) + " TK";
+        rewardNowEl.textContent = newBalance.toFixed(4) + " TK";
+
+        // Show reward modal
+        rewardModal.classList.remove('hidden');
+
+      } else if (res.status === 'error') {
+        // ❌ Handle error messages
+        const msg = res.message || 'Unknown error';
+        let icon = '⚠️';
+        let title = 'Something Went Wrong';
+        let detail = msg;
+
+        if (msg === 'Invalid email') {
+          icon = '📧'; title = 'Invalid Email';
+          detail = 'Your account email is invalid. Please contact support.';
+        } else if (msg === 'Invalid box number') {
+          icon = '📦'; title = 'Invalid Box';
+          detail = 'The box selection was invalid. Please try again.';
+        } else if (msg === 'Box number must be between 1-9') {
+          icon = '🔢'; title = 'Invalid Box Number';
+          detail = 'Box number must be between 1 and 9. Please try again.';
+        } else if (msg === 'User not found') {
+          icon = '👤'; title = 'User Not Found';
+          detail = 'Your account could not be found. Please re-login.';
+        } else if (msg === 'Failed to update data') {
+          icon = '🔄'; title = 'Update Failed';
+          detail = 'Failed to save your reward. Please try again later.';
+        }
+
+        showErrorDialog(title, detail, icon);
+        resetBoxes(); // Re-enable boxes so user can retry
+      }
+    }
+
+    // Show a styled error dialog
+    function showErrorDialog(title, message, icon) {
+      icon = icon || '⚠️';
+      // Remove any existing dialog
+      const existing = document.getElementById('error-dialog-overlay');
+      if (existing) existing.remove();
+
+      const overlay = document.createElement('div');
+      overlay.id = 'error-dialog-overlay';
+      overlay.className = 'error-dialog-overlay';
+      overlay.innerHTML = `
+        <div class="error-dialog-box">
+          <div class="error-dialog-icon">${icon}</div>
+          <div class="error-dialog-title">${title}</div>
+          <div class="error-dialog-msg">${message}</div>
+          <button class="error-dialog-btn" onclick="document.getElementById('error-dialog-overlay').remove()">OK, Got It</button>
+        </div>
+      `;
+      document.body.appendChild(overlay);
+    }
+
+    // Re-enable boxes (used after an error)
+    function resetBoxes() {
+      const boxes = document.querySelectorAll('#box-grid .box-card');
+      boxes.forEach(b => b.classList.remove('disabled'));
+    }
+
+    // ✔ OK BUTTON — send success data back to Android
+    rewardOkBtn.onclick = () => {
+      rewardModal.classList.add('hidden');
+
+      if (claimSuccessData) {
+        // Update local state
+        userData.taka = String(
+          (parseFloat(userData.taka) || 0) + parseFloat(claimSuccessData.today_income)
+        );
+        userData.last_gift_collect = claimSuccessData.last_gift_collect;
+
+        // Add the clicked box number to the payload
+        claimSuccessData.boxno = String(claimedBoxNumber);
+
+        // Update local last_gift_earn so it highlights immediately
+        userData.last_gift_earn = claimedBoxNumber + "b " + claimSuccessData.today_income;
+
+        // Send to Android as JSON string
+        let value = JSON.stringify(claimSuccessData);
+        if (typeof Android !== "undefined" && typeof Android.claimSuccess === "function") {
+          Android.claimSuccess(value);
+        } else {
+          console.log("Android.claimSuccess not found. Data:", value);
+        }
+
+        claimSuccessData = null;
+      }
+
+      // Update UI to claimed state
+      processUserData();
+    };
+
+    function showLoadingScreen() {
+      loadingScreen.classList.remove('hidden');
+      // Animate bar (indeterminate feel via CSS)
+      loadingBarFill.classList.remove('animate-load-bar');
+      void loadingBarFill.offsetWidth;
+      loadingBarFill.classList.add('animate-load-bar');
+    }
+
+    // ⏳ COUNTDOWN TIMER
+    function getNextMidnight() {
+      let now = new Date();
+      let midnight = new Date();
+      midnight.setHours(24, 0, 0, 0);
+      return midnight - now;
+    }
+
+    function startCountdown() {
+      if (timerInterval) clearInterval(timerInterval);
+      
+      updateTimerUI();
+      timerInterval = setInterval(updateTimerUI, 1000);
+    }
+
+    function updateTimerUI() {
+      let remaining = getNextMidnight();
+      
+      if (remaining <= 0) {
+        clearInterval(timerInterval);
+        // Midnight passed, reset UI
+        setAvailableState();
+        return;
+      }
+
+      // Calculate formatting
+      let hours = Math.floor((remaining / (1000 * 60 * 60)) % 24);
+      let minutes = Math.floor((remaining / 1000 / 60) % 60);
+      let seconds = Math.floor((remaining / 1000) % 60);
+
+      countdownTimerEl.textContent = 
+        String(hours).padStart(2, '0') + ":" + 
+        String(minutes).padStart(2, '0') + ":" + 
+        String(seconds).padStart(2, '0');
+
+      // Progress Bar Logic (Fill based on remaining time)
+      const TOTAL_DAY_MS = 86400000; // 24 * 60 * 60 * 1000
+      let elapsedToday = TOTAL_DAY_MS - remaining;
+      let percent = (elapsedToday / TOTAL_DAY_MS) * 100;
+      progressBarEl.style.width = percent + "%";
+    }
+  </script>
+</body>
+</html>

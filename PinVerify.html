@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Verify PIN - IoLent</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    @keyframes fadeSlideUp { 0% { opacity: 0; transform: translateY(30px); } 100% { opacity: 1; transform: translateY(0); } }
+    @keyframes inputPop { 0% { transform: scale(0.8); opacity: 0; } 100% { transform: scale(1); opacity: 1; } }
+
+    body { margin: 0; font-family: 'Inter', 'Segoe UI', sans-serif; background-color: #0B111B !important; background-image: none !important;
+           display: flex; align-items: center; justify-content: center; height: 100vh; color: #ffffff; }
+    .pin-container { background: rgba(255, 255, 255, 0.05); padding: 30px 25px; border-radius: 15px; box-shadow: 0 8px 32px rgba(0,0,0,0.3); border: 1px solid rgba(255, 255, 255, 0.1); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+                     text-align: center; max-width: 320px; width: 100%; animation: fadeSlideUp 0.8s ease-out; }
+    .pin-container h2 { margin-bottom: 10px; color: #00e676; font-weight: 800; }
+    .pin-container p { color: #9ba1a6; }
+    .pin-inputs { display: flex; justify-content: space-between; margin: 20px 0; }
+    .pin-inputs input { width: 50px; height: 60px; font-size: 24px; text-align: center; border: 2px solid rgba(255, 255, 255, 0.1); border-radius: 10px; background: rgba(0, 0, 0, 0.2); color: #ffffff;
+                        transition: all 0.3s; animation: inputPop 0.4s ease forwards; }
+    .pin-inputs input:focus { border-color: #00e676; outline: none; transform: scale(1.1); box-shadow: 0 0 15px rgba(0, 230, 118, 0.2); background: rgba(0, 230, 118, 0.05); }
+    .submit-btn { background: #00e676; color: #0B111B; padding: 12px 30px; border: none; border-radius: 10px; font-size: 16px; font-weight: bold;
+                  cursor: pointer; transition: all 0.3s; box-shadow: 0 4px 15px rgba(0, 230, 118, 0.3); width: 100%; }
+    .submit-btn:hover { transform: translateY(-2px); box-shadow: 0 8px 20px rgba(0, 230, 118, 0.5); }
+    .footer { margin-top: 20px; font-size: 14px; color: #9ba1a6; }
+
+    /* Custom Dialog Styles */
+    .dialog-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.7); backdrop-filter: blur(5px); display: flex; align-items: center; justify-content: center; z-index: 1000; opacity: 0; visibility: hidden; transition: all 0.3s ease; }
+    .dialog-overlay.active { opacity: 1; visibility: visible; }
+    .dialog-box { background: #0B111B; border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 15px; padding: 25px; text-align: center; max-width: 300px; width: 80%; transform: scale(0.8); transition: all 0.3s ease; box-shadow: 0 10px 40px rgba(0,0,0,0.5); }
+    .dialog-overlay.active .dialog-box { transform: scale(1); }
+    .dialog-box h3 { color: #ff5252; margin-top: 0; margin-bottom: 10px; font-weight: 700; font-size: 20px; }
+    .dialog-box p { color: #e0e0e0; margin-bottom: 20px; font-size: 15px; line-height: 1.5; }
+    .dialog-btn { background: #ff5252; color: #fff; border: none; padding: 10px 25px; border-radius: 8px; font-weight: bold; cursor: pointer; transition: 0.2s; width: 100%; font-size: 16px; }
+    .dialog-btn:hover { background: #ff1744; }
+
+    /* Loading Overlay Styles */
+    .loading-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.7); backdrop-filter: blur(5px); display: flex; flex-direction: column; align-items: center; justify-content: center; z-index: 1005; opacity: 0; visibility: hidden; transition: all 0.3s ease; }
+    .loading-overlay.active { opacity: 1; visibility: visible; }
+    .spinner { width: 40px; height: 40px; border: 4px solid rgba(0, 230, 118, 0.2); border-top-color: #00e676; border-radius: 50%; animation: spin 1s linear infinite; }
+    .loading-text { color: #00e676; margin-top: 15px; font-weight: 600; font-size: 16px; letter-spacing: 1px; }
+    @keyframes spin { to { transform: rotate(360deg); } }
+  </style>
+</head>
+<body>
+  <div class="pin-container">
+    <h2>Verify Your Pin</h2>
+    <p>Please enter your 4-digit secure PIN</p>
+    <div class="pin-inputs">
+      <input type="password" maxlength="1" inputmode="numeric" pattern="[0-9]*" oninput="moveToNext(this, 0)">
+      <input type="password" maxlength="1" inputmode="numeric" pattern="[0-9]*" oninput="moveToNext(this, 1)">
+      <input type="password" maxlength="1" inputmode="numeric" pattern="[0-9]*" oninput="moveToNext(this, 2)">
+      <input type="password" maxlength="1" inputmode="numeric" pattern="[0-9]*" oninput="moveToNext(this, 3)">
+    </div>
+    <button class="submit-btn" onclick="confirmPin()">Confirm</button>
+    <div class="footer">IoLent - Everything is Money</div>
+  </div>
+
+  <!-- Loading Overlay -->
+  <div id="loadingOverlay" class="loading-overlay">
+    <div class="spinner"></div>
+    <div class="loading-text">Verifying...</div>
+  </div>
+
+  <!-- Custom Dialog -->
+  <div id="customDialog" class="dialog-overlay">
+    <div class="dialog-box">
+      <h3 id="dialogTitle">Error</h3>
+      <p id="dialogMessage">An error occurred.</p>
+      <button onclick="closeDialog()" class="dialog-btn">OK</button>
+    </div>
+  </div>
+
+  <script>
+    const inputs = document.querySelectorAll('.pin-inputs input');
+
+    function moveToNext(current, index) {
+      // Allow only numeric input
+      current.value = current.value.replace(/[^0-9]/g, '');
+      
+      if (current.value.length === 1 && index < inputs.length - 1) {
+        inputs[index + 1].focus();
+      }
+    }
+
+    function showDialog(title, message) {
+      document.getElementById('dialogTitle').innerText = title;
+      document.getElementById('dialogMessage').innerText = message;
+      document.getElementById('customDialog').classList.add('active');
+    }
+
+    function closeDialog() {
+      document.getElementById('customDialog').classList.remove('active');
+    }
+
+    function showLoading() {
+      document.getElementById('loadingOverlay').classList.add('active');
+    }
+
+    function hideLoading() {
+      document.getElementById('loadingOverlay').classList.remove('active');
+    }
+
+    function confirmPin() {
+      let pin = '';
+      for (let input of inputs) {
+        if (input.value === '') {
+          showDialog("Missing Input", "Please enter all 4 digits");
+          return;
+        }
+        pin += input.value;
+      }
+      // Android JavaScript Interface কল
+      if (typeof Android !== "undefined" && Android.verifyPIN) {
+        showLoading();
+        var value = pin;  
+        Android.verifyPIN(value);
+      } else {
+        showDialog("Error", "Android Interface not found!");
+      }
+    }
+
+    // Handles response from Sketchware Android app
+    function handleResponse(responseStr) {
+      hideLoading();
+      try {
+        const data = JSON.parse(responseStr);
+        if (data.status === 'error') {
+          if (data.message === 'Database error') {
+            showDialog("Error", "Something went wrong");
+          } else {
+            showDialog("Error", data.message);
+          }
+        } else if (data.status === 'success') {
+          if (data.page === 'SetUpline') {
+            window.location.href = 'ReferralSetup.html';
+          } else if (data.page === 'AccountSetup') {
+            window.location.href = 'AccountSetup.html';
+          } else if (data.page === 'SetAddress') {
+            window.location.href = 'AddressSet.html';
+          } else if (data.page === 'Dashboard') {
+            window.location.href = 'Loading.html';
+          }
+        }
+      } catch (e) {
+        console.error("Error parsing response: ", e);
+        showDialog("Error", "Something went wrong");
+      }
+    }
+  </script>
+</body>
+</html>

@@ -1,0 +1,980 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Promote Our Service - IoLent</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    
+    <style>
+        /* CSS Variables */
+        :root {
+            --primary-color: #00e676;
+            --secondary-color: #00c853;
+            --accent-color: #00e676;
+            --text-color: #ffffff;
+            --light-text: #ffffff;
+            --bg-color: #0B111B;
+            --card-bg: rgba(255, 255, 255, 0.05);
+            --border-radius: 12px;
+            --box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            --transition-speed: 0.3s;
+            --font-family-primary: 'Space Grotesk', sans-serif;
+            --font-family-secondary: 'Inter', sans-serif;
+        }
+
+        /* Reset and Base Styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: var(--font-family-secondary);
+            background-color: var(--bg-color) !important;
+            background-image: none !important;
+            color: var(--text-color);
+            min-height: 100vh;
+            padding: 20px;
+            -webkit-overflow-scrolling: touch;
+            overflow-scrolling: touch;
+            overscroll-behavior: none;
+        }
+
+        /* Background Elements */
+        .background-elements {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            z-index: 1;
+            pointer-events: none;
+            will-change: transform;
+            transform: translateZ(0);
+            -webkit-transform: translateZ(0);
+        }
+
+        .element {
+            position: absolute;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.1);
+            animation: float 6s ease-in-out infinite;
+            will-change: transform;
+            transform: translateZ(0);
+            -webkit-transform: translateZ(0);
+        }
+
+        .element-1 {
+            width: 300px;
+            height: 300px;
+            top: -10%;
+            left: -10%;
+            animation-delay: 0s;
+        }
+
+        .element-2 {
+            width: 250px;
+            height: 250px;
+            top: 70%;
+            right: -10%;
+            animation-delay: 1s;
+        }
+
+        .element-3 {
+            width: 200px;
+            height: 200px;
+            bottom: -10%;
+            left: 20%;
+            animation-delay: 2s;
+        }
+
+        .element-4 {
+            width: 150px;
+            height: 150px;
+            top: 30%;
+            right: 10%;
+            animation-delay: 3s;
+        }
+
+        /* Container */
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            position: relative;
+            z-index: 10;
+        }
+
+        /* Header */
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .header h1 {
+            font-family: var(--font-family-primary);
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 15px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            animation: slideInDown 0.8s ease-out;
+            color: white;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .header p {
+            color: rgba(255, 255, 255, 0.9);
+            font-size: 1.1rem;
+            animation: fadeIn 0.8s ease-out 0.2s both;
+            max-width: 600px;
+            margin: 0 auto;
+            line-height: 1.6;
+        }
+
+        /* Promotion Card */
+        .promotion-card {
+            background: var(--card-bg);
+            backdrop-filter: blur(20px);
+            border-radius: 25px;
+            box-shadow: var(--box-shadow);
+            padding: 40px;
+            margin-bottom: 30px;
+            animation: fadeInUp 0.8s ease-out;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            will-change: transform;
+            transform: translateZ(0);
+            -webkit-transform: translateZ(0);
+        }
+
+        /* Reward Section */
+        .reward-section {
+            text-align: center;
+            margin-bottom: 40px;
+            padding: 30px;
+            background: var(--primary-color);
+            border-radius: 20px;
+            color: var(--bg-color);
+            position: relative;
+            overflow: hidden;
+            will-change: transform;
+            transform: translateZ(0);
+            -webkit-transform: translateZ(0);
+        }
+
+        .reward-section::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255,255,255,0.1) 1px, transparent 1px);
+            background-size: 20px 20px;
+            animation: rotate 20s linear infinite;
+            z-index: 1;
+        }
+
+        .reward-amount {
+            font-family: var(--font-family-primary);
+            font-size: 3rem;
+            font-weight: 700;
+            margin-bottom: 10px;
+            position: relative;
+            z-index: 2;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .reward-text {
+            font-family: var(--font-family-secondary);
+            font-size: 1.2rem;
+            opacity: 0.9;
+            position: relative;
+            z-index: 2;
+        }
+
+        .reward-badge {
+            display: inline-block;
+            background: rgba(255, 255, 255, 0.2);
+            padding: 8px 20px;
+            border-radius: 30px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            margin-top: 15px;
+            position: relative;
+            z-index: 2;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+        }
+
+        /* Form Section */
+        .form-section {
+            margin-bottom: 30px;
+        }
+
+        .section-title {
+            font-family: var(--font-family-primary);
+            font-size: 1.5rem;
+            color: var(--text-color);
+            margin-bottom: 25px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .section-title i {
+            color: var(--primary-color);
+            font-size: 1.5rem;
+        }
+
+        .form-group {
+            margin-bottom: 25px;
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: 10px;
+            font-weight: 600;
+            color: var(--text-color);
+            font-size: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .form-label i {
+            color: var(--primary-color);
+            font-size: 1.2rem;
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 15px 20px;
+            border: 2px solid rgba(255, 255, 255, 0.1);
+            border-radius: 15px;
+            font-family: var(--font-family-secondary);
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            background: rgba(0, 0, 0, 0.2);
+            color: var(--text-color);
+            box-sizing: border-box;
+            outline: none;
+        }
+
+        .form-input:focus {
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(0, 230, 118, 0.1);
+            transform: translateY(-2px);
+        }
+
+        .form-input::placeholder {
+            color: #999;
+        }
+
+        /* Social Media Icons */
+        .social-icons {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+
+        .social-icon {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px 15px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 25px;
+            border: 2px solid transparent;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            font-weight: 600;
+        }
+
+        .social-icon:hover {
+            background: var(--primary-color);
+            color: white;
+            border-color: var(--primary-color);
+            transform: translateY(-2px);
+        }
+
+        .social-icon i {
+            font-size: 1.2rem;
+        }
+
+        .facebook { border-color: #1877F2; color: #1877F2; }
+        .facebook:hover { background: #1877F2; color: white; }
+
+        .youtube { border-color: #FF0000; color: #FF0000; }
+        .youtube:hover { background: #FF0000; color: white; }
+
+        .instagram { border-color: #E4405F; color: #E4405F; }
+        .instagram:hover { background: #E4405F; color: white; }
+
+        .twitter { border-color: #1DA1F2; color: #1DA1F2; }
+        .twitter:hover { background: #1DA1F2; color: white; }
+
+        .linkedin { border-color: #0077B5; color: #0077B5; }
+        .linkedin:hover { background: #0077B5; color: white; }
+
+        .tiktok { border-color: #000000; color: #000000; }
+        .tiktok:hover { background: #000000; color: white; }
+
+        /* Action Buttons */
+        .action-buttons {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            margin-top: 30px;
+        }
+
+        .action-btn {
+            padding: 18px;
+            border-radius: 15px;
+            font-family: var(--font-family-secondary);
+            font-weight: 700;
+            font-size: 1.1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            border: 2px solid transparent;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 15px;
+            text-decoration: none;
+            text-align: center;
+        }
+
+        .btn-submit {
+            background: var(--primary-color);
+            color: var(--bg-color);
+            box-shadow: 0 6px 20px rgba(0, 230, 118, 0.4);
+            animation: pulse 2s infinite;
+        }
+
+        .btn-submit:hover {
+            box-shadow: 0 8px 25px rgba(0, 230, 118, 0.6);
+            transform: translateY(-3px);
+        }
+
+        .btn-cancel {
+            background: transparent;
+            color: var(--text-color);
+            border-color: rgba(255, 255, 255, 0.2);
+        }
+
+        .btn-cancel:hover {
+            background: rgba(255, 255, 255, 0.05);
+            color: var(--primary-color);
+            border-color: var(--primary-color);
+        }
+
+        /* Instructions */
+        .instructions {
+            background: rgba(255, 255, 255, 0.05);
+            padding: 25px;
+            border-radius: 15px;
+            margin-bottom: 30px;
+            border-left: 5px solid var(--primary-color);
+        }
+
+        .instructions h3 {
+            font-family: var(--font-family-primary);
+            font-size: 1.2rem;
+            margin-bottom: 15px;
+            color: var(--text-color);
+        }
+
+        .instructions ul {
+            list-style: none;
+            padding-left: 0;
+        }
+
+        .instructions li {
+            font-family: var(--font-family-secondary);
+            font-size: 0.95rem;
+            color: var(--text-color);
+            margin-bottom: 10px;
+            padding-left: 25px;
+            position: relative;
+        }
+
+        .instructions li::before {
+            content: '✓';
+            position: absolute;
+            left: 0;
+            color: var(--primary-color);
+            font-weight: bold;
+        }
+
+        /* How It Works - Visual Steps */
+        .how-it-works {
+            margin-bottom: 30px;
+        }
+
+        .how-it-works-title {
+            font-family: var(--font-family-primary);
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: var(--text-color);
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .how-it-works-title i {
+            color: var(--primary-color);
+        }
+
+        .steps-wrapper {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 10px;
+            position: relative;
+        }
+
+        @media (max-width: 600px) {
+            .steps-wrapper {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        .step-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            padding: 18px 10px;
+            background: rgba(0, 230, 118, 0.05);
+            border: 1.5px solid rgba(0, 230, 118, 0.15);
+            border-radius: 16px;
+            position: relative;
+            transition: all 0.3s ease;
+        }
+
+        .step-item:hover {
+            background: rgba(0, 230, 118, 0.1);
+            transform: translateY(-4px);
+            box-shadow: 0 8px 20px rgba(0, 230, 118, 0.12);
+        }
+
+        .step-num {
+            width: 38px;
+            height: 38px;
+            border-radius: 50%;
+            background: var(--primary-color);
+            color: var(--bg-color);
+            font-family: var(--font-family-primary);
+            font-weight: 700;
+            font-size: 1rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 10px;
+            box-shadow: 0 4px 12px rgba(0, 230, 118, 0.35);
+            flex-shrink: 0;
+        }
+
+        .step-icon {
+            font-size: 1.6rem;
+            margin-bottom: 8px;
+        }
+
+        .step-label {
+            font-family: var(--font-family-primary);
+            font-size: 0.85rem;
+            font-weight: 700;
+            color: var(--text-color);
+            margin-bottom: 4px;
+        }
+
+        .step-desc {
+            font-size: 0.75rem;
+            color: #888;
+            line-height: 1.4;
+        }
+
+        /* Promotion Guidelines */
+        .guidelines-section {
+            margin-bottom: 30px;
+        }
+
+        .guidelines-title {
+            font-family: var(--font-family-primary);
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: var(--text-color);
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .guidelines-title i {
+            color: #ff4757;
+        }
+
+        .guidelines-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 10px;
+        }
+
+        @media (max-width: 480px) {
+            .guidelines-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .guideline-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+            padding: 12px 14px;
+            border-radius: 12px;
+            font-size: 0.88rem;
+            font-family: var(--font-family-secondary);
+            color: #444;
+            transition: background 0.2s ease;
+        }
+
+        .guideline-item.rule {
+            background: rgba(46, 213, 115, 0.07);
+            border: 1px solid rgba(46, 213, 115, 0.2);
+        }
+
+        .guideline-item.rule:hover {
+            background: rgba(46, 213, 115, 0.13);
+        }
+
+        .guideline-item.warning {
+            background: rgba(255, 71, 87, 0.06);
+            border: 1px solid rgba(255, 71, 87, 0.18);
+        }
+
+        .guideline-item.warning:hover {
+            background: rgba(255, 71, 87, 0.11);
+        }
+
+        .guideline-icon {
+            font-size: 1.2rem;
+            flex-shrink: 0;
+            margin-top: 1px;
+        }
+
+        /* Animations */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes slideInDown {
+            from {
+                opacity: 0;
+                transform: translateY(-50px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+            to {
+                opacity: 1;
+            }
+        }
+
+        @keyframes float {
+            0%, 100% {
+                transform: translateY(0px);
+            }
+            50% {
+                transform: translateY(-20px);
+            }
+        }
+
+        @keyframes pulse {
+            0% {
+                transform: scale(1);
+            }
+            50% {
+                transform: scale(1.02);
+            }
+            100% {
+                transform: scale(1);
+            }
+        }
+
+        @keyframes rotate {
+            from {
+                transform: rotate(0deg);
+            }
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .container {
+                padding: 0 15px;
+            }
+            
+            .promotion-card {
+                padding: 25px;
+            }
+            
+            .header h1 {
+                font-size: 2rem;
+            }
+            
+            .reward-amount {
+                font-size: 2.5rem;
+            }
+            
+            .action-btn {
+                padding: 15px;
+                font-size: 1rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .header h1 {
+                font-size: 1.7rem;
+            }
+            
+            .reward-amount {
+                font-size: 2rem;
+            }
+            
+            .reward-text {
+                font-size: 1rem;
+            }
+            
+            .social-icons {
+                justify-content: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Background Elements -->
+    <div class="background-elements">
+        <div class="element element-1"></div>
+        <div class="element element-2"></div>
+        <div class="element element-3"></div>
+        <div class="element element-4"></div>
+    </div>
+
+    <!-- Container -->
+    <div class="container">
+        <!-- Header -->
+        <div class="header">
+            <h1>Promote Our Service</h1>
+            <p>Share IoLent on your favorite social media platforms and earn exciting rewards! Every promotion helps us grow and we want to reward your support.</p>
+        </div>
+
+        <!-- Promotion Card -->
+        <div class="promotion-card">
+            <!-- Reward Section -->
+            <div class="reward-section">
+                <div class="reward-amount">৳ 500</div>
+                <div class="reward-text">Bounty Reward</div>
+                <div class="reward-badge">
+                    <i class="fas fa-gift"></i> Up to ৳500 Per Verified Promotion
+                </div>
+            </div>
+
+            <!-- How It Works - Visual Steps -->
+            <div class="how-it-works">
+                <div class="how-it-works-title">
+                    <i class="fas fa-route"></i> How It Works
+                </div>
+                <div class="steps-wrapper">
+                    <div class="step-item">
+                        <div class="step-num">1</div>
+                        <div class="step-icon">📣</div>
+                        <div class="step-label">Promote</div>
+                        <div class="step-desc">Share IoLent on Facebook, YouTube, Instagram, etc.</div>
+                    </div>
+                    <div class="step-item">
+                        <div class="step-num">2</div>
+                        <div class="step-icon">🔗</div>
+                        <div class="step-label">Submit Link</div>
+                        <div class="step-desc">Fill out the form with your promotion URL</div>
+                    </div>
+                    <div class="step-item">
+                        <div class="step-num">3</div>
+                        <div class="step-icon">✅</div>
+                        <div class="step-label">Verify</div>
+                        <div class="step-desc">Our team reviews and verifies your promotion</div>
+                    </div>
+                    <div class="step-item">
+                        <div class="step-num">4</div>
+                        <div class="step-icon">🎁</div>
+                        <div class="step-label">Get Reward</div>
+                        <div class="step-desc">Receive your maximum ৳500 bounty reward instantly!</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Promotion Guidelines -->
+            <div class="guidelines-section">
+                <div class="guidelines-title">
+                    <i class="fas fa-clipboard-list"></i> Promotion Guidelines
+                </div>
+                <div class="guidelines-grid">
+                    <!-- Rules -->
+                    <div class="guideline-item rule">
+                        <span class="guideline-icon">✅</span>
+                        <span>Must clearly mention <strong>IoLent</strong> name in your post</span>
+                    </div>
+                    <div class="guideline-item rule">
+                        <span class="guideline-icon">✅</span>
+                        <span>Must include your <strong>referral link</strong> in the post</span>
+                    </div>
+                    <div class="guideline-item rule">
+                        <span class="guideline-icon">✅</span>
+                        <span>Post must be <strong>publicly visible</strong> to everyone</span>
+                    </div>
+                    <div class="guideline-item rule">
+                        <span class="guideline-icon">✅</span>
+                        <span>Post must stay <strong>live for at least 7 days</strong> after submission</span>
+                    </div>
+                    <!-- Warnings -->
+                    <div class="guideline-item warning">
+                        <span class="guideline-icon">❌</span>
+                        <span><strong>No spam posts</strong> — low-quality or repetitive posts will be rejected</span>
+                    </div>
+                    <div class="guideline-item warning">
+                        <span class="guideline-icon">❌</span>
+                        <span><strong>Fake or duplicate</strong> submissions will result in a permanent ban</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Promotion Submission Form Card -->
+    <div class="promotion-card" style="margin-top: 30px; animation-delay: 0.4s;">
+        <h3 class="section-title">
+            <i class="fas fa-edit"></i> Promotion Submission Form
+        </h3>
+        
+        <form id="promotionForm">
+            <div class="form-group">
+                <label class="form-label" for="fullName">
+                    <i class="fas fa-user"></i> Full Name
+                </label>
+                <input type="text" id="fullName" name="fullName" class="form-input" placeholder="Enter your full name" required>
+            </div>
+
+            <div class="form-group">
+                <label class="form-label" for="userId">
+                    <i class="fas fa-id-card"></i> User ID
+                </label>
+                <input type="number" id="userId" name="userId" class="form-input" placeholder="Enter your User ID" min="10000" required>
+            </div>
+
+            <div class="form-group">
+                <label class="form-label" for="email">
+                    <i class="fas fa-envelope"></i> Email Address
+                </label>
+                <input type="email" id="email" name="email" class="form-input" placeholder="your.email@gmail.com" required>
+            </div>
+
+            <div class="form-group">
+                <label class="form-label" for="phoneNumber">
+                    <i class="fas fa-phone"></i> Phone Number
+                </label>
+                <input type="tel" id="phoneNumber" name="phoneNumber" class="form-input" placeholder="+880 1XXXXXXXXX" minlength="11" maxlength="15" required>
+            </div>
+
+            <div class="form-group">
+                <label class="form-label" for="promotionUrl">
+                    <i class="fas fa-link"></i> Promotion URL
+                </label>
+                <input type="url" id="promotionUrl" name="promotionUrl" class="form-input" placeholder="https://www.socialmedia.com/your-post-url" required>
+            </div>
+
+            <div class="action-buttons">
+                <button type="submit" class="action-btn btn-submit" id="submitBtn">
+                    <i class="fas fa-paper-plane"></i> Submit Promotion
+                </button>
+            </div>
+        </form>
+    </div>
+
+    <script>
+        // JavaScript for Promotion Page
+
+        document.addEventListener('DOMContentLoaded', function() {
+            const promotionForm = document.getElementById('promotionForm');
+            const socialMediaInputs = document.querySelectorAll('input[name="socialMedia"]');
+            const socialMediaOther = document.getElementById('socialMediaOther');
+            const submitBtn = document.getElementById('submitBtn');
+            const cancelBtn = document.getElementById('cancelBtn');
+
+            // Social Media Selection Handler
+            socialMediaInputs.forEach(input => {
+                input.addEventListener('change', function() {
+                    if (this.value === 'Other') {
+                        socialMediaOther.style.display = 'block';
+                        socialMediaOther.required = true;
+                    } else {
+                        socialMediaOther.style.display = 'none';
+                        socialMediaOther.required = false;
+                    }
+                });
+            });
+
+            // Form Submission Handler
+            promotionForm.addEventListener('submit', function(e) {
+                e.preventDefault();
+                
+                // Get form data
+                const formData = new FormData(promotionForm);
+                const data = {};
+                
+                formData.forEach((value, key) => {
+                    data[key] = value;
+                });
+
+                // Validate form
+                if (!data.fullName || !data.userId || !data.email || !data.phoneNumber || !data.promotionUrl) {
+                    alert('Please fill in all required fields.');
+                    return;
+                }
+
+                // 1. Validate name (English letters only)
+                const nameRegex = /^[a-zA-Z\s]+$/;
+                if (!nameRegex.test(data.fullName)) {
+                    alert('Name must contain only English letters and spaces.');
+                    return;
+                }
+
+                // 2. Validate User ID (numbers only, minimum 10000)
+                const userIdNum = parseInt(data.userId);
+                if (isNaN(userIdNum) || userIdNum < 10000) {
+                    alert('User ID must be a number and minimum 10000.');
+                    return;
+                }
+
+                // 3. Validate email (@gmail.com only)
+                const emailRegex = /^[^\s@]+@gmail\.com$/;
+                if (!emailRegex.test(data.email)) {
+                    alert('Email must be a valid Gmail address (@gmail.com).');
+                    return;
+                }
+
+                // 4. Validate phone number (11-15 digits)
+                const phoneRegex = /^\d{11,15}$/;
+                if (!phoneRegex.test(data.phoneNumber)) {
+                    alert('Phone number must be 11-15 digits long.');
+                    return;
+                }
+
+                // 5. Validate URL (must be a valid URL)
+                try {
+                    new URL(data.promotionUrl);
+                } catch (e) {
+                    alert('Please enter a valid URL.');
+                    return;
+                }
+
+                // Show success message
+                alert('Thank you for promoting IoLent! Your submission has been received. We will review your promotion and contact you shortly.');
+                
+                // Reset form
+                promotionForm.reset();
+                
+                // Add click animation to submit button
+                submitBtn.style.transform = 'scale(0.95)';
+                setTimeout(() => {
+                    submitBtn.style.transform = '';
+                }, 100);
+            });
+
+
+            // Mobile-optimized parallax effect for background elements
+            let ticking = false;
+            
+            function updateParallax(e) {
+                const elements = document.querySelectorAll('.element');
+                const x = e.clientX / window.innerWidth;
+                const y = e.clientY / window.innerHeight;
+                
+                elements.forEach((element, index) => {
+                    const speed = 0.5 + (index * 0.1);
+                    const xPos = (x - 0.5) * speed * 50;
+                    const yPos = (y - 0.5) * speed * 50;
+                    
+                    element.style.transform = `translate3d(${xPos}px, ${yPos}px, 0)`;
+                });
+                ticking = false;
+            }
+            
+            function requestParallax(e) {
+                if (!ticking) {
+                    requestAnimationFrame(() => updateParallax(e));
+                    ticking = true;
+                }
+            }
+            
+            // Use throttled event listeners for better mobile performance
+            window.addEventListener('mousemove', requestParallax, { passive: true });
+            window.addEventListener('touchmove', requestParallax, { passive: true });
+
+        // Form input animations
+        const formInputs = document.querySelectorAll('.form-input');
+        formInputs.forEach(input => {
+            input.addEventListener('focus', function() {
+                this.parentElement.style.transform = 'translateY(-2px)';
+                this.parentElement.style.transition = 'transform 0.3s ease';
+            });
+            
+            input.addEventListener('blur', function() {
+                this.parentElement.style.transform = 'translateY(0)';
+            });
+        });
+
+        // Real-time input validation for Full Name field
+        const fullNameInput = document.getElementById('fullName');
+        fullNameInput.addEventListener('input', function(e) {
+            // Remove any non-English letters and spaces
+            const cleanedValue = e.target.value.replace(/[^a-zA-Z\s]/g, '');
+            if (cleanedValue !== e.target.value) {
+                e.target.value = cleanedValue;
+            }
+        });
+
+        // Real-time input validation for Phone Number field
+        const phoneNumberInput = document.getElementById('phoneNumber');
+        phoneNumberInput.addEventListener('input', function(e) {
+            // Remove any non-numeric characters
+            const cleanedValue = e.target.value.replace(/[^0-9]/g, '');
+            if (cleanedValue !== e.target.value) {
+                e.target.value = cleanedValue;
+            }
+        });
+
+        });
+    </script>
+</body>
+</html>
