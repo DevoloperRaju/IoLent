@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -636,168 +636,161 @@
     </div>
 
     <script>
-        const correctAnswerValue = "3"; // Correct option is 3
-        let isAnswered = false;
-        let countdownInterval;
+const correctAnswerValue = "3"; // Correct option is 3
+let isAnswered = false;
+let countdownInterval;
+function selectOption(labelElement) {
+  if (isAnswered) return;
 
-        function selectOption(labelElement) {
-            if (isAnswered) return;
+  // Remove selected class from all
+  const labels = document.querySelectorAll('.option-lbl');
+  labels.forEach(lbl => lbl.classList.remove('selected'));
 
-            // Remove selected class from all
-            const labels = document.querySelectorAll('.option-lbl');
-            labels.forEach(lbl => lbl.classList.remove('selected'));
+  // Add selected to clicked
+  labelElement.classList.add('selected');
 
-            // Add selected to clicked
-            labelElement.classList.add('selected');
+  // Enable submit button
+  const btn = document.getElementById('submit-btn');
+  btn.removeAttribute('disabled');
+}
+function submitAnswer() {
+  if (isAnswered) return;
+  const selectedRadio = document.querySelector('input[name="quiz"]:checked');
+  if (!selectedRadio) return; // Should not happen due to disabled btn
 
-            // Enable submit button
-            const btn = document.getElementById('submit-btn');
-            btn.removeAttribute('disabled');
-        }
+  const btn = document.getElementById('submit-btn');
+  btn.classList.add('ripple');
+  setTimeout(() => validateAnswer(selectedRadio), 300);
+}
+function validateAnswer(selectedRadio) {
+  isAnswered = true;
+  const selectedValue = selectedRadio.value;
+  const labels = document.querySelectorAll('.option-lbl');
 
-        function submitAnswer() {
-            if (isAnswered) return;
-            
-            const selectedRadio = document.querySelector('input[name="quiz"]:checked');
-            if(!selectedRadio) return; // Should not happen due to disabled btn
+  // Hide Submit button
+  document.getElementById('submit-btn').style.display = 'none';
 
-            const btn = document.getElementById('submit-btn');
-            btn.classList.add('ripple');
-            
-            setTimeout(() => validateAnswer(selectedRadio), 300);
-        }
+  // Disable all options
+  labels.forEach(lbl => {
+    lbl.classList.add('disabled');
+    lbl.onclick = null; // remove click listener
 
-        function validateAnswer(selectedRadio) {
-            isAnswered = true;
+    const curVal = lbl.querySelector('input').value;
+    const checkIcon = lbl.querySelector('.check');
+    const crossIcon = lbl.querySelector('.cross');
+    if (curVal === correctAnswerValue) {
+      lbl.classList.add('correct');
+      checkIcon.style.display = 'block';
+      crossIcon.style.display = 'none';
+    }
+    if (curVal === selectedValue && selectedValue !== correctAnswerValue) {
+      lbl.classList.add('wrong');
+      checkIcon.style.display = 'none';
+      crossIcon.style.display = 'block';
+    }
+  });
+  if (selectedValue === correctAnswerValue) {
+    // Correct Answer
+    document.getElementById('msg-success').style.display = 'block';
+    document.getElementById('claim-btn').style.display = 'flex';
+    shootConfetti();
+  } else {
+    // Wrong Answer
+    const failMsg = document.getElementById('msg-fail');
+    failMsg.style.display = 'block';
 
-            const selectedValue = selectedRadio.value;
-            const labels = document.querySelectorAll('.option-lbl');
+    // Show countdown for tomorrow immediately
+    setTimeout(() => {
+      startCountdown();
+    }, 1000);
+  }
+}
+function claimBonus() {
+  const btn = document.getElementById('claim-btn');
+  const successMsg = document.getElementById('msg-success');
 
-            // Hide Submit button
-            document.getElementById('submit-btn').style.display = 'none';
-
-            // Disable all options
-            labels.forEach(lbl => {
-                lbl.classList.add('disabled');
-                lbl.onclick = null; // remove click listener
-                
-                const curVal = lbl.querySelector('input').value;
-                const checkIcon = lbl.querySelector('.check');
-                const crossIcon = lbl.querySelector('.cross');
-
-                if(curVal === correctAnswerValue) {
-                    lbl.classList.add('correct');
-                    checkIcon.style.display = 'block';
-                    crossIcon.style.display = 'none';
-                }
-
-                if(curVal === selectedValue && selectedValue !== correctAnswerValue) {
-                    lbl.classList.add('wrong');
-                    checkIcon.style.display = 'none';
-                    crossIcon.style.display = 'block';
-                }
-            });
-
-            if(selectedValue === correctAnswerValue) {
-                // Correct Answer
-                document.getElementById('msg-success').style.display = 'block';
-                document.getElementById('claim-btn').style.display = 'flex';
-                shootConfetti();
-            } else {
-                // Wrong Answer
-                const failMsg = document.getElementById('msg-fail');
-                failMsg.style.display = 'block';
-                
-                // Show countdown for tomorrow immediately
-                setTimeout(() => {
-                    startCountdown();
-                }, 1000);
-            }
-        }
-
-        function claimBonus() {
-            const btn = document.getElementById('claim-btn');
-            const successMsg = document.getElementById('msg-success');
-            
-            // Transform button to Claimed
-            btn.style.background = "rgba(255,255,255,0.1)";
-            btn.style.color = "var(--text-muted)";
-            btn.style.boxShadow = "none";
-            btn.innerHTML = `
+  // Transform button to Claimed
+  btn.style.background = "rgba(255,255,255,0.1)";
+  btn.style.color = "var(--text-muted)";
+  btn.style.boxShadow = "none";
+  btn.innerHTML = `
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"></polyline></svg>
                 Bonus Claimed
             `;
-            btn.disabled = true;
-            
-            successMsg.querySelector('.rm-desc').innerText = "Points added to your balance.";
-            
-            // Show countdown
-            setTimeout(() => {
-                startCountdown();
-            }, 1000);
-        }
+  btn.disabled = true;
+  successMsg.querySelector('.rm-desc').innerText = "Points added to your balance.";
 
-        function startCountdown() {
-            document.getElementById('countdown-sect').style.display = 'block';
-            
-            // Demo Time: 23h 15m 45s
-            let h = 23;
-            let m = 15;
-            let s = 45;
+  // Show countdown
+  setTimeout(() => {
+    startCountdown();
+  }, 1000);
+}
+function startCountdown() {
+  document.getElementById('countdown-sect').style.display = 'block';
 
-            const elH = document.getElementById('cd-h');
-            const elM = document.getElementById('cd-m');
-            const elS = document.getElementById('cd-s');
+  // Demo Time: 23h 15m 45s
+  let h = 23;
+  let m = 15;
+  let s = 45;
+  const elH = document.getElementById('cd-h');
+  const elM = document.getElementById('cd-m');
+  const elS = document.getElementById('cd-s');
+  if (countdownInterval) clearInterval(countdownInterval);
+  countdownInterval = setInterval(() => {
+    s--;
+    if (s < 0) {
+      s = 59;
+      m--;
+    }
+    if (m < 0) {
+      m = 59;
+      h--;
+    }
+    if (h < 0) {
+      clearInterval(countdownInterval);
+      return;
+    }
+    elH.innerText = h.toString().padStart(2, '0');
+    elM.innerText = m.toString().padStart(2, '0');
+    elS.innerText = s.toString().padStart(2, '0');
+  }, 1000);
 
-            if(countdownInterval) clearInterval(countdownInterval);
+  // Scroll to bottom to view timer smoothly
+  window.scrollTo({
+    top: document.body.scrollHeight,
+    behavior: 'smooth'
+  });
+}
 
-            countdownInterval = setInterval(() => {
-                s--;
-                if(s < 0) { s = 59; m--; }
-                if(m < 0) { m = 59; h--; }
-                if(h < 0) { clearInterval(countdownInterval); return; }
+// --- Confetti Animation Logic ---
+function shootConfetti() {
+  const container = document.getElementById('confetti-container');
+  const colors = ['#00e676'];
+  for (let i = 0; i < 60; i++) {
+    const conf = document.createElement('div');
+    conf.classList.add('confetti');
 
-                elH.innerText = h.toString().padStart(2, '0');
-                elM.innerText = m.toString().padStart(2, '0');
-                elS.innerText = s.toString().padStart(2, '0');
-            }, 1000);
-            
-            // Scroll to bottom to view timer smoothly
-            window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
-        }
+    // Randomize properties
+    const x = Math.random() * window.innerWidth;
+    const size = Math.random() * 8 + 4;
+    const delay = Math.random() * 2;
+    const color = colors[Math.floor(Math.random() * colors.length)];
+    conf.style.left = `${x}px`;
+    conf.style.width = `${size}px`;
+    conf.style.height = `${size * 1.5}px`; // rectangular
+    conf.style.backgroundColor = color;
+    conf.style.animationDelay = `${delay}s`;
 
-        // --- Confetti Animation Logic ---
-        function shootConfetti() {
-            const container = document.getElementById('confetti-container');
-            const colors = ['#00e676'];
-            
-            for(let i=0; i<60; i++) {
-                const conf = document.createElement('div');
-                conf.classList.add('confetti');
-                
-                // Randomize properties
-                const x = Math.random() * window.innerWidth;
-                const size = Math.random() * 8 + 4;
-                const delay = Math.random() * 2;
-                const color = colors[Math.floor(Math.random() * colors.length)];
-                
-                conf.style.left = `${x}px`;
-                conf.style.width = `${size}px`;
-                conf.style.height = `${size * 1.5}px`; // rectangular
-                conf.style.backgroundColor = color;
-                conf.style.animationDelay = `${delay}s`;
-                
-                // Add some rotation variety
-                if(Math.random() > 0.5) conf.style.borderRadius = "50%"; 
+    // Add some rotation variety
+    if (Math.random() > 0.5) conf.style.borderRadius = "50%";
+    container.appendChild(conf);
 
-                container.appendChild(conf);
-                
-                // Clean up DOM after animation completes (3s + max delay 2s)
-                setTimeout(() => {
-                    conf.remove();
-                }, 5500);
-            }
-        }
-    </script>
+    // Clean up DOM after animation completes (3s + max delay 2s)
+    setTimeout(() => {
+      conf.remove();
+    }, 5500);
+  }
+}
+</script>
 </body>
 </html>

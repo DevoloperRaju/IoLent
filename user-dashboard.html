@@ -4,226 +4,618 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>IoLent Dashboard</title>
+    <!-- Premium Fonts & Icons -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
     <style>
+        :root {
+            --primary: #00e676;
+            --primary-glow: rgba(0, 230, 118, 0.25);
+            --primary-dark: #00c853;
+            --bg-dark: #0B111B;
+            --bg-dark-gray: #131B2A;
+            --bg-card: rgba(255, 255, 255, 0.03);
+            --bg-card-hover: rgba(255, 255, 255, 0.06);
+            --border-color: rgba(255, 255, 255, 0.08);
+            --border-color-glow: rgba(0, 230, 118, 0.4);
+            --text-main: #ffffff;
+            --text-muted: #8e9bb0;
+            --accent-purple: #7b2cbf;
+            --accent-purple-glow: rgba(123, 44, 191, 0.3);
+            --accent-gold: #ffd166;
+            --font-primary: 'Space Grotesk', sans-serif;
+            --font-secondary: 'Inter', sans-serif;
+            --transition-speed: 0.3s;
+        }
+
         body {
             margin: 0;
-            font-family: "Poppins", "Inter", sans-serif;
-            background-color: #0B111B !important;
+            font-family: var(--font-secondary);
+            background-color: var(--bg-dark) !important;
             background-image: none !important;
-            color: #fff;
+            color: var(--text-main);
             -webkit-overflow-scrolling: touch;
             overflow-scrolling: touch;
+            padding: 16px;
+            box-sizing: border-box;
+            min-height: 100vh;
         }
-        
-        .user-card {
-            margin: 15px;
-            padding: 15px;
-            border-radius: 15px;
-            background: linear-gradient(145deg, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0.05));
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
+
+        * {
+            box-sizing: border-box;
+        }
+
+        /* --- PROFILE HEADER CARD --- */
+        .profile-container {
+            position: relative;
+            background: linear-gradient(135deg, rgba(19, 27, 42, 0.8), rgba(11, 17, 27, 0.95));
+            border: 1px solid var(--border-color);
+            border-radius: 24px;
+            padding: 24px;
+            margin-bottom: 16px;
+            box-shadow: 0 12px 30px rgba(0, 0, 0, 0.4);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
             text-align: center;
-            animation: fadeIn 1s ease-in-out;
+            overflow: hidden;
+            animation: slideDown 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .profile-container::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(0, 230, 118, 0.05) 0%, transparent 60%);
+            pointer-events: none;
+        }
+
+        .avatar-wrapper {
+            position: relative;
+            width: 100px;
+            height: 100px;
+            margin: 0 auto 12px;
+        }
+
+        .avatar-ring {
+            position: absolute;
+            top: -4px;
+            left: -4px;
+            right: -4px;
+            bottom: -4px;
+            border-radius: 50%;
+            background: linear-gradient(45deg, var(--primary), transparent, var(--primary));
+            animation: spin 6s linear infinite;
+        }
+
+        .profile-container img {
+            position: relative;
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            border: 3px solid var(--bg-dark);
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5);
+            object-fit: cover;
+            background: var(--bg-dark-gray);
+            z-index: 1;
+            transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        .profile-container:hover img {
+            transform: scale(1.05);
+        }
+
+        .profile-info {
+            position: relative;
+            z-index: 2;
+        }
+
+        .profile-name-row {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            margin: 4px 0;
+        }
+
+        .profile-container h2 {
+            font-family: var(--font-primary);
+            font-size: 22px;
+            font-weight: 700;
+            margin: 0;
+            color: var(--text-main);
+            letter-spacing: 0.5px;
+        }
+
+        .verified-badge {
+            color: var(--primary);
+            font-size: 16px;
+            text-shadow: 0 0 10px var(--primary-glow);
+        }
+
+        .profile-id-row {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            background: rgba(255, 255, 255, 0.05);
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            color: var(--text-muted);
+            margin: 4px 0 8px;
+            border: 1px solid rgba(255, 255, 255, 0.02);
+            cursor: pointer;
+            transition: background var(--transition-speed);
+        }
+
+        .profile-id-row:active {
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .profile-robots {
+            font-size: 13px;
+            color: var(--text-muted);
+            margin: 2px 0 16px;
+            font-weight: 500;
+        }
+
+        /* --- BALANCES SECTION --- */
+        .balance-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px;
+            margin-top: 8px;
+        }
+
+        .balance-tile {
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            padding: 14px 10px;
+            text-align: center;
+            cursor: pointer;
+            transition: all var(--transition-speed) cubic-bezier(0.16, 1, 0.3, 1);
             position: relative;
             overflow: hidden;
-            will-change: transform;
-            transform: translateZ(0);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 72px;
         }
-        
-        .user-card::before {
+
+        .balance-tile::before {
             content: '';
             position: absolute;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            background: linear-gradient(135deg, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0));
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.02), transparent);
             pointer-events: none;
         }
-        
-        .user-card img {
-            width: 100px;
-            height: 100px;
-            border-radius: 50%;
-            border: 3px solid #ffffff;
-            margin-bottom: 8px;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
-            transition: transform 0.3s ease;
-        }
-        
-        .user-card:hover img {
-            transform: scale(1.05);
-        }
-        
-        .user-card h2 {
-            margin: 5px 0;
-            font-size: 20px;
-        }
-        
-        .user-card p {
-            margin: 5px 0;
-            font-size: 15px;
-            opacity: 0.9;
-        }
-        
-        .balance {
-            display: flex;
-            justify-content: space-around;
-            margin-top: 10px;
-            gap: 10px;
-        }
-        
-        .balance div {
-            background: linear-gradient(145deg, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0.05));
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            padding: 15px 16px;
-            border-radius: 50px;
-            font-size: 14px;
-            min-width: 100px;
-            text-align: center;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
-        }
-        
-        .balance div:hover {
+
+        .balance-tile:hover {
             transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
-            border-color: rgba(255, 255, 255, 0.4);
+            background: var(--bg-card-hover);
         }
-        
-        .loading-text {
-            animation: blink 1s infinite;
+
+        .balance-tile.taka-active {
+            border-color: rgba(0, 230, 118, 0.3);
+            box-shadow: 0 4px 20px rgba(0, 230, 118, 0.1);
         }
-        
-        @keyframes blink {
-            0% { opacity: 0.5; }
-            50% { opacity: 1; }
-            100% { opacity: 0.5; }
+
+        .balance-tile.point-active {
+            border-color: rgba(255, 209, 102, 0.3);
+            box-shadow: 0 4px 20px rgba(255, 209, 102, 0.1);
         }
-        
-        .ticker {
-            background: rgba(255, 255, 255, 0.05);
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(0, 230, 118, 0.2);
-            color: #00e676;
-            padding: 6px;
-            overflow: hidden;
+
+        .balance-tile-icon {
+            font-size: 16px;
+            margin-bottom: 4px;
+        }
+
+        .balance-tile-icon.taka { color: var(--primary); }
+        .balance-tile-icon.point { color: var(--accent-gold); }
+
+        .balance-tile-label {
+            font-family: var(--font-primary);
+            font-size: 13px;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+        }
+
+        .balance-tile-val {
+            font-family: var(--font-primary);
+            font-weight: 700;
+            font-size: 15px;
+            margin-top: 2px;
+            letter-spacing: 0.3px;
+            animation: fadeIn 0.4s ease-out;
+        }
+
+        /* --- ROBOT LIFECYCLE --- */
+        .lifecycle-container {
+            background: linear-gradient(135deg, rgba(19, 27, 42, 0.7), rgba(11, 17, 27, 0.9));
+            border: 1px solid var(--border-color);
+            border-radius: 24px;
+            padding: 20px;
+            margin-bottom: 16px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.35);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
             position: relative;
-            white-space: nowrap;
-            font-size: 12px;
-            box-shadow: 0 4px 15px rgba(0, 230, 118, 0.2);
+            overflow: hidden;
+            animation: slideDown 0.6s cubic-bezier(0.16, 1, 0.3, 1) 0.1s both;
         }
-        
+
+        .lifecycle-header {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 16px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            padding-bottom: 10px;
+        }
+
+        .lifecycle-header i {
+            color: var(--primary);
+            font-size: 20px;
+            text-shadow: 0 0 8px var(--primary-glow);
+        }
+
+        .lifecycle-header h2 {
+            font-family: var(--font-primary);
+            font-size: 16px;
+            font-weight: 700;
+            margin: 0;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+        }
+
+        .lifecycle-stats {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end;
+            margin-bottom: 12px;
+        }
+
+        .lifecycle-stat-box {
+            text-align: left;
+        }
+
+        .lifecycle-stat-box p {
+            font-size: 11px;
+            color: var(--text-muted);
+            margin: 0 0 4px;
+            text-transform: uppercase;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+        }
+
+        .lifecycle-stat-box h3 {
+            font-family: var(--font-primary);
+            font-size: 26px;
+            font-weight: 700;
+            color: var(--primary);
+            margin: 0;
+            text-shadow: 0 0 12px var(--primary-glow);
+            transition: color var(--transition-speed), transform 0.2s;
+        }
+
+        .lifecycle-progress-wrapper {
+            background: rgba(255, 255, 255, 0.05);
+            height: 10px;
+            border-radius: 6px;
+            overflow: hidden;
+            border: 1px solid rgba(255, 255, 255, 0.02);
+            position: relative;
+        }
+
+        .lifecycle-progress-bar {
+            height: 100%;
+            width: 0%;
+            background: linear-gradient(90deg, var(--primary-dark), var(--primary));
+            box-shadow: 0 0 10px var(--primary-glow);
+            border-radius: 6px;
+            transition: width 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .lifecycle-footer-text {
+            font-size: 11px;
+            color: var(--text-muted);
+            margin: 10px 0 0 0;
+            line-height: 1.4;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .lifecycle-footer-text i {
+            color: var(--primary);
+        }
+
+        /* --- TICKER NOTICE BANNER --- */
+        .notice-marquee-container {
+            display: flex;
+            align-items: center;
+            background: rgba(0, 230, 118, 0.04);
+            border: 1px dashed rgba(0, 230, 118, 0.2);
+            border-radius: 12px;
+            padding: 8px 12px;
+            margin-bottom: 16px;
+            overflow: hidden;
+            box-shadow: inset 0 0 10px rgba(0, 230, 118, 0.02);
+        }
+
+        .notice-tag {
+            background: var(--primary);
+            color: var(--bg-dark);
+            font-family: var(--font-primary);
+            font-size: 10px;
+            font-weight: 700;
+            padding: 2px 8px;
+            border-radius: 6px;
+            margin-right: 12px;
+            letter-spacing: 0.5px;
+            white-space: nowrap;
+            box-shadow: 0 0 10px rgba(0, 230, 118, 0.3);
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .notice-tag i {
+            animation: pulse 1s infinite alternate;
+        }
+
+        .ticker {
+            flex-grow: 1;
+            overflow: hidden;
+            white-space: nowrap;
+            position: relative;
+        }
+
         .ticker span {
             display: inline-block;
-            padding-left: 100%;
-            animation: ticker 15s linear infinite;
+            font-size: 12px;
+            font-weight: 500;
+            color: #d1fadc;
+            animation: marquee 25s linear infinite;
         }
-        
-        @keyframes ticker {
-            0% { transform: translateX(0); }
-            100% { transform: translateX(-100%); }
-        }
-        
-        .grid {
+
+        /* --- HERO ACTIONS (FIRST ROW - 2 CARDS) --- */
+        .hero-actions-grid {
             display: grid;
             grid-template-columns: repeat(2, 1fr);
-            gap: 8px;
-            padding: 10px;
+            gap: 12px;
+            margin-bottom: 16px;
         }
-        
-        .grid-3 {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 8px;
-            padding: 4px;
-        }
-        
-        /* Remove extra padding for the last 3 cards */
-        .grid-3:last-child {
-            padding: 0 10px;
-        }
-        
-        .card {
-            background: rgba(0, 230, 118, 0.1);
-            border: 1px solid rgba(0, 230, 118, 0.2);
-            border-radius: 12px;
-            padding: 12px 6px;
+
+        .hero-card {
+            position: relative;
+            border-radius: 20px;
+            padding: 20px 16px;
             text-align: center;
-            transition: all 0.3s ease;
             cursor: pointer;
+            overflow: hidden;
+            transition: all var(--transition-speed) cubic-bezier(0.16, 1, 0.3, 1);
             display: flex;
             flex-direction: column;
-            justify-content: center;
             align-items: center;
-            font-size: 12px;
-            min-height: 60px;
-            box-shadow: 0 4px 15px rgba(0, 230, 118, 0.1);
+            justify-content: center;
+            min-height: 105px;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+        }
+
+        .hero-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.1), transparent);
+            pointer-events: none;
+        }
+
+        .hero-card.mystery {
+            background: linear-gradient(135deg, #4d12ab, #190540);
+            border: 1px solid var(--accent-purple-glow);
+        }
+
+        .hero-card.mystery:hover {
+            box-shadow: 0 8px 25px rgba(123, 44, 191, 0.4);
+            border-color: rgba(123, 44, 191, 0.6);
+            transform: translateY(-4px);
+        }
+
+        .hero-card.robot {
+            background: linear-gradient(135deg, #005f30, #032112);
+            border: 1px solid rgba(0, 230, 118, 0.2);
+        }
+
+        .hero-card.robot:hover {
+            box-shadow: 0 8px 25px rgba(0, 230, 118, 0.3);
+            border-color: rgba(0, 230, 118, 0.4);
+            transform: translateY(-4px);
+        }
+
+        .hero-card-icon {
+            font-size: 28px;
+            margin-bottom: 8px;
+            transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        .hero-card.mystery .hero-card-icon {
+            color: #d896ff;
+            text-shadow: 0 0 10px rgba(216, 150, 255, 0.5);
+        }
+
+        .hero-card.robot .hero-card-icon {
+            color: var(--primary);
+            text-shadow: 0 0 10px var(--primary-glow);
+        }
+
+        .hero-card:hover .hero-card-icon {
+            transform: scale(1.18) rotate(5deg);
+        }
+
+        .hero-card-title {
+            font-family: var(--font-primary);
+            font-size: 13px;
+            font-weight: 700;
+            letter-spacing: 0.8px;
+            text-transform: uppercase;
+        }
+
+        /* --- GENERAL ACTIONS GRID (3 COLUMNS) --- */
+        .actions-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+            margin-bottom: 16px;
+        }
+
+        .action-card {
+            background: linear-gradient(135deg, rgba(19, 27, 42, 0.5), rgba(11, 17, 27, 0.65));
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            padding: 14px 8px;
+            text-align: center;
+            cursor: pointer;
+            transition: all var(--transition-speed) cubic-bezier(0.16, 1, 0.3, 1);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 74px;
             position: relative;
             overflow: hidden;
-            color: #fff; /* White text color */
         }
-        
-        /* Wide card styling */
-        .wide-card {
-            background: #00e676 !important;
-            color: #0B111B !important;
-            font-weight: bold;
-        }
-        
-        .card::before {
+
+        .action-card::before {
             content: '';
             position: absolute;
             top: 0;
             left: -100%;
             width: 100%;
             height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
-            transition: left 0.5s;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.05), transparent);
+            transition: 0.5s;
         }
-        
-        .card:hover {
-            transform: translateY(-5px) scale(1.02);
-            box-shadow: 0 8px 25px rgba(0, 230, 118, 0.3);
-            border-color: rgba(0, 230, 118, 0.4);
+
+        .action-card:hover {
+            background: var(--bg-card-hover);
+            border-color: rgba(255, 255, 255, 0.15);
+            transform: translateY(-3px);
+            box-shadow: 0 6px 15px rgba(0,0,0,0.25);
         }
-        
-        .card:hover::before {
+
+        .action-card:hover::before {
             left: 100%;
         }
-        
-        .emoji {
-            font-size: 28px;
-            margin-bottom: 5px;
-            color: #00e676; /* Lime emoji color */
+
+        .action-icon-box {
+            width: 32px;
+            height: 32px;
+            border-radius: 10px;
+            background: rgba(255, 255, 255, 0.03);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 6px;
+            font-size: 14px;
+            transition: all var(--transition-speed) cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            border: 1px solid rgba(255, 255, 255, 0.02);
         }
-        
+
+        /* Color variations for icons */
+        .color-green { color: var(--primary); background: rgba(0, 230, 118, 0.08) !important; border-color: rgba(0, 230, 118, 0.15) !important; }
+        .color-blue { color: #00b0ff; background: rgba(0, 176, 255, 0.08) !important; border-color: rgba(0, 176, 255, 0.15) !important; }
+        .color-purple { color: #d896ff; background: rgba(216, 150, 255, 0.08) !important; border-color: rgba(216, 150, 255, 0.15) !important; }
+        .color-gold { color: var(--accent-gold); background: rgba(255, 209, 102, 0.08) !important; border-color: rgba(255, 209, 102, 0.15) !important; }
+        .color-red { color: #ff5252; background: rgba(255, 82, 82, 0.08) !important; border-color: rgba(255, 82, 82, 0.15) !important; }
+        .color-cyan { color: #00e5ff; background: rgba(0, 229, 255, 0.08) !important; border-color: rgba(0, 229, 255, 0.15) !important; }
+
+        .action-card:hover .action-icon-box {
+            transform: scale(1.15);
+            box-shadow: 0 0 10px cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .action-title {
+            font-family: var(--font-primary);
+            font-size: 10px;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+            color: var(--text-main);
+            text-transform: uppercase;
+        }
+
+        /* --- PROJECT BANNER CARD --- */
+        .wide-action-container {
+            margin-bottom: 16px;
+        }
+
         .wide-card {
-            grid-column: 1/-1;
+            background: linear-gradient(135deg, var(--primary-dark), #0b5f30);
+            border: 1px solid rgba(0, 230, 118, 0.3);
+            border-radius: 20px;
+            padding: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            cursor: pointer;
+            box-shadow: 0 8px 20px rgba(0, 230, 118, 0.15);
+            transition: all var(--transition-speed) cubic-bezier(0.16, 1, 0.3, 1);
         }
-        
+
+        .wide-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(0, 230, 118, 0.35);
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+        }
+
+        .wide-card-icon {
+            font-size: 22px;
+            color: #ffffff;
+            animation: bounce 2s infinite;
+        }
+
+        .wide-card-title {
+            font-family: var(--font-primary);
+            font-size: 13px;
+            font-weight: 700;
+            letter-spacing: 1px;
+            color: #ffffff;
+            text-transform: uppercase;
+        }
+
+        /* --- CAROUSEL SLIDER --- */
         .slider {
             position: relative;
             max-width: 100%;
-            height: 250px;
-            margin: 15px auto;
+            height: 180px;
+            margin: 16px auto;
             overflow: hidden;
-            border-radius: 16px;
-            box-shadow: 0 8px 32px rgba(31, 38, 135, 0.37);
-            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 20px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.4);
+            border: 1px solid var(--border-color);
         }
-        
+
         .slides {
             display: flex;
             width: 500%;
-            animation: slide 20s linear infinite;
             height: 100%;
-            transition: transform 0.5s ease;
+            animation: slide 25s linear infinite;
         }
-        
+
         .slides a {
             width: 20%;
             flex-shrink: 0;
@@ -231,251 +623,310 @@
             position: relative;
             overflow: hidden;
         }
-        
+
         .slides img {
             width: 100%;
             height: 100%;
             object-fit: cover;
             display: block;
-            border-radius: 16px;
             transition: transform 0.5s ease;
         }
-        
+
         .slides a:hover img {
-            transform: scale(1.1);
+            transform: scale(1.08);
         }
-        
-        @keyframes slide {
-            0% { transform: translateX(0); }
-            20% { transform: translateX(0); }
-            25% { transform: translateX(-20%); }
-            45% { transform: translateX(-20%); }
-            50% { transform: translateX(-40%); }
-            70% { transform: translateX(-40%); }
-            75% { transform: translateX(-60%); }
-            95% { transform: translateX(-60%); }
-            100% { transform: translateX(-80%); }
-        }
-        
+
+        /* --- FOOTER --- */
         footer {
             text-align: center;
-            padding: 8px;
+            padding: 16px 8px;
             font-size: 11px;
-            opacity: 0.8;
+            color: var(--text-muted);
+            letter-spacing: 0.5px;
+            font-family: var(--font-primary);
+            border-top: 1px solid rgba(255, 255, 255, 0.05);
+            margin-top: 10px;
+            font-weight: 500;
         }
-        
-        @keyframes fadeIn {
+
+        /* --- ANIMATIONS --- */
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        @keyframes marquee {
+            0% { transform: translateX(0); }
+            100% { transform: translateX(-100%); }
+        }
+
+        @keyframes slide {
+            0% { transform: translateX(0); }
+            18% { transform: translateX(0); }
+            20% { transform: translateX(-20%); }
+            38% { transform: translateX(-20%); }
+            40% { transform: translateX(-40%); }
+            58% { transform: translateX(-40%); }
+            60% { transform: translateX(-60%); }
+            78% { transform: translateX(-60%); }
+            80% { transform: translateX(-80%); }
+            98% { transform: translateX(-80%); }
+            100% { transform: translateX(0); }
+        }
+
+        @keyframes slideDown {
             from { opacity: 0; transform: translateY(-20px); }
             to { opacity: 1; transform: translateY(0); }
         }
-        
-        @keyframes float {
-            0%, 100% { transform: translateY(0px); }
-            50% { transform: translateY(-5px); }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
         }
-        
-        .user-card {
-            animation: fadeIn 1s ease-in-out, float 3s ease-in-out infinite;
+
+        @keyframes pulse {
+            0% { opacity: 0.6; }
+            100% { opacity: 1; }
         }
-        
-        /* Responsive Design */
-        @media (max-width: 768px) {
-            .grid {
-                grid-template-columns: repeat(2, 1fr);
-            }
-            
-            .grid-3 {
-                grid-template-columns: repeat(3, 1fr);
-            }
-            
-            .card {
-                min-height: 50px;
-                padding: 8px 4px;
-            }
-            
-            .emoji {
-                font-size: 24px;
-            }
+
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-4px); }
         }
-        
-        @media (max-width: 480px) {
-            .grid-3 {
-                grid-template-columns: 1fr;
-            }
-            
-            .user-card {
-                margin: 10px;
-                padding: 12px;
-            }
-            
-            .user-card h2 {
-                font-size: 14px;
-            }
-            
-            .user-card p {
-                font-size: 11px;
-            }
+
+        /* Loading spinner for balance */
+        .spinner {
+            display: inline-block;
+            width: 14px;
+            height: 14px;
+            border: 2px solid rgba(255,255,255,0.1);
+            border-radius: 50%;
+            border-top-color: #ffffff;
+            animation: spin 0.8s linear infinite;
+            margin-right: 4px;
+            vertical-align: middle;
+        }
+
+        .deactivate-float {
+            animation: deactivateUp 1.2s cubic-bezier(0.19, 1, 0.22, 1) forwards;
+            font-family: var(--font-primary);
+        }
+
+        @keyframes deactivateUp {
+            0% { transform: translateY(0) scale(0.8); opacity: 0; }
+            20% { transform: translateY(-10px) scale(1.1); opacity: 1; }
+            100% { transform: translateY(-40px) scale(0.9); opacity: 0; }
+        }
+
+        /* Responsive adjustments */
+        @media (max-width: 360px) {
+            .profile-container h2 { font-size: 19px; }
+            .balance-tile-label { font-size: 11px; }
+            .balance-tile-val { font-size: 13px; }
+            .lifecycle-stat-box h3 { font-size: 22px; }
+            .action-title { font-size: 9px; }
         }
     </style>
 </head>
 <body>
-    <div class="user-card">
-        <img id="profile-image" src="https://i.ibb.co.com/QjvffmCv/ic-launcher.png" alt="User">
-        <h2 id="profile-name">Atikur Rahman</h2>
-        <p id="profile-id">🆔 User ID: 10000</p>
-        <p id="profile-robots">🤖Active Robot: 12 | 🤖Deactive Robot: 10</p>
-        <div class="balance">
-            <div id="money" onclick="showMoneyBalance()">💰 TAKA</div>
-            <div id="points" onclick="showPointBalance()">⭐ POINT</div>        </div>
+
+    <!-- 1. Profile & Balance Card -->
+    <div class="profile-container">
+        <div class="avatar-wrapper">
+            <div class="avatar-ring"></div>
+            <img id="profile-image" src="https://i.ibb.co.com/QjvffmCv/ic-launcher.png" alt="User">
+        </div>
+        <div class="profile-info">
+            <div class="profile-name-row">
+                <h2 id="profile-name">Atikur Rahman</h2>
+                <i class="fas fa-circle-check verified-badge" title="Verified User"></i>
+            </div>
+            <div class="profile-id-row" id="profile-id-container" onclick="copyUserId()">
+                <i class="far fa-copy"></i>
+                <span id="profile-id">🆔 User ID: 10000</span>
+            </div>
+            <p class="profile-robots" id="profile-robots">🤖Active Robot: 12 | 🤖Deactive Robot: 10</p>
+        </div>
+        
+        <!-- Nested Split Balances -->
+        <div class="balance-grid">
+            <div class="balance-tile" id="money" onclick="showMoneyBalance()">
+                <span class="balance-tile-icon taka"><i class="fas fa-coins"></i></span>
+                <span class="balance-tile-label">TAKA Balance</span>
+                <span class="balance-tile-val">REVEAL</span>
+            </div>
+            <div class="balance-tile" id="points" onclick="showPointBalance()">
+                <span class="balance-tile-icon point"><i class="fas fa-star"></i></span>
+                <span class="balance-tile-label">POINT Balance</span>
+                <span class="balance-tile-val">REVEAL</span>
+            </div>
+        </div>
     </div>
     
-    <!-- Robot Lifecycle Card -->
-    <div class="user-card" style="background: rgba(0, 230, 118, 0.05); border: 1px solid rgba(0, 230, 118, 0.2);">
-        <h2 style="color: #00e676; text-shadow: 0 0 10px rgba(0, 230, 118, 0.5);">🤖 Robot Lifecycle</h2>
-        <div style="display: flex; justify-content: space-between; align-items: center; margin: 10px 0;">
-            <div style="text-align: left;">
-                <p style="font-size: 14px; margin-bottom: 5px;">Active Robots</p>
-                <h3 style="font-size: 24px; color: #00e676; margin: 0;" id="active-robots-count">100</h3>
+    <!-- 2. Robot Lifecycle Monitor -->
+    <div class="lifecycle-container">
+        <div class="lifecycle-header">
+            <i class="fas fa-microchip"></i>
+            <h2>Robot Lifecycle Monitor</h2>
+        </div>
+        <div class="lifecycle-stats">
+            <div class="lifecycle-stat-box">
+                <p>Active Workstations</p>
+                <h3 id="active-robots-count">100</h3>
             </div>
             <div style="text-align: right;">
-                <p style="font-size: 12px; color: #ffffff; font-weight: bold; margin-bottom: 5px;">Next Deactivation</p>
-                <p style="font-size: 14px; color: #00e676; margin: 0;" id="next-deactivation-text">0/20 TK</p>
+                <p style="font-size: 11px; color: var(--text-muted); margin: 0 0 4px; text-transform: uppercase; font-weight: 600; letter-spacing: 0.5px;">Next Shutdown Progress</p>
+                <h4 style="font-family: var(--font-primary); font-size: 18px; color: var(--primary); margin: 0; font-weight: 700;" id="next-deactivation-text">0.00/20.00 TK</h4>
             </div>
         </div>
-        <div style="width: 100%; height: 8px; background: rgba(255, 255, 255, 0.1); border-radius: 4px; overflow: hidden; margin: 10px 0;">
-            <div id="lifecycle-progress" style="width: 0%; height: 100%; background: #00e676; transition: width 0.3s ease;"></div>
+        <div class="lifecycle-progress-wrapper">
+            <div class="lifecycle-progress-bar" id="lifecycle-progress"></div>
         </div>
-        <p style="font-size: 12px; color: #ffffff; font-weight: bold; margin-top: 5px;">One Robot Will Be Deactivated For Every 20 TK Earned.</p>
+        <p class="lifecycle-footer-text">
+            <i class="fas fa-triangle-exclamation"></i>
+            <span>Safety Protocol: One active robot will deactivate for every 20 TK generated.</span>
+        </p>
     </div>
     
-    <div class="ticker">
-        <span>আসসালামুয়ালাইকুম। আপনারা সবাই কেমন আছেন। আশা করি আপনারা সবাই অনেক অনেক ভালো আছেন। আজকে আমাদের অ্যাপ এর কর্যক্রম শুরু হয়েছে। তাই আজকে আমরা ডিপোজিট করা শুরু করবো।</span>
-    </div>
-
-    <!-- First Row - 2 Cards -->
-    <div class="grid">
-        <div class="card" onclick="navigateTo('GiftBox.html')">
-            <span class="emoji">🎁</span>
-            <span>MYSTERY BOX</span>
+    <!-- 3. Dynamic News Ticker Notice -->
+    <div class="notice-marquee-container">
+        <div class="notice-tag">
+            <i class="fas fa-bullhorn"></i> NOTICE
         </div>
-        <div class="card" onclick="navigateTo('BuyRobot.html')">
-            <span class="emoji">🤖</span>
-            <span>BUY ROBOT</span>
+        <div class="ticker">
+            <span id="ticker-text">আসসালামুয়ালাইকুম। আপনারা সবাই কেমন আছেন। আশা করি আপনারা সবাই অনেক অনেক ভালো আছেন। আজকে আমাদের অ্যাপ এর কর্যক্রম শুরু হয়েছে। তাই আজকে আমরা ডিপোজিট করা শুরু করবো।</span>
         </div>
     </div>
 
-    <!-- Second Row - 15 Cards in 3 columns -->
-    <div class="grid-3">
-        <div class="card" onclick="navigateTo('Profile.html')">
-            <span class="emoji">👤</span>
-            <span>PROFILE</span>
+    <!-- 4. Hero Primary Actions -->
+    <div class="hero-actions-grid">
+        <div class="hero-card mystery" onclick="navigateTo('GiftBox.html')">
+            <span class="hero-card-icon"><i class="fas fa-gift"></i></span>
+            <span class="hero-card-title">Mystery Box</span>
         </div>
-        <div class="card" onclick="navigateTo('Transfer.html')">
-            <span class="emoji">💸</span>
-            <span>TRANSFER</span>
-        </div>
-        <div class="card" onclick="navigateTo('Withdrawal.html')">
-            <span class="emoji">🏧</span>
-            <span>WITHDRAW</span>
-        </div>
-        <div class="card" onclick="navigateTo('deposit.html')">
-            <span class="emoji">📥</span>
-            <span>DEPOSIT</span>
-        </div>
-        <div class="card" onclick="navigateTo('exchange.html')">
-            <span class="emoji">🔄</span>
-            <span>EXCHANGE</span>
-        </div>
-        <div class="card" onclick="navigateTo('user-report.html')">
-            <span class="emoji">📊</span>
-            <span>REPORT</span>
-        </div>
-        <div class="card" onclick="navigateTo('referral-page.html')">
-            <span class="emoji">🤝</span>
-            <span>REFERRAL</span>
-        </div>
-        <div class="card" onclick="navigateTo('leaderboard.html')">
-            <span class="emoji">🏆</span>
-            <span>LEADERBOARD</span>
-        </div>
-        <div class="card" onclick="navigateTo('rewards.html')">
-            <span class="emoji">🎁</span>
-            <span>REWARD</span>
-        </div>
-        <div class="card" onclick="navigateTo('achievements.html')">
-            <span class="emoji">🎖️</span>
-            <span>ACHIEVEMENT</span>
-        </div>
-        <div class="card" onclick="navigateTo('daily-bonus.html')">
-            <span class="emoji">📅</span>
-            <span>DAILY BONUS</span>
-        </div>
-        <div class="card" onclick="navigateTo('notices.html')">
-            <span class="emoji">📋</span>
-            <span>NOTICE</span>
-        </div>
-        <div class="card" onclick="navigateTo('notifications.html')">
-            <span class="emoji">🔔</span>
-            <span>NOTIFICATION</span>
-        </div>
-        <div class="card" onclick="navigateTo('Support.html')">
-            <span class="emoji">🎧</span>
-            <span>SUPPORT</span>
-        </div>
-        <div class="card" onclick="navigateTo('Settings.html')">
-            <span class="emoji">⚙️</span>
-            <span>SETTING</span>
-        </div>
-        <div class="card" onclick="navigateTo('About.html')">
-            <span class="emoji">ℹ️</span>
-            <span>ABOUT</span>
-        </div>
-        <div class="card" onclick="navigateTo('community.html')">
-            <span class="emoji">👥</span>
-            <span>COMMUNITY</span>
-        </div>
-        <div class="card" onclick="navigateTo('our-admin.html')">
-            <span class="emoji">👔</span>
-            <span>MY AGENT</span>
+        <div class="hero-card robot" onclick="navigateTo('BuyRobot.html')">
+            <span class="hero-card-icon"><i class="fas fa-robot"></i></span>
+            <span class="hero-card-title">Buy Robot</span>
         </div>
     </div>
 
-    <!-- New Row - 3 Additional Cards -->
-    <div class="grid-3">
-        <div class="card" onclick="navigateTo('Promotion.html')">
-            <span class="emoji">📣</span>
-            <span>BOUNTY</span>
+    <!-- 5. Interactive General Actions Grid (3-column layout) -->
+    <div class="actions-grid">
+        <div class="action-card" onclick="navigateTo('Profile.html')">
+            <span class="action-icon-box color-blue"><i class="fas fa-user-circle"></i></span>
+            <span class="action-title">Profile</span>
         </div>
-        <div class="card" onclick="navigateTo('AppUpdate.html')">
-            <span class="emoji">📱</span>
-            <span>APP UPDATE</span>
+        <div class="action-card" onclick="navigateTo('Transfer.html')">
+            <span class="action-icon-box color-purple"><i class="fas fa-paper-plane"></i></span>
+            <span class="action-title">Transfer</span>
         </div>
-        <div class="card" onclick="navigateTo('BusinessPlan.html')">
-            <span class="emoji">🗺️</span>
-            <span>BUSINESS PLAN</span>
+        <div class="action-card" onclick="navigateTo('Withdrawal.html')">
+            <span class="action-icon-box color-gold"><i class="fas fa-wallet"></i></span>
+            <span class="action-title">Withdraw</span>
+        </div>
+        
+        <div class="action-card" onclick="navigateTo('deposit.html')">
+            <span class="action-icon-box color-green"><i class="fas fa-circle-arrow-down"></i></span>
+            <span class="action-title">Deposit</span>
+        </div>
+        <div class="action-card" onclick="navigateTo('exchange.html')">
+            <span class="action-icon-box color-cyan"><i class="fas fa-arrows-rotate"></i></span>
+            <span class="action-title">Exchange</span>
+        </div>
+        <div class="action-card" onclick="navigateTo('user-report.html')">
+            <span class="action-icon-box color-blue"><i class="fas fa-chart-line"></i></span>
+            <span class="action-title">Report</span>
+        </div>
+        
+        <div class="action-card" onclick="navigateTo('referral-page.html')">
+            <span class="action-icon-box color-purple"><i class="fas fa-users-viewfinder"></i></span>
+            <span class="action-title">Referral</span>
+        </div>
+        <div class="action-card" onclick="navigateTo('leaderboard.html')">
+            <span class="action-icon-box color-gold"><i class="fas fa-trophy"></i></span>
+            <span class="action-title">Leaderboard</span>
+        </div>
+        <div class="action-card" onclick="navigateTo('rewards.html')">
+            <span class="action-icon-box color-green"><i class="fas fa-gift"></i></span>
+            <span class="action-title">Reward</span>
+        </div>
+        
+        <div class="action-card" onclick="navigateTo('achievements.html')">
+            <span class="action-icon-box color-purple"><i class="fas fa-medal"></i></span>
+            <span class="action-title">Achievement</span>
+        </div>
+        <div class="action-card" onclick="navigateTo('daily-bonus.html')">
+            <span class="action-icon-box color-gold"><i class="fas fa-calendar-check"></i></span>
+            <span class="action-title">Daily Bonus</span>
+        </div>
+        <div class="action-card" onclick="navigateTo('notices.html')">
+            <span class="action-icon-box color-blue"><i class="fas fa-clipboard-list"></i></span>
+            <span class="action-title">Notice</span>
+        </div>
+        
+        <div class="action-card" onclick="navigateTo('notifications.html')">
+            <span class="action-icon-box color-cyan"><i class="fas fa-bell"></i></span>
+            <span class="action-title">Alerts</span>
+        </div>
+        <div class="action-card" onclick="navigateTo('Support.html')">
+            <span class="action-icon-box color-blue"><i class="fas fa-headset"></i></span>
+            <span class="action-title">Support</span>
+        </div>
+        <div class="action-card" onclick="navigateTo('Settings.html')">
+            <span class="action-icon-box color-purple"><i class="fas fa-gear"></i></span>
+            <span class="action-title">Setting</span>
+        </div>
+        
+        <div class="action-card" onclick="navigateTo('About.html')">
+            <span class="action-icon-box color-cyan"><i class="fas fa-circle-info"></i></span>
+            <span class="action-title">About</span>
+        </div>
+        <div class="action-card" onclick="navigateTo('community.html')">
+            <span class="action-icon-box color-blue"><i class="fas fa-users"></i></span>
+            <span class="action-title">Community</span>
+        </div>
+        <div class="action-card" onclick="navigateTo('our-admin.html')">
+            <span class="action-icon-box color-gold"><i class="fas fa-user-tie"></i></span>
+            <span class="action-title">My Agent</span>
+        </div>
+        
+        <div class="action-card" onclick="navigateTo('Promotion.html')">
+            <span class="action-icon-box color-purple"><i class="fas fa-sack-dollar"></i></span>
+            <span class="action-title">Bounty</span>
+        </div>
+        <div class="action-card" onclick="navigateTo('AppUpdate.html')">
+            <span class="action-icon-box color-cyan"><i class="fas fa-cloud-arrow-down"></i></span>
+            <span class="action-title">Update</span>
+        </div>
+        <div class="action-card" onclick="navigateTo('BusinessPlan.html')">
+            <span class="action-icon-box color-gold"><i class="fas fa-file-contract"></i></span>
+            <span class="action-title">Plan</span>
         </div>
     </div>
 
-    <!-- Last Row - 1 Wide Card -->
-    <div class="grid">
-        <div class="card wide-card" onclick="navigateTo('our-project.html')">
-            <span class="emoji">🚀</span>
-            <span>OUR PROJECT</span>
+    <!-- 6. Wide Card - Project Link -->
+    <div class="wide-action-container">
+        <div class="wide-card" onclick="navigateTo('our-project.html')">
+            <span class="wide-card-icon"><i class="fas fa-rocket"></i></span>
+            <span class="wide-card-title">Our Project Launchpad</span>
         </div>
     </div>
 
+    <!-- 7. Image Slideshow Slider -->
     <div class="slider">
         <div class="slides">
-            <a href="#"><img src="https://i.ibb.co.com/C3c28QjY/1763119409545.png" alt=""></a>
-            <a href="#"><img src="https://i.ibb.co.com/C3c28QjY/1763119409545.png" alt=""></a>
-            <a href="#"><img src="https://i.ibb.co.com/C3c28QjY/1763119409545.png" alt=""></a>
-            <a href="#"><img src="https://i.ibb.co.com/C3c28QjY/1763119409545.png" alt=""></a>
-            <a href="#"><img src="https://i.ibb.co.com/C3c28QjY/1763119409545.png" alt=""></a>
+            <a href="#"><img src="https://i.ibb.co.com/C3c28QjY/1763119409545.png" alt="Promo Slide 1"></a>
+            <a href="#"><img src="https://i.ibb.co.com/C3c28QjY/1763119409545.png" alt="Promo Slide 2"></a>
+            <a href="#"><img src="https://i.ibb.co.com/C3c28QjY/1763119409545.png" alt="Promo Slide 3"></a>
+            <a href="#"><img src="https://i.ibb.co.com/C3c28QjY/1763119409545.png" alt="Promo Slide 4"></a>
+            <a href="#"><img src="https://i.ibb.co.com/C3c28QjY/1763119409545.png" alt="Promo Slide 5"></a>
         </div>
     </div>
 
-    <footer>Welcome Back</footer>
+    <!-- 8. Footer -->
+    <footer>IoLent Ecosystem • Security Verified</footer>
 
+    <!-- JavaScript Integrations -->
     <script>
         let isShowing = false;
         let timeoutId = null;
@@ -484,28 +935,47 @@
         let pointValue = 987.654321;
         let cachedUserData = null;
 
-        // Notify Android when the page is fully loaded
+        // Notify Android wrapper when dashboard is ready
         document.addEventListener('DOMContentLoaded', () => {
             try {
                 if (window.Android && typeof window.Android.sendMe === 'function') {
-                    let value = "ok";
-                    window.Android.sendMe(value);
+                    window.Android.sendMe("ok");
                 }
             } catch (e) {
-                console.error("Error notifying Android:", e);
+                console.error("Error communicating with Android wrapper:", e);
             }
         });
 
+        // Copy User ID Helper
+        function copyUserId() {
+            const rawIdText = document.getElementById('profile-id').textContent;
+            const match = rawIdText.match(/\d+/);
+            if (match) {
+                const userId = match[0];
+                navigator.clipboard.writeText(userId).then(() => {
+                    // Quick toast feedback
+                    const idRow = document.getElementById('profile-id-container');
+                    const originalHTML = idRow.innerHTML;
+                    idRow.innerHTML = `<i class="fas fa-check" style="color: var(--primary);"></i> Copied!`;
+                    setTimeout(() => {
+                        idRow.innerHTML = originalHTML;
+                    }, 1500);
+                }).catch(err => {
+                    console.error("Copy failed: ", err);
+                });
+            }
+        }
+
+        // Handle JSON Cache Data updates from Android Host
         function handleCacheData(data) {
             if (!data) return;
             
-            // Handle if Android passes JSON as a string, parse it until it's an object
             let safetyCounter = 0;
             while (typeof data === 'string' && safetyCounter < 5) {
                 try {
                     data = JSON.parse(data);
                 } catch (e) {
-                    console.error("JSON parse error:", e);
+                    console.error("JSON parsing error inside handleCacheData:", e);
                     break;
                 }
                 safetyCounter++;
@@ -520,53 +990,55 @@
             }
         }
 
+        // Apply updated user metrics to DOM
         function applyUserData() {
             let data = cachedUserData;
             if (!data) return;
 
-            // Handle if data is an array (sometimes Sketchware lists are saved as arrays)
             if (Array.isArray(data) && data.length > 0) {
                 data = data[0];
             }
 
-            // Extract nested user data if wrapped in a response object like {"status": "success", "data": {...}}
             if (data && data.data && typeof data.data === 'object') {
                 data = data.data;
             }
 
             if (typeof data !== 'object') {
-                if (document.getElementById('profile-name')) {
-                    document.getElementById('profile-name').textContent = "Error: Type " + (typeof data);
-                }
+                document.getElementById('profile-name').textContent = "Error: Type " + (typeof data);
                 return;
             }
 
+            // Image
             if (data.image && document.getElementById('profile-image')) {
                 document.getElementById('profile-image').src = data.image;
             }
             
+            // Name
             if (document.getElementById('profile-name')) {
-                if (data.name) {
-                    document.getElementById('profile-name').textContent = data.name;
-                } else {
-                    document.getElementById('profile-name').textContent = "Error: No Name Found";
-                }
+                document.getElementById('profile-name').textContent = data.name || "User";
             }
             
+            // ID
             if (data.id !== undefined && document.getElementById('profile-id')) {
                 document.getElementById('profile-id').textContent = "🆔 User ID: " + data.id;
             }
+
+            // Robot Details
             if (data.active_robot !== undefined && data.deactive_robot !== undefined && document.getElementById('profile-robots')) {
                 document.getElementById('profile-robots').textContent = "🤖Active Robot: " + data.active_robot + " | 🤖Deactive Robot: " + data.deactive_robot;
             }
             
+            // Taka Balance
             if (data.taka !== undefined && data.taka !== null) {
                 balance = parseFloat(data.taka) || 0;
             }
+
+            // Point Balance
             if (data.point !== undefined && data.point !== null) {
                 pointValue = parseFloat(data.point) || 0;
             }
             
+            // Robots Lifecycle values
             if (data.active_robot !== undefined && data.active_robot !== null) {
                 activeRobots = parseInt(data.active_robot) || 0;
             }
@@ -574,196 +1046,166 @@
                 currentCycleEarnings = parseFloat(data.current_cycle_earn) || 0;
             }
             
+            // Reset balance tiles display to default 'REVEAL' state when data refreshes
+            const moneyTileVal = document.querySelector('#money .balance-tile-val');
+            const pointsTileVal = document.querySelector('#points .balance-tile-val');
+            if (moneyTileVal && !moneyTileVal.innerHTML.includes('TK')) {
+                moneyTileVal.textContent = 'REVEAL';
+            }
+            if (pointsTileVal && !pointsTileVal.innerHTML.includes('POINT')) {
+                pointsTileVal.textContent = 'REVEAL';
+            }
+
             if (typeof updateRobotLifecycleUI === 'function') {
                 updateRobotLifecycleUI();
             }
         }
         
+        // Show Taka balance with high-end reveal animation
         function showMoneyBalance() {
             if (isShowing) return;
             isShowing = true;
             clearTimeout(timeoutId);
             
-            let moneyDiv = document.getElementById("money");
+            const moneyTile = document.getElementById("money");
+            const moneyVal = moneyTile.querySelector(".balance-tile-val");
             
-            moneyDiv.innerHTML = '<span class="loading-text">⏳ Loading...</span>';
+            moneyTile.classList.add("taka-active");
+            moneyVal.innerHTML = '<span class="spinner"></span> LOADING...';
             
-            // Format without scientific notation
             let formattedBalance = balance.toFixed(10).replace(/\.?0+$/, "");
             if (formattedBalance === "") formattedBalance = "0";
             
             setTimeout(() => {
-                moneyDiv.innerHTML = "💰 " + formattedBalance + " TK";
-            }, 1500);
+                moneyVal.innerHTML = '<i class="fas fa-coins animate-pulse"></i> ' + formattedBalance + " TK";
+            }, 1000);
             
             timeoutId = setTimeout(() => {
-                moneyDiv.innerHTML = "💰 TAKA";
+                moneyVal.innerHTML = "REVEAL";
+                moneyTile.classList.remove("taka-active");
                 isShowing = false;
-            }, 4000);
+            }, 4500);
         }
         
+        // Show Point balance with reveal animation
         function showPointBalance() {
             if(isShowing) return;
             isShowing = true;
             clearTimeout(timeoutId);
             
-            let pointsDiv = document.getElementById("points");
-            pointsDiv.innerHTML = '<span class="loading-text">⏳ Loading...</span>';
+            const pointsTile = document.getElementById("points");
+            const pointsVal = pointsTile.querySelector(".balance-tile-val");
             
-            // Fixed format conversion (maximum 8 decimal)
+            pointsTile.classList.add("point-active");
+            pointsVal.innerHTML = '<span class="spinner"></span> LOADING...';
+            
             let formattedPoint = Number(pointValue).toFixed(10).replace(/\.?0+$/, "");
             if (formattedPoint === "") formattedPoint = "0";
             
             setTimeout(()=>{
-                pointsDiv.innerHTML = "⭐ " + formattedPoint + " POINT";
-            }, 1500);
+                pointsVal.innerHTML = '<i class="fas fa-star animate-pulse"></i> ' + formattedPoint + " POINT";
+            }, 1000);
             
             timeoutId = setTimeout(()=>{
-                pointsDiv.innerHTML = "⭐ POINT";
+                pointsVal.innerHTML = "REVEAL";
+                pointsTile.classList.remove("point-active");
                 isShowing = false;
-            }, 4000);
+            }, 4500);
         }
         
-        // === Navigation Function ===
+        // Navigation helper
         function navigateTo(page) {
-            // Directly use window.location.href so it works in both Android WebView and browsers
             window.location.href = page;
         }
         
         // === Robot Lifecycle & Deactivation System ===
-        
-        // State variables
         let activeRobots = 20;
         let currentCycleEarnings = 2.5;
-        const ROBOT_LIFESPAN = 20; // TK
+        const ROBOT_LIFESPAN = 20; // 1 robot deactivates per 20 TK earned
         
-        // DOM Elements
         const activeRobotsCount = document.getElementById('active-robots-count');
         const nextDeactivationText = document.getElementById('next-deactivation-text');
         const lifecycleProgress = document.getElementById('lifecycle-progress');
         
-        // Initialize UI
+        // Set Initial state
         updateRobotLifecycleUI();
         
-        /**
-         * Main function to handle robot lifecycle updates
-         * @param {number} newIncome - The new income amount in TK
-         */
         function updateRobotLifecycle(newIncome) {
             if (newIncome <= 0) return;
             
-            // Add new income to current cycle
             currentCycleEarnings += newIncome;
             
-            // Calculate how many robots need to be deactivated
             let robotsToDeactivate = Math.floor(currentCycleEarnings / ROBOT_LIFESPAN);
-            
-            // Ensure we don't deactivate more robots than we have
             robotsToDeactivate = Math.min(robotsToDeactivate, activeRobots);
             
-            // Update active robots count
             activeRobots -= robotsToDeactivate;
-            
-            // Calculate remainder for next cycle
             currentCycleEarnings = currentCycleEarnings % ROBOT_LIFESPAN;
             
-            // Update UI
             updateRobotLifecycleUI();
             
-            // Trigger visual feedback for deactivation
             if (robotsToDeactivate > 0) {
                 triggerDeactivationAnimation(robotsToDeactivate);
             }
         }
         
-        /**
-         * Update the UI elements for robot lifecycle
-         */
         function updateRobotLifecycleUI() {
-            // Update active robots count
+            if (!activeRobotsCount || !lifecycleProgress || !nextDeactivationText) return;
+
             activeRobotsCount.textContent = activeRobots;
             
-            // Update progress bar
-            const progressPercent = (currentCycleEarnings / ROBOT_LIFESPAN) * 100;
+            const progressPercent = Math.min(100, (currentCycleEarnings / ROBOT_LIFESPAN) * 100);
             lifecycleProgress.style.width = progressPercent + '%';
             
-            // Update text
-            nextDeactivationText.textContent = currentCycleEarnings.toFixed(2) + '/' + ROBOT_LIFESPAN + ' TK';
+            nextDeactivationText.textContent = currentCycleEarnings.toFixed(2) + '/' + ROBOT_LIFESPAN.toFixed(2) + ' TK';
             
-            // Show/hide the robot lifecycle card based on active robot count
-            const lifecycleCard = document.querySelector('.user-card:nth-child(2)');
+            const lifecycleCard = document.querySelector('.lifecycle-container');
             if (activeRobots === 0) {
-                lifecycleCard.style.display = 'none';
+                lifecycleCard.style.opacity = '0.5';
             } else {
-                lifecycleCard.style.display = 'block';
+                lifecycleCard.style.opacity = '1';
             }
             
-            // Visual feedback for low robot count
-            if (activeRobots <= 10) {
-                activeRobotsCount.style.color = '#ff4757'; // Red color for warning
-                activeRobotsCount.style.textShadow = '0 0 10px rgba(255, 71, 87, 0.5)';
+            // Warning logic for low active robot count
+            if (activeRobots <= 5) {
+                activeRobotsCount.style.color = '#ff5252';
+                activeRobotsCount.style.textShadow = '0 0 10px rgba(255, 82, 82, 0.6)';
             } else {
-                activeRobotsCount.style.color = '#00e676'; // Green color
+                activeRobotsCount.style.color = '#00e676';
                 activeRobotsCount.style.textShadow = '0 0 10px rgba(0, 230, 118, 0.5)';
             }
         }
         
-        /**
-         * Trigger visual animation when robots are deactivated
-         * @param {number} count - Number of robots deactivated
-         */
         function triggerDeactivationAnimation(count) {
-            // Flash effect for the robot count
-            activeRobotsCount.style.transform = 'scale(1.2)';
+            // Pulsate scaling on the count display
+            activeRobotsCount.style.transform = 'scale(1.25)';
             setTimeout(() => {
                 activeRobotsCount.style.transform = 'scale(1)';
-            }, 200);
+            }, 250);
             
-            // Create floating text effect
+            // Spawn floating text warning
             const floatingText = document.createElement('div');
             floatingText.textContent = '-' + count + ' 🤖';
+            floatingText.className = 'deactivate-float';
             floatingText.style.position = 'absolute';
-            floatingText.style.top = '10px';
-            floatingText.style.right = '10px';
+            floatingText.style.top = '20px';
+            floatingText.style.right = '20px';
             floatingText.style.fontSize = '18px';
             floatingText.style.fontWeight = 'bold';
-            floatingText.style.color = '#ff4757';
-            floatingText.style.textShadow = '0 0 5px rgba(255, 71, 87, 0.8)';
-            floatingText.style.animation = 'floatUp 1s ease-out forwards';
+            floatingText.style.color = '#ff5252';
+            floatingText.style.textShadow = '0 0 8px rgba(255, 82, 82, 0.7)';
             
-            // Add animation keyframes dynamically
-            const style = document.createElement('style');
-            style.textContent = `
-                @keyframes floatUp {
-                    0% { transform: translateY(0); opacity: 1; }
-                    100% { transform: translateY(-30px); opacity: 0; }
-                }
-            `;
-            document.head.appendChild(style);
-            
-            // Find the robot lifecycle card and add the floating text
-            const lifecycleCard = document.querySelector('.user-card:nth-child(2)');
-            lifecycleCard.style.position = 'relative';
+            const lifecycleCard = document.querySelector('.lifecycle-container');
             lifecycleCard.appendChild(floatingText);
             
-            // Remove the floating text after animation
             setTimeout(() => {
                 floatingText.remove();
-                style.remove();
-            }, 1000);
+            }, 1200);
         }
         
-        /**
-         * Test function to simulate income collection
-         * This can be called from other parts of the application
-         */
+        // Debug helper
         function simulateIncomeCollection(amount) {
             updateRobotLifecycle(amount);
         }
-        
-        // Example usage (can be removed in production):
-        // setTimeout(() => simulateIncomeCollection(15), 2000);  // After 2 seconds, collect 15 TK
-        // setTimeout(() => simulateIncomeCollection(10), 4000);  // After 4 seconds, collect 10 TK (should deactivate 1 robot)
     </script>
 </body>
 </html>
