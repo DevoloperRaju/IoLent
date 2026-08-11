@@ -1,0 +1,558 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IoLent - Registration Complete</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    
+    <style>
+        :root {
+            --primary-color: #00e676;
+            --secondary-color: #00c853;
+            --accent-color: #00e676;
+            --text-color: #ffffff;
+            --light-text: #ffffff;
+            --bg-color: #0B111B;
+            --card-bg: rgba(255, 255, 255, 0.05);
+            --border-radius: 20px;
+            --box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            --transition-speed: 0.3s;
+            --font-family-primary: 'Space Grotesk', sans-serif;
+            --font-family-secondary: 'Inter', sans-serif;
+        }
+
+        /* Reset and Base Styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: var(--font-family-secondary);
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        /* Main Container */
+        .container {
+            background: var(--card-bg);
+            backdrop-filter: blur(20px);
+            padding: 40px;
+            border-radius: var(--border-radius);
+            box-shadow: var(--box-shadow);
+            width: 100%;
+            max-width: 450px;
+            z-index: 10;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            display: flex;
+            flex-direction: column;
+            gap: 30px;
+            margin: 20px;
+        }
+
+        /* Logo Section */
+        .logo-section {
+            text-align: center;
+            animation: scaleIn 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275) both;
+        }
+
+        .logo-container {
+            position: relative;
+            margin: 0 auto 15px;
+            width: 90px;
+            height: 90px;
+        }
+
+        .logo-circle {
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 230, 118, 0.1);
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+            box-shadow: 0 0 20px rgba(0, 230, 118, 0.2);
+            animation: pulseGlow 2s infinite alternate;
+        }
+
+        .logo-circle::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 50%;
+        }
+
+        .logo-image {
+            width: 50px;
+            height: 50px;
+            object-fit: contain;
+            z-index: 2;
+        }
+
+        /* Welcome Section */
+        .welcome-section {
+            text-align: center;
+        }
+
+        .welcome-heading {
+            font-family: var(--font-family-primary);
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--primary-color);
+            margin-bottom: 10px;
+            letter-spacing: 0.5px;
+            animation: slideInUp 0.8s ease-out 0.2s both;
+        }
+
+        .success-text {
+            font-size: 1.1rem;
+            font-weight: 500;
+            color: var(--text-color);
+            margin-bottom: 8px;
+            animation: slideInUp 0.8s ease-out 0.4s both;
+        }
+
+        .supportive-text {
+            font-size: 0.9rem;
+            color: rgba(255, 255, 255, 0.6);
+            animation: slideInUp 0.8s ease-out 0.5s both;
+        }
+
+        /* Progress Card */
+        .progress-card {
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 16px;
+            padding: 25px;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            animation: fadeIn 0.8s ease-out 0.7s both;
+        }
+
+        .progress-heading {
+            font-family: var(--font-family-primary);
+            font-size: 1.1rem;
+            font-weight: 600;
+            margin-bottom: 20px;
+            text-align: center;
+            color: rgba(255, 255, 255, 0.9);
+        }
+
+        /* Steps List */
+        .steps-list {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            margin-bottom: 25px;
+        }
+
+        .step-item {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            font-size: 0.95rem;
+            animation: slideInRight 0.5s ease-out both;
+        }
+
+        .step-item:nth-child(1) { animation-delay: 1.0s; }
+        .step-item:nth-child(2) { animation-delay: 1.2s; }
+        .step-item:nth-child(3) { animation-delay: 1.4s; }
+        .step-item:nth-child(4) { animation-delay: 1.6s; }
+
+        .step-icon {
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 0.7rem;
+            flex-shrink: 0;
+        }
+
+        /* Step States */
+        .step-completed .step-icon {
+            background: var(--primary-color);
+            color: #000;
+        }
+
+        .step-completed .step-text {
+            color: rgba(255, 255, 255, 0.9);
+        }
+
+        .step-current .step-icon {
+            background: transparent;
+            border: 2px solid var(--primary-color);
+            color: var(--primary-color);
+            position: relative;
+        }
+        
+        .step-current .step-icon::after {
+            content: '';
+            position: absolute;
+            width: 8px;
+            height: 8px;
+            background: var(--primary-color);
+            border-radius: 50%;
+            animation: pulse 1s infinite;
+        }
+
+        .step-current .step-text {
+            color: var(--primary-color);
+            font-weight: 500;
+        }
+
+        .step-pending .step-icon {
+            background: transparent;
+            border: 2px solid rgba(255, 255, 255, 0.2);
+            color: transparent;
+        }
+
+        .step-pending .step-text {
+            color: rgba(255, 255, 255, 0.4);
+        }
+
+        /* Progress Indicator */
+        .progress-bar-container {
+            height: 4px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 2px;
+            overflow: hidden;
+            margin-bottom: 12px;
+            position: relative;
+        }
+
+        .progress-bar {
+            position: absolute;
+            top: 0;
+            left: 0;
+            height: 100%;
+            background: var(--primary-color);
+            width: 50%;
+            border-radius: 2px;
+            animation: shimmer 2s infinite linear;
+            background-image: linear-gradient(
+                90deg,
+                var(--primary-color) 0%,
+                #69f0ae 50%,
+                var(--primary-color) 100%
+            );
+            background-size: 200% 100%;
+        }
+
+        .progress-status {
+            text-align: center;
+            font-size: 0.85rem;
+            color: var(--primary-color);
+            font-weight: 500;
+            height: 20px; /* fixed height to prevent jumping */
+            transition: opacity 0.3s ease;
+        }
+
+        /* Action Button */
+        .action-btn {
+            width: 100%;
+            padding: 16px;
+            background: var(--primary-color);
+            color: #000;
+            border: none;
+            border-radius: 12px;
+            font-family: var(--font-family-secondary);
+            font-size: 1.05rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            animation: fadeIn 0.8s ease-out 1.8s both;
+        }
+
+        /* Disabled State */
+        .action-btn:disabled {
+            background: rgba(255, 255, 255, 0.1);
+            color: rgba(255, 255, 255, 0.4);
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+
+        .action-btn:not(:disabled):hover {
+            background: var(--secondary-color);
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 230, 118, 0.3);
+        }
+
+        /* Error UI (Hidden by default) */
+        .error-container {
+            display: none;
+            text-align: center;
+            padding: 20px;
+            background: rgba(255, 82, 82, 0.1);
+            border: 1px solid rgba(255, 82, 82, 0.2);
+            border-radius: 12px;
+            margin-top: 20px;
+        }
+        
+        .error-icon {
+            color: #ff5252;
+            font-size: 2rem;
+            margin-bottom: 10px;
+        }
+        
+        .error-title {
+            color: #ff5252;
+            font-family: var(--font-family-primary);
+            font-size: 1.2rem;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+        
+        .error-message {
+            color: rgba(255, 255, 255, 0.8);
+            font-size: 0.9rem;
+            margin-bottom: 15px;
+        }
+        
+        .retry-btn {
+            padding: 10px 20px;
+            background: transparent;
+            border: 1px solid #ff5252;
+            color: #ff5252;
+            border-radius: 8px;
+            cursor: pointer;
+            font-family: var(--font-family-secondary);
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+        
+        .retry-btn:hover {
+            background: rgba(255, 82, 82, 0.1);
+        }
+
+        /* Animations */
+        @keyframes scaleIn {
+            0% { transform: scale(0); opacity: 0; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+
+        @keyframes slideInUp {
+            0% { transform: translateY(20px); opacity: 0; }
+            100% { transform: translateY(0); opacity: 1; }
+        }
+
+        @keyframes slideInRight {
+            0% { transform: translateX(-20px); opacity: 0; }
+            100% { transform: translateX(0); opacity: 1; }
+        }
+
+        @keyframes fadeIn {
+            0% { opacity: 0; }
+            100% { opacity: 1; }
+        }
+
+        @keyframes pulseGlow {
+            0% { box-shadow: 0 0 10px rgba(0, 230, 118, 0.1); }
+            100% { box-shadow: 0 0 25px rgba(0, 230, 118, 0.3); }
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(0.8); opacity: 0.5; }
+            50% { transform: scale(1.2); opacity: 1; }
+            100% { transform: scale(0.8); opacity: 0.5; }
+        }
+
+        @keyframes shimmer {
+            0% { background-position: 200% 0; }
+            100% { background-position: -200% 0; }
+        }
+
+        /* Responsive */
+        @media (max-width: 480px) {
+            .container {
+                padding: 30px 20px;
+                border-radius: 16px;
+            }
+            
+            .welcome-heading {
+                font-size: 1.5rem;
+            }
+            
+            .success-text {
+                font-size: 1rem;
+            }
+            
+            .progress-card {
+                padding: 20px 15px;
+            }
+        }
+        
+        @media (max-width: 360px) {
+            .container {
+                padding: 25px 15px;
+            }
+            
+            .welcome-heading {
+                font-size: 1.3rem;
+            }
+            
+            .step-item {
+                font-size: 0.85rem;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        
+        <!-- Logo Section -->
+        <div class="logo-section">
+            <div class="logo-container">
+                <div class="logo-circle">
+                    <img src="https://i.ibb.co.com/QjvffmCv/ic-launcher.png" alt="IoLent Logo" class="logo-image">
+                </div>
+            </div>
+        </div>
+
+        <!-- Welcome Message -->
+        <div class="welcome-section">
+            <h1 class="welcome-heading">Welcome to IoLent!</h1>
+            <p class="success-text">Your account registration was successful.</p>
+            <p class="supportive-text">We're getting your IoLent account ready.</p>
+        </div>
+
+        <!-- Progress Section -->
+        <div class="progress-card">
+            <h3 class="progress-heading">Setting Up Your Account</h3>
+            
+            <ul class="steps-list">
+                <li class="step-item step-completed">
+                    <div class="step-icon"><i class="fas fa-check"></i></div>
+                    <span class="step-text">Google account verified</span>
+                </li>
+                <li class="step-item step-completed">
+                    <div class="step-icon"><i class="fas fa-check"></i></div>
+                    <span class="step-text">Firebase account created</span>
+                </li>
+                <li class="step-item step-current" id="step3">
+                    <div class="step-icon"></div>
+                    <span class="step-text">Creating your IoLent account</span>
+                </li>
+                <li class="step-item step-pending" id="step4">
+                    <div class="step-icon"></div>
+                    <span class="step-text">Preparing your account</span>
+                </li>
+            </ul>
+
+            <div class="progress-bar-container">
+                <div class="progress-bar"></div>
+            </div>
+            
+            <div class="progress-status" id="statusText">
+                Preparing your IoLent account...
+            </div>
+        </div>
+
+        <!-- Error UI (Hidden by default, ready for backend integration) -->
+        <div class="error-container" id="errorUI">
+            <i class="fas fa-exclamation-circle error-icon"></i>
+            <h3 class="error-title">Registration Setup Failed</h3>
+            <p class="error-message">We couldn't finish setting up your account.</p>
+            <button class="retry-btn">Try Again</button>
+        </div>
+
+        <!-- Action Button -->
+        <button class="action-btn" id="setupPinBtn" disabled>
+            Setup Your PIN
+        </button>
+
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            if (typeof Android !== 'undefined' &&
+                typeof Android.iamReady === 'function') {
+                Android.iamReady("FBtoken");
+            }
+
+            // Animated Status Text Logic (Visual Demo Only)
+            const statusTextElement = document.getElementById('statusText');
+            const statusMessages = [
+                "Preparing your IoLent account...",
+                "Securing your account...",
+                "Finalizing your registration...",
+                "Almost ready..."
+            ];
+            
+            let messageIndex = 0;
+            
+            // Rotate messages every 2.5 seconds to simulate processing
+            const messageInterval = setInterval(() => {
+                messageIndex = (messageIndex + 1) % statusMessages.length;
+                
+                // Fade out
+                statusTextElement.style.opacity = 0;
+                
+                setTimeout(() => {
+                    statusTextElement.textContent = statusMessages[messageIndex];
+                    // Fade in
+                    statusTextElement.style.opacity = 1;
+                }, 300);
+                
+            }, 2500);
+
+            // Future Integration Comments:
+            /*
+            When the backend API (create_user.php & verify_token.php) is implemented:
+            
+            1. Clear the messageInterval when API responds:
+               clearInterval(messageInterval);
+               
+            2. On Success:
+               - Update UI steps:
+                 document.getElementById('step3').className = 'step-item step-completed';
+                 document.getElementById('step3').querySelector('.step-icon').innerHTML = '<i class="fas fa-check"></i>';
+                 
+                 document.getElementById('step4').className = 'step-item step-completed';
+                 document.getElementById('step4').querySelector('.step-icon').innerHTML = '<i class="fas fa-check"></i>';
+                 
+               - Update Progress Status:
+                 statusTextElement.textContent = "Account setup complete!";
+                 statusTextElement.style.color = "#00e676";
+                 
+               - Make Progress Bar full width:
+                 document.querySelector('.progress-bar').style.width = '100%';
+                 document.querySelector('.progress-bar').style.animation = 'none'; // Stop shimmer
+                 
+               - Enable the button:
+                 document.getElementById('setupPinBtn').disabled = false;
+                 
+            3. On Error:
+               - Hide progress card:
+                 document.querySelector('.progress-card').style.display = 'none';
+               - Show Error UI:
+                 document.getElementById('errorUI').style.display = 'block';
+               - Populate error message if needed.
+            */
+            
+            // Dummy click handler for when it becomes enabled
+            document.getElementById('setupPinBtn').addEventListener('click', () => {
+                // In the future, this will redirect:
+                // window.location.href = "PinSetup.html";
+                console.log('Button clicked, ready to navigate to PIN Setup');
+            });
+        });
+    </script>
+</body>
+</html>
