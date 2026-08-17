@@ -1,0 +1,485 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Verify Email - IoLent</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        /* Premium, modern, clean styling matching IoLent design system */
+        :root {
+            --primary-color: #00e676;
+            --secondary-color: #00c853;
+            --text-color: #ffffff;
+            --text-muted: rgba(255, 255, 255, 0.6);
+            --bg-color: #0B111B;
+            --card-bg: rgba(255, 255, 255, 0.05);
+            --border-radius: 20px;
+            --box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            --font-family-primary: 'Space Grotesk', sans-serif;
+            --font-family-secondary: 'Inter', sans-serif;
+            
+            --success: #00e676;
+            --error: #ff5252;
+            --warning: #ffb74d;
+            --info: #00e676; /* Mapping primary action */
+        }
+
+        * {
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: var(--font-family-secondary);
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        .container {
+            background: var(--card-bg);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: var(--border-radius);
+            padding: 40px 32px;
+            width: 90%;
+            max-width: 420px;
+            box-shadow: var(--box-shadow);
+            text-align: center;
+            transition: all 0.3s ease;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .brand {
+            font-family: var(--font-family-primary);
+            font-size: 24px;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+            color: var(--text-color);
+            margin-bottom: 24px;
+        }
+
+        .brand span {
+            color: var(--primary-color);
+        }
+
+        /* Icon & Loader Area */
+        .status-visual {
+            height: 90px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 24px;
+        }
+
+        .icon-box {
+            width: 72px;
+            height: 72px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            transform: scale(0.8);
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            background-color: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .icon-box.visible {
+            opacity: 1;
+            transform: scale(1);
+            animation: pulseGlow 2s infinite alternate;
+        }
+
+        @keyframes pulseGlow {
+            0% { box-shadow: 0 0 10px rgba(0, 230, 118, 0.05); }
+            100% { box-shadow: 0 0 25px rgba(0, 230, 118, 0.2); }
+        }
+
+        .icon-box svg {
+            width: 32px;
+            height: 32px;
+        }
+
+        .loader {
+            width: 48px;
+            height: 48px;
+            border: 3px solid rgba(255, 255, 255, 0.1);
+            border-top: 3px solid var(--primary-color);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* Typography */
+        .title {
+            font-family: var(--font-family-primary);
+            font-size: 22px;
+            font-weight: 700;
+            margin: 0 0 12px 0;
+            letter-spacing: 0.5px;
+            color: var(--primary-color);
+        }
+
+        .message {
+            font-size: 15px;
+            line-height: 1.6;
+            color: var(--text-muted);
+            margin: 0 0 32px 0;
+        }
+
+        /* Action Buttons */
+        .actions {
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
+        }
+
+        button {
+            appearance: none;
+            border: none;
+            border-radius: 12px;
+            padding: 16px;
+            font-family: var(--font-family-secondary);
+            font-size: 1.05rem;
+            font-weight: 600;
+            cursor: pointer;
+            width: 100%;
+            transition: all 0.3s ease;
+        }
+
+        button.primary {
+            background-color: var(--primary-color);
+            color: #000;
+        }
+
+        button.primary:not(:disabled):hover {
+            background-color: var(--secondary-color);
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 230, 118, 0.3);
+        }
+
+        button.primary:active {
+            transform: scale(0.98);
+        }
+
+        button.secondary {
+            background-color: rgba(255, 255, 255, 0.1);
+            color: var(--text-color);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        button.secondary:not(:disabled):hover {
+            background-color: rgba(255, 255, 255, 0.15);
+            transform: translateY(-2px);
+        }
+
+        button.secondary:active {
+            transform: scale(0.98);
+        }
+
+        button:disabled {
+            background-color: rgba(255, 255, 255, 0.1);
+            color: rgba(255, 255, 255, 0.4);
+            cursor: not-allowed;
+            transform: none !important;
+            box-shadow: none !important;
+        }
+
+        /* Utility */
+        .hidden {
+            display: none !important;
+        }
+
+        /* Theme colors for icons */
+        .theme-error { color: var(--error); border-color: rgba(255, 82, 82, 0.3); }
+        .theme-success { color: var(--success); border-color: rgba(0, 230, 118, 0.3); }
+        .theme-warning { color: var(--warning); border-color: rgba(255, 183, 77, 0.3); }
+        .theme-info { color: var(--info); border-color: rgba(0, 230, 118, 0.3); }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <div class="brand">Io<span>Lent</span></div>
+
+        <div class="status-visual">
+            <!-- Loading Spinner -->
+            <div id="loader" class="loader"></div>
+            
+            <!-- Dynamic Icon Container -->
+            <div id="icon-box" class="icon-box hidden">
+                <!-- SVG will be injected here via JS -->
+            </div>
+        </div>
+
+        <h1 id="title" class="title">Preparing...</h1>
+        <p id="message" class="message">Preparing email verification...</p>
+
+        <div id="actions" class="actions">
+            <button id="btn-primary" class="primary hidden"></button>
+            <button id="btn-secondary" class="secondary hidden"></button>
+        </div>
+    </div>
+
+    <script>
+        /**
+         * State management and UI logic for IoLent Email Verification
+         */
+
+        // UI Elements
+        const elLoader = document.getElementById('loader');
+        const elIconBox = document.getElementById('icon-box');
+        const elTitle = document.getElementById('title');
+        const elMessage = document.getElementById('message');
+        const btnPrimary = document.getElementById('btn-primary');
+        const btnSecondary = document.getElementById('btn-secondary');
+
+        // SVG Icons
+        const ICONS = {
+            error: `<svg fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>`,
+            email: `<svg fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path></svg>`,
+            success: `<svg fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>`,
+            warning: `<svg fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>`
+        };
+
+        let isLoading = false;
+
+        /**
+         * Safely communicates with Android Java Bridge
+         * @param {string} command - The command string to send to Android
+         */
+        function callAndroid(command) {
+            if (window.Android && typeof window.Android.iamReady === "function") {
+                window.Android.iamReady(command);
+            }
+        }
+
+        /**
+         * Clears all button event listeners by cloning and replacing the buttons
+         */
+        function resetButtons() {
+            const newBtnPrimary = btnPrimary.cloneNode(true);
+            const newBtnSecondary = btnSecondary.cloneNode(true);
+            
+            btnPrimary.parentNode.replaceChild(newBtnPrimary, btnPrimary);
+            btnSecondary.parentNode.replaceChild(newBtnSecondary, btnSecondary);
+            
+            // Update references
+            window.btnPrimary = document.getElementById('btn-primary');
+            window.btnSecondary = document.getElementById('btn-secondary');
+            
+            window.btnPrimary.classList.add('hidden');
+            window.btnSecondary.classList.add('hidden');
+        }
+
+        /**
+         * Sets the UI into a loading state
+         * @param {string} title - The title to display while loading
+         * @param {string} message - The message to display while loading
+         */
+        function startLoading(title, message) {
+            isLoading = true;
+            
+            // Visuals
+            elIconBox.classList.remove('visible');
+            elIconBox.classList.add('hidden');
+            elLoader.classList.remove('hidden');
+            
+            // Text
+            elTitle.textContent = title;
+            elMessage.textContent = message;
+            
+            // Disable buttons to prevent duplicate calls
+            resetButtons();
+            window.btnPrimary.disabled = true;
+            window.btnSecondary.disabled = true;
+        }
+
+        /**
+         * Sets the UI to a specific non-loading state
+         * @param {Object} config - Configuration for the new state
+         */
+        function setUIState(config) {
+            isLoading = false;
+            
+            // Set Icon
+            elLoader.classList.add('hidden');
+            elIconBox.className = `icon-box theme-${config.theme}`;
+            elIconBox.innerHTML = ICONS[config.icon];
+            
+            // Small delay to trigger CSS animation
+            setTimeout(() => {
+                elIconBox.classList.add('visible');
+            }, 50);
+
+            // Set Text
+            elTitle.textContent = config.title;
+            elMessage.textContent = config.message;
+
+            // Reset buttons setup
+            resetButtons();
+
+            // Configure Primary Button
+            if (config.primaryBtn) {
+                window.btnPrimary.textContent = config.primaryBtn.text;
+                window.btnPrimary.disabled = false;
+                window.btnPrimary.classList.remove('hidden');
+                window.btnPrimary.addEventListener('click', () => {
+                    if (isLoading) return;
+                    config.primaryBtn.action();
+                });
+            }
+
+            // Configure Secondary Button
+            if (config.secondaryBtn) {
+                window.btnSecondary.textContent = config.secondaryBtn.text;
+                window.btnSecondary.disabled = false;
+                window.btnSecondary.classList.remove('hidden');
+                window.btnSecondary.addEventListener('click', () => {
+                    if (isLoading) return;
+                    config.secondaryBtn.action();
+                });
+            }
+        }
+
+        /**
+         * Actions available to be triggered by UI buttons
+         */
+        const Actions = {
+            requestVerification: () => {
+                startLoading("Sending Email...", "We are preparing your verification email.");
+                callAndroid("Email Verification");
+            },
+            checkVerification: () => {
+                startLoading("Checking...", "Checking your verification status.");
+                callAndroid("Email Verification Check");
+            },
+            continueToNextStep: () => {
+                startLoading("Continuing...", "Preparing your account.");
+                callAndroid("Email Verified");
+            }
+        };
+
+        /**
+         * UI State Renderers
+         */
+        function showSendFailed() {
+            setUIState({
+                theme: 'error',
+                icon: 'error',
+                title: 'Send Failed',
+                message: "We couldn't send the verification email.",
+                primaryBtn: {
+                    text: "Try Again",
+                    action: Actions.requestVerification
+                }
+            });
+        }
+
+        function showSendSuccess() {
+            setUIState({
+                theme: 'info',
+                icon: 'email',
+                title: 'Check Your Inbox',
+                message: "Verification email sent successfully. Please check your email.",
+                primaryBtn: {
+                    text: "I've Verified My Email",
+                    action: Actions.checkVerification
+                },
+                secondaryBtn: {
+                    text: "Resend Email",
+                    action: Actions.requestVerification
+                }
+            });
+        }
+
+        function showVerified() {
+            setUIState({
+                theme: 'success',
+                icon: 'success',
+                title: 'Email Verified',
+                message: "Your email has been verified successfully.",
+                primaryBtn: {
+                    text: "Continue",
+                    action: Actions.continueToNextStep
+                }
+            });
+        }
+
+        function showNotVerified() {
+            setUIState({
+                theme: 'warning',
+                icon: 'warning',
+                title: 'Not Verified',
+                message: "Your email hasn't been verified yet.",
+                primaryBtn: {
+                    text: "Check Again",
+                    action: Actions.checkVerification
+                },
+                secondaryBtn: {
+                    text: "Resend Email",
+                    action: Actions.requestVerification
+                }
+            });
+        }
+
+        /**
+         * ENTRY POINT: Called by Android Java Bridge to provide status updates
+         * @param {number} statusCode - The status code from Android
+         */
+        window.receiveEmailVerificationStatus = function(statusCode) {
+            // Parse to integer just in case it's passed as a string
+            const status = parseInt(statusCode, 10);
+            
+            switch (status) {
+                case 1:
+                    // 1 = Email verification sending failed
+                    showSendFailed();
+                    break;
+                case 2:
+                    // 2 = Verification email sent successfully
+                    showSendSuccess();
+                    break;
+                case 3:
+                    // 3 = Email is already verified
+                    showVerified();
+                    break;
+                case 4:
+                    // 4 = Email is not verified yet
+                    showNotVerified();
+                    break;
+                default:
+                    // Fallback for unknown status
+                    startLoading("Unknown Status", "Please try again.");
+                    break;
+            }
+        };
+
+        // Initialize on page load
+        document.addEventListener("DOMContentLoaded", () => {
+            // Set initial loading state
+            startLoading("Preparing...", "Preparing email verification...");
+            
+            // Notify Android that the JS environment is ready
+            callAndroid("Email Verification");
+        });
+
+    </script>
+</body>
+</html>
