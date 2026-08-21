@@ -259,6 +259,7 @@
         };
 
         let isLoading = false;
+        let checkAttempted = false;
 
         /**
          * Safely communicates with Android Java Bridge
@@ -267,25 +268,23 @@
         function callAndroid(command) {
             if (window.Android && typeof window.Android.iamReady === "function") {
                 window.Android.iamReady(command);
+            } else {
+                showBridgeError();
             }
         }
 
         /**
-         * Clears all button event listeners by cloning and replacing the buttons
+         * Clears button actions and hides them
          */
         function resetButtons() {
-            const newBtnPrimary = btnPrimary.cloneNode(true);
-            const newBtnSecondary = btnSecondary.cloneNode(true);
-            
-            btnPrimary.parentNode.replaceChild(newBtnPrimary, btnPrimary);
-            btnSecondary.parentNode.replaceChild(newBtnSecondary, btnSecondary);
-            
-            // Update references
-            window.btnPrimary = document.getElementById('btn-primary');
-            window.btnSecondary = document.getElementById('btn-secondary');
-            
-            window.btnPrimary.classList.add('hidden');
-            window.btnSecondary.classList.add('hidden');
+            btnPrimary.classList.add('hidden');
+            btnSecondary.classList.add('hidden');
+
+            btnPrimary.disabled = true;
+            btnSecondary.disabled = true;
+
+            btnPrimary.onclick = null;
+            btnSecondary.onclick = null;
         }
 
         /**
@@ -307,8 +306,6 @@
             
             // Disable buttons to prevent duplicate calls
             resetButtons();
-            window.btnPrimary.disabled = true;
-            window.btnSecondary.disabled = true;
         }
 
         /**
@@ -337,24 +334,24 @@
 
             // Configure Primary Button
             if (config.primaryBtn) {
-                window.btnPrimary.textContent = config.primaryBtn.text;
-                window.btnPrimary.disabled = false;
-                window.btnPrimary.classList.remove('hidden');
-                window.btnPrimary.addEventListener('click', () => {
+                btnPrimary.textContent = config.primaryBtn.text;
+                btnPrimary.disabled = false;
+                btnPrimary.classList.remove('hidden');
+                btnPrimary.onclick = () => {
                     if (isLoading) return;
                     config.primaryBtn.action();
-                });
+                };
             }
 
             // Configure Secondary Button
             if (config.secondaryBtn) {
-                window.btnSecondary.textContent = config.secondaryBtn.text;
-                window.btnSecondary.disabled = false;
-                window.btnSecondary.classList.remove('hidden');
-                window.btnSecondary.addEventListener('click', () => {
+                btnSecondary.textContent = config.secondaryBtn.text;
+                btnSecondary.disabled = false;
+                btnSecondary.classList.remove('hidden');
+                btnSecondary.onclick = () => {
                     if (isLoading) return;
                     config.secondaryBtn.action();
-                });
+                };
             }
         }
 
@@ -363,22 +360,40 @@
          */
         const Actions = {
             requestVerification: () => {
+                checkAttempted = false;
                 startLoading("Sending Email...", "We are preparing your verification email.");
-                callAndroid("Email Verification");
+                if (window.Android && typeof window.Android.iamReady === "function") {
+                    window.Android.iamReady("Email Verification");
+                } else {
+                    showBridgeError();
+                }
             },
             checkVerification: () => {
+                checkAttempted = true;
                 startLoading("Checking...", "Checking your verification status.");
-                callAndroid("Email Verification Check");
+                if (window.Android && typeof window.Android.checkEmailVerify === "function") {
+                    window.Android.checkEmailVerify("Check Email Verification");
+                } else {
+                    showBridgeError();
+                }
             },
             continueToNextStep: () => {
-                startLoading("Continuing...", "Preparing your account.");
-                callAndroid("Email Verified");
+                // DO NOTHING for now as requested
             }
         };
 
         /**
          * UI State Renderers
          */
+        function showBridgeError() {
+            setUIState({
+                theme: 'error',
+                icon: 'error',
+                title: 'Connection Error',
+                message: "Could not communicate with the app.",
+            });
+        }
+
         function showSendFailed() {
             setUIState({
                 theme: 'error',
@@ -386,7 +401,7 @@
                 title: 'Send Failed',
                 message: "We couldn't send the verification email.",
                 primaryBtn: {
-                    text: "Try Again",
+                    text: "Resend Verification Email",
                     action: Actions.requestVerification
                 }
             });
@@ -397,14 +412,10 @@
                 theme: 'info',
                 icon: 'email',
                 title: 'Check Your Inbox',
-                message: "Verification email sent successfully. Please check your email.",
+                message: "Verification email sent successfully. Please check your email and verify your account.",
                 primaryBtn: {
-                    text: "I've Verified My Email",
+                    text: "Check Verification",
                     action: Actions.checkVerification
-                },
-                secondaryBtn: {
-                    text: "Resend Email",
-                    action: Actions.requestVerification
                 }
             });
         }
@@ -427,14 +438,10 @@
                 theme: 'warning',
                 icon: 'warning',
                 title: 'Not Verified',
-                message: "Your email hasn't been verified yet.",
+                message: "Your email has not been verified yet. Please click the verification link in your email and try again.",
                 primaryBtn: {
-                    text: "Check Again",
+                    text: "Check Verification",
                     action: Actions.checkVerification
-                },
-                secondaryBtn: {
-                    text: "Resend Email",
-                    action: Actions.requestVerification
                 }
             });
         }
@@ -453,16 +460,16 @@
                     showSendFailed();
                     break;
                 case 2:
-                    // 2 = Verification email sent successfully
-                    showSendSuccess();
+                    // 2 = Verification email sent successfully / waiting for user verification
+                    if (checkAttempted) {
+                        showNotVerified();
+                    } else {
+                        showSendSuccess();
+                    }
                     break;
                 case 3:
                     // 3 = Email is already verified
                     showVerified();
-                    break;
-                case 4:
-                    // 4 = Email is not verified yet
-                    showNotVerified();
                     break;
                 default:
                     // Fallback for unknown status
